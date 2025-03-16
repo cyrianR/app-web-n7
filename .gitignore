@@ -1,4 +1,4 @@
 .env
 
-/logs/gradle-build-logs
-/logs/gradle-bootRun-logs
+/logs/gradle-build-logs.txt
+/logs/gradle-bootRun-logs.txt

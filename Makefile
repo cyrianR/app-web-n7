@@ -17,16 +17,16 @@ dev: stop ## Development environment, launch hotreloaded preview of the entire p
 	@echo "Database container starting..."
 	@docker compose up -d > /dev/null 2>&1
 	@echo "Gradle continuous build starting..."
-	@cd spring-boot-api && ./gradlew build --continuous > ../logs/gradle-build-logs 2>&1 &
+	@cd spring-boot-api && ./gradlew build --continuous > ../logs/gradle-build-logs.txt 2>&1 &
 	@echo "API starting..."
-	@cd spring-boot-api && ./gradlew bootRun > ../logs/gradle-bootRun-logs 2>&1 &
+	@cd spring-boot-api && ./gradlew bootRun > ../logs/gradle-bootRun-logs.txt 2>&1 &
 
 .PHONY: dev-verbose-api
 dev-verbose-api: stop ## Development environment with verbose api, launch hotreloaded preview of the entire project
 	@echo "Database container starting..."
 	@docker compose up -d > /dev/null 2>&1
 	@echo "Gradle continuous build starting..."
-	@cd spring-boot-api && ./gradlew build --continuous > ../logs/gradle-build-logs 2>&1 &
+	@cd spring-boot-api && ./gradlew build --continuous > ../logs/gradle-build-logs.txt 2>&1 &
 	@echo "API starting..."
 	@cd spring-boot-api && ./gradlew bootRun
 
