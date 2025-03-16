@@ -1,1 +1,4 @@
 .env
+
+/logs/gradle-build-logs
+/logs/gradle-bootRun-logs
