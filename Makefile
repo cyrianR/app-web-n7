@@ -42,7 +42,7 @@ clean: ## Removes add build artifacts and downloaded dependencies
 	@cd spring-boot-api && ./gradlew clean > /dev/null 2>&1 &
 
 .PHONY: exec-sql
-exec-sql: 
+exec-sql: ## Execute sql commands directly in the database container
 	@docker exec -it postgres psql -U dev -d app-web-n7-db -c "$(SQL)"
 
 # TODO
