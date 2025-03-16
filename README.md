@@ -17,7 +17,7 @@ Voir [PROJECT.md](PROJECT.md).
 ## Auteurs
 
 - [Cyrian Ragot](https://github.com/cyrianR)
-- [Nino Rottier]()
+- [Nino Rottier](https://github.com/steno3)
 - [Timothée Klein](https://github.com/pekatour)
 - [Marwa El Omari]()
 - [Baptiste Arrix-Pouget]()
