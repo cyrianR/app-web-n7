@@ -19,5 +19,5 @@ Voir [PROJECT.md](PROJECT.md).
 - [Cyrian Ragot](https://github.com/cyrianR)
 - [Nino Rottier](https://github.com/steno3)
 - [Timothée Klein](https://github.com/pekatour)
-- [Marwa El Omari]()
+- [Marwa El Omari](https://github.com/marwa-elomari)
 - [Baptiste Arrix-Pouget]()
