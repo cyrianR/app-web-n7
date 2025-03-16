@@ -4,9 +4,13 @@ services:
     image: postgres:17
     container_name: postgres
     ports:
-      - "5432:5432"
-    env_file:
-      - .env
+      - "${DB_PORT}:${DB_PORT}"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_HOST: ${DB_HOST}
+      POSTGRES_PORT: ${DB_PORT}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
