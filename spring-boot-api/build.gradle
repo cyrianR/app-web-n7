@@ -37,6 +37,7 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    developmentOnly 'com.github.javafaker:javafaker:1.0.2'
 }
 
 tasks.named('test') {

@@ -68,12 +68,10 @@ Pour initialiser le projet spring-boot-api, on a utilisé Spring Initializr : ht
 Pourquoi PostgreSQL et pas HSQLDB ?
 
 - plus utilisé dans l'industrie et plus de documentation
-- plus proche d'un environnement de production
+- plus proche d'un environnement de production classique, plus robuste
 - plus de fonctionnalités si besoin (gérer fichiers json, xml par exemple)
-- HSQLDB est plus léger mais avec docker on règle ce problème
+- HSQLDB est plus léger mais avec docker on règle ce problème de postgreSQL
 - bien entendu l'API JDBC vu en cours fonctionne sur PostgreSQL
-
-Dans le projet on trouve un dossier db. Il contient des scripts pour initialiser la base de donnée
 
 ## Parallèles avec les technologies utilisées en cours et TP
 

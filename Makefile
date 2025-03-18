@@ -14,7 +14,7 @@ help: ## Display this help message
 
 .PHONY: dev
 dev: stop ## Development environment, launch hotreloaded preview of the entire project
-	@echo "Database container starting..."
+	@echo "Development database container starting..."
 	@docker compose up -d postgres-dev > /dev/null 2>&1
 	@echo "Gradle continuous build starting..."
 	@cd spring-boot-api && ./gradlew build --continuous > ../logs/gradle-build-logs.txt 2>&1 &
@@ -23,7 +23,7 @@ dev: stop ## Development environment, launch hotreloaded preview of the entire p
 
 .PHONY: dev-verbose-api
 dev-verbose-api: stop ## Development environment with verbose api, launch hotreloaded preview of the entire project
-	@echo "Database container starting..."
+	@echo "Development database container starting..."
 	@docker compose up -d postgres-dev > /dev/null 2>&1
 	@echo "Gradle continuous build starting..."
 	@cd spring-boot-api && ./gradlew build --continuous > ../logs/gradle-build-logs.txt 2>&1 &
