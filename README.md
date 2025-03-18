@@ -1,6 +1,6 @@
 # Projet d'Application Web
 
-Projet fullstack d'une application web dans le cadre de nos cours à l'ENSEEIHT.
+Projet fullstack d'une application web dans le cadre de nos cours à l'ENSEEIHT. Elle est constituée d'une application VueJS et d'une API REST avec Spring Boot.
 
 ## Fonctionnalités
 

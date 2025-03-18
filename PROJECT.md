@@ -2,15 +2,6 @@
 
 **Ce document permet d'expliquer les choix des technologies utilisées et de la construction de l'environnement de développement**
 
-### Prérequis
-- linux, windows (via WSL)
-- java 17 (minimum)
-- npm
-- nodejs
-- docker avec docker compose
-- vite
-- make (pas nécessaire, mais scripts utiles lors du développement)
-
 ### Versions des frameworks
 - spring boot 3
 - vue 3
@@ -61,6 +52,7 @@ Pour initialiser le projet spring-boot-api, on a utilisé Spring Initializr : ht
 - **Spring Web** : pour développer des app web RESTful avec Spring MVC et un tomcat intégré
 - **Spring Data JPA** : persistence de données dans des bases SQL avec Hibernate
 - **PostgreSQL Driver** : un driver JDBC qui permet au programme Java de se connecter à une base de données SQL
+- **Faker** : permet de générer des données de test comme du texte sous différents formats
 
 
 ## Technologie de base de données : PostgreSQL
