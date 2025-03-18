@@ -5,7 +5,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import com.github.javafaker.Faker;
+import net.datafaker.Faker;
 
 import fr.n7.spring_boot_api.model.Tutorial;
 import fr.n7.spring_boot_api.repository.TutorialRepository;
