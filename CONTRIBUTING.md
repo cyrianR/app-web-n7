@@ -92,7 +92,7 @@ Dans un second terminal :
 
 
 
-> **Finalement**, ne pas oublier de tout stopper pour le bien de votre RAM (fermer les terminaux et docker compose down OU utiliser make stop)
+> **Finalement**, ne pas oublier de tout stopper quand vous avez fini pour le bien de votre RAM (fermer les terminaux et docker compose down OU utiliser make stop)
 
 
 ### Accéder aux serveurs lancés
@@ -110,6 +110,15 @@ Pour tester l'API seulement (si le front associé n'a pas encore été codé), v
 Lire [PROJECT.md](PROJECT.md) pour comprendre la structure du code et les technologies utilisées.
 
 **IMPORTANT** : Faire attention à l'utilisation de git ! On ne force pas un push ! On vérifie bien qu'on annule pas du code d'une autre personne lorsqu'on résoud les conflits ! Les conflits c'est normal, on travaille sur les mêmes fichiers, mais il faut proprement s'occuper des conflits en mergant correctement à la main votre code et celui des autres. (on ne fait pas bêtement "accept current change" ou "accept incoming change", il faut inclure les deux)
+
+### Résolution de problèmes
+
+- Quand l'environnement de dev est lancé avec le Makefile, les outputs des serveurs sont forward dans des fichiers dans le dossier /log du projet.
+
+
+- Dans un projet web, un des problèmes récurrent est le formattage des données et faire en sorte qu'elles apparaissent correctement dans le front (pas tronquées ou invisibles ou autre) donc il faut bien tester dans votre navigateur les composants, et il faut dans mettre des données assez variées dans le seeding de l'api.
+
+- Si problème avec l'environnement ou questions sur l'utilisation de gradle/vite/npm/docker/Makefile ou sur la structure du projet : demander à Cyrian.
 
 ### Conventions
 
