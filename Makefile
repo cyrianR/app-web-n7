@@ -15,7 +15,7 @@ help: ## Display this help message
 .PHONY: dev
 dev: stop ## Development environment, launch hotreloaded preview of the entire project
 	@echo "Database container starting..."
-	@docker compose up -d > /dev/null 2>&1
+	@docker compose up -d postgres-dev > /dev/null 2>&1
 	@echo "Gradle continuous build starting..."
 	@cd spring-boot-api && ./gradlew build --continuous > ../logs/gradle-build-logs.txt 2>&1 &
 	@echo "API starting..."
@@ -24,7 +24,7 @@ dev: stop ## Development environment, launch hotreloaded preview of the entire p
 .PHONY: dev-verbose-api
 dev-verbose-api: stop ## Development environment with verbose api, launch hotreloaded preview of the entire project
 	@echo "Database container starting..."
-	@docker compose up -d > /dev/null 2>&1
+	@docker compose up -d postgres-dev > /dev/null 2>&1
 	@echo "Gradle continuous build starting..."
 	@cd spring-boot-api && ./gradlew build --continuous > ../logs/gradle-build-logs.txt 2>&1 &
 	@echo "API starting..."
@@ -34,7 +34,7 @@ dev-verbose-api: stop ## Development environment with verbose api, launch hotrel
 stop: ## Stop development environment
 	@echo "Stopping development environment..."
 	@cd spring-boot-api && ./gradlew --stop > /dev/null 2>&1 &
-	@docker compose down > /dev/null 2>&1
+	@docker compose down postgres-dev > /dev/null 2>&1
 
 .PHONY: clean
 clean: ## Removes add build artifacts and downloaded dependencies
@@ -42,10 +42,11 @@ clean: ## Removes add build artifacts and downloaded dependencies
 	@cd spring-boot-api && ./gradlew clean > /dev/null 2>&1 &
 
 .PHONY: exec-sql
-exec-sql: ## Execute sql commands directly in the database container
-	@docker exec -it postgres psql -U dev -d app-web-n7-db -c "$(SQL)"
+exec-sql: ## Execute sql commands directly in the development database container
+	@docker exec -it postgres-dev psql -U dev -d app-web-n7-db -c "$(SQL)"
 
 # TODO
 # ajouter commande pour clean la db et remettre juste les données de test
 # dans "clean", supprimer tout le volume du container de la db 
 # autres commandes : build, deploy, format, test
+# prod scripts

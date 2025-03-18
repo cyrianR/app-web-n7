@@ -1,7 +1,7 @@
 services:
-  postgres:
+  postgres-prod:
     image: postgres:17
-    container_name: postgres
+    container_name: postgres-prod
     ports:
       - "${DB_PORT}:${DB_PORT}"
     environment:
@@ -11,12 +11,26 @@ services:
       POSTGRES_HOST: ${DB_HOST}
       POSTGRES_PORT: ${DB_PORT}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_prod:/var/lib/postgresql/data
+    networks:
+      - app-web-n7
+
+  postgres-dev:
+    image: postgres:17
+    container_name: postgres-dev
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_HOST: ${DB_HOST}
+      POSTGRES_PORT: ${DB_PORT}
     networks:
       - app-web-n7
 
 volumes:
-  postgres_data:
+  postgres_data_prod:
 
 networks:
   app-web-n7:
