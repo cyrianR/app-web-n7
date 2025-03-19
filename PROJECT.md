@@ -31,6 +31,15 @@ Pour interagir directement avec la base de données PostgreSQL, (vérifier que l
 
 ## Technologies utilisées pour vue-app
 
+Pour initialiser le projet, on a utilisé :
+```
+npm create vite@latest vue-app -- --template vue-ts
+```
+Puis pour installer les types :
+```
+npm install --save-dev typescript @types/node @types/vue 
+```
+
 **nodejs** : Environnement d'exécution pour JavaScript (un peu comme un jre pour Java)
 **npm** : Gestionnaire de dépendances pour des projets javascript sur nodejs (permet aussi de spécifier des scripts dans le package.json pour automatiser certaines tâches)
 **vite** : Outil de développement web qui permet des build rapide, intègre un serveur de développement et reload en direct l'application lors de changements
