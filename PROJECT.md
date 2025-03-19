@@ -46,7 +46,13 @@ npm install --save-dev typescript @types/node @types/vue
 
 #### Packages
 
-**axios** : gérer requêtes http vers l'api (en gros c'est le controler qui sert à définir les get et post)
+**axios** : Gérer requêtes http vers l'api (en gros c'est le controler qui sert à définir les get et post).
+> En particulier, voir le fichier *http-common.ts* qui initialise axios et nous mettrons les fichiers de service qui controllent les requêtes pour chacunes de nos entities dans le dossier *services/*.
+
+**vue-router** : Ajoute un moyen simple de créer des routes pour naviguer à travers les pages web.
+> En particulier, voir le fichier *router.js* et les balises *router-link* et *router-view* dans les fichiers vue du projet.
+
+**bootstrap** : Framework très utile pour dev du front facilement, moins de css à écrire et des composants responsive rapides.
 
 
 ## Technologies utilisées pour spring-boot-api
@@ -90,6 +96,23 @@ Le reste est globalement pareil, mise à part qu'avec Spring Boot il y a moins d
 
 #### Base de donnée :
 PostgreSQL au lieu de HSQLDB.
+
+# Exemples
+
+## Petit exemple pour l'api : HelloWorld
+
+Dans le projet spring-boot-api, vous pouvez trouver le fichier **HelloWorld.java** qui map seulement un seul endpoint à /api/messages/hello et qui affiche un message. Vous pouvez y accéder par <http://localhost:8080/api/messages/hello>.
+
+## Exemple complet pour illustrer la structure du code et l'environnement
+
+
+
+TODO :
+- Tutorials api et app
+- expliquer code, packages java
+- expliquer les endpoints de l'api pour Tutorials
+- expliquer seeding dans SeedDatasourceDev.java
+- montrer une query sql avec make exec-sql
 
 
 ## Bibliographie

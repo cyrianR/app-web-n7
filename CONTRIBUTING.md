@@ -127,16 +127,3 @@ Lire [PROJECT.md](PROJECT.md) pour comprendre la structure du code et les techno
 2. Noms de commit qui ont du sens. Et un commit != une feature : il peut y avoir plusieurs commit par feature (surtout lorsqu'on touche à la fois au frontend et au backend).
 
 3. Utiliser des branches si possible (une branche = une feature).
-
-## Petit exemple pour l'api : HelloWorld
-
-Dans le projet spring-boot-api, vous pouvez trouver le fichier **HelloWorld.java** qui map seulement un seul endpoint à /api/messages/hello et qui affiche un message. Vous pouvez y accéder par <http://localhost:8080/api/messages/hello>.
-
-## Exemple complet pour illustrer la structure du code et l'environnement
-
-TODO :
-- Tutorials api et app
-- expliquer code, packages java
-- expliquer les endpoints de l'api pour Tutorials
-- expliquer seeding dans SeedDatasourceDev.java
-- montrer une query sql avec make exec-sql
