@@ -93,7 +93,9 @@ Dans un second terminal :
 **4.** Lancer l'application VueJS
 Dans un troisième terminal :
 ```
-
+cd vue-app
+npm install
+npm run dev
 ```
 
 
