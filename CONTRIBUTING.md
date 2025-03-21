@@ -4,11 +4,9 @@
 
 ### Prérequis
 - linux, windows (via WSL)
-- java 17 (minimum)
-- npm
-- nodejs
+- java 17
+- nodejs (nodejs installe npm normalement)
 - docker et docker compose
-- vite
 - make (pas nécessaire, mais scripts utiles lors du développement)
 
 ### Commencer à développer
@@ -67,7 +65,7 @@ cp .env ./vue-app/.env
 
 **2.** Lancer la DB dans un container docker
 ```
-docker compose up -d
+docker-compose up -d
 ```
 > Note : pour stopper : docker compose down
 
