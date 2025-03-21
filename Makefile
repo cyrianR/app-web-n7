@@ -40,8 +40,8 @@ dev-verbose-api: stop copy-env ## Development environment with verbose api, laun
 stop: ## Stop development environment
 	@echo "Stopping development environment..."
 	@test -f .env || cp .env.example .env
-	@cd spring-boot-api && ./gradlew --stop > /dev/null 2>&1 &
-	@kill -9 $(ps -ax | grep vite) > /dev/null 2>&1 &
+	@cd spring-boot-api && ./gradlew --stop > /dev/null 2>&1
+	@bash scripts/stop.sh
 	@docker compose down postgres-dev > /dev/null 2>&1
 
 .PHONY: clean

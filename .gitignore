@@ -1,5 +1,6 @@
 .env
 
+
 /logs/gradle-build-logs.txt
 /logs/gradle-bootRun-logs.txt
 /logs/npm-run-dev-logs.txt

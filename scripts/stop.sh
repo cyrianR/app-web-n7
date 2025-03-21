@@ -1,0 +1,1 @@
+kill -9 $(ps -ax | grep vite) > /dev/null 2>&1 &
