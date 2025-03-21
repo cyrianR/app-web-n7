@@ -1,6 +1,5 @@
 .env
-.vscode
-.vscode/*
+
 
 /logs/gradle-build-logs.txt
 /logs/gradle-bootRun-logs.txt
