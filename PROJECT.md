@@ -41,7 +41,9 @@ npm install bootstrap@5.3.3 jquery popper.js axios vue-router@4
 ```
 
 **nodejs** : Environnement d'exécution pour JavaScript (un peu comme un jre pour Java)
+
 **npm** : Gestionnaire de dépendances pour des projets javascript sur nodejs (permet aussi de spécifier des scripts dans le package.json pour automatiser certaines tâches)
+
 **vite** : Outil de développement web qui permet des build rapide, intègre un serveur de développement et reload en direct l'application lors de changements
 
 #### Packages
