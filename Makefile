@@ -15,7 +15,7 @@ help: ## Display this help message
 .PHONY: dev
 dev: stop copy-env ## Development environment, launch hotreloaded preview of the entire project
 	@echo "Development database container starting..."
-	@docker compose up -d postgres-dev > /dev/null 2>&1
+	@docker-compose up -d postgres-dev > /dev/null 2>&1
 	@echo "Gradle continuous build starting..."
 	@cd spring-boot-api && ./gradlew build --continuous > ../logs/gradle-build-logs.txt 2>&1 &
 	@echo "API starting..."
@@ -27,7 +27,7 @@ dev: stop copy-env ## Development environment, launch hotreloaded preview of the
 .PHONY: dev-verbose-api
 dev-verbose-api: stop copy-env ## Development environment with verbose api, launch hot-reloaded preview of the entire project
 	@echo "Development database container starting..."
-	@docker compose up -d postgres-dev > /dev/null 2>&1
+	@docker-compose up -d postgres-dev > /dev/null 2>&1
 	@echo "Gradle continuous build starting..."
 	@cd spring-boot-api && ./gradlew build --continuous > ../logs/gradle-build-logs.txt 2>&1 &
 	@echo "Vue application starting..."
@@ -42,7 +42,7 @@ stop: ## Stop development environment
 	@test -f .env || cp .env.example .env
 	@cd spring-boot-api && ./gradlew --stop > /dev/null 2>&1
 	@bash scripts/stop.sh
-	@docker compose down postgres-dev > /dev/null 2>&1
+	@docker-compose down postgres-dev > /dev/null 2>&1
 
 .PHONY: clean
 clean: stop ## Removes add build artifacts and downloaded dependencies
