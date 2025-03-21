@@ -58,9 +58,11 @@ make exec-sql SQL="<query SQL>"
 
 **Option 2 : lancer les serveurs dans plusieurs terminaux :**
 
-**1.** Ajouter les variables d'environnement
+**1.** Ajouter les variables d'environnement aux projets
 ```
 cp .env.example .env
+cp .env ./spring-boot-api/.env
+cp .env ./vue-app/.env
 ```
 
 **2.** Lancer la DB dans un container docker
@@ -89,7 +91,10 @@ Dans un second terminal :
 > Note : cette commande start l'api Spring Boot dans un serveur tomcat intégré
 
 **4.** Lancer l'application VueJS
+Dans un troisième terminal :
+```
 
+```
 
 
 > **Finalement**, ne pas oublier de tout stopper quand vous avez fini pour le bien de votre RAM (fermer les terminaux et docker compose down OU utiliser make stop)
@@ -99,7 +104,7 @@ Dans un second terminal :
 
 Dans un navigateur, on peut accéder :
 - à l'API : <http://localhost:8080/api>
-- à l'application : <http://localhost:8081/>
+- à l'application : <http://localhost:5173/>
 
 A l'aide d'un client de base de données comme DBeaver ou pgAdmin, on peut visualiser les entrées de la DB. Il faut configurer ces clients avec les creds du .env pour y accéder. Cependant, vous avez la commande "make exec-sql" vue plus haut pour rapidement lancer des requêtes SQL vers la DB.
 
@@ -114,7 +119,6 @@ Lire [PROJECT.md](PROJECT.md) pour comprendre la structure du code et les techno
 ### Résolution de problèmes
 
 - Quand l'environnement de dev est lancé avec le Makefile, les outputs des serveurs sont forward dans des fichiers dans le dossier /log du projet.
-
 
 - Dans un projet web, un des problèmes récurrent est le formattage des données et faire en sorte qu'elles apparaissent correctement dans le front (pas tronquées ou invisibles ou autre) donc il faut bien tester dans votre navigateur les composants, et il faut dans mettre des données assez variées dans le seeding de l'api.
 

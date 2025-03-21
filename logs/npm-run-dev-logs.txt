@@ -1,0 +1,9 @@
+
+> vue-app@0.0.0 dev
+> vite
+
+
+  VITE v6.2.2  ready in 337 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose

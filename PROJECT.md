@@ -35,9 +35,9 @@ Pour initialiser le projet, on a utilisé :
 ```
 npm create vite@latest vue-app -- --template vue-ts
 ```
-Puis pour installer les types :
+Puis pour installer les dépendances :
 ```
-npm install --save-dev typescript @types/node @types/vue 
+npm install bootstrap@5.3.3 jquery popper.js axios vue-router@4
 ```
 
 **nodejs** : Environnement d'exécution pour JavaScript (un peu comme un jre pour Java)

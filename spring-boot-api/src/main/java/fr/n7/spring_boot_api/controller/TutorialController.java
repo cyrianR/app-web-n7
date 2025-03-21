@@ -22,7 +22,7 @@ import fr.n7.spring_boot_api.model.Tutorial;
 import fr.n7.spring_boot_api.repository.TutorialRepository;
 
 // filter authorized origin
-// @CrossOrigin(origins = "http://localhost:8080")
+// @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api")
 public class TutorialController {
