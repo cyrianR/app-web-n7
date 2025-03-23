@@ -2,6 +2,8 @@
 COLOR_RESET= \033[0m
 COLOR_INFO= \033[32m
 COLOR_COMMENT= \033[33m
+FRONTEND_DIR = vue-app
+BACKEND_DIR = spring-boot-api
 
 # TARGETS
 default: help
@@ -17,39 +19,39 @@ dev: stop copy-env ## Development environment, launch hotreloaded preview of the
 	@echo "Development database container starting..."
 	@docker-compose up -d postgres-dev > /dev/null 2>&1
 	@echo "Gradle continuous build starting..."
-	@cd spring-boot-api && ./gradlew build --continuous > ../logs/gradle-build-logs.txt 2>&1 &
+	@cd $(BACKEND_DIR) && ./gradlew build --continuous > ../logs/gradle-build-logs.txt 2>&1 &
 	@echo "API starting..."
-	@cd spring-boot-api && ./gradlew bootRun > ../logs/gradle-bootRun-logs.txt 2>&1 &
+	@cd $(BACKEND_DIR) && ./gradlew bootRun > ../logs/gradle-bootRun-logs.txt 2>&1 &
 	@echo "Vue application starting..."
-	@cd vue-app && npm install > /dev/null 2>&1
-	@cd vue-app && npm run dev > ../logs/npm-run-dev-logs.txt 2>&1 &
+	@cd $(FRONTEND_DIR) && npm install > /dev/null 2>&1
+	@cd $(FRONTEND_DIR) && npm run dev > ../logs/npm-run-dev-logs.txt 2>&1 &
 
 .PHONY: dev-verbose-api
 dev-verbose-api: stop copy-env ## Development environment with verbose api, launch hot-reloaded preview of the entire project
 	@echo "Development database container starting..."
 	@docker-compose up -d postgres-dev > /dev/null 2>&1
 	@echo "Gradle continuous build starting..."
-	@cd spring-boot-api && ./gradlew build --continuous > ../logs/gradle-build-logs.txt 2>&1 &
+	@cd $(BACKEND_DIR) && ./gradlew build --continuous > ../logs/gradle-build-logs.txt 2>&1 &
 	@echo "Vue application starting..."
-	@cd vue-app && npm install > /dev/null 2>&1
-	@cd vue-app && npm run dev > ../logs/npm-run-dev-logs.txt 2>&1 &
+	@cd $(FRONTEND_DIR) && npm install > /dev/null 2>&1
+	@cd $(FRONTEND_DIR) && npm run dev > ../logs/npm-run-dev-logs.txt 2>&1 &
 	@echo "API starting..."
-	@cd spring-boot-api && ./gradlew bootRun
+	@cd $(BACKEND_DIR) && ./gradlew bootRun
 
 .PHONY: stop
 stop: ## Stop development environment
 	@echo "Stopping development environment..."
 	@test -f .env || cp .env.example .env
-	@cd spring-boot-api && ./gradlew --stop > /dev/null 2>&1
-	@bash scripts/stop.sh
+	@cd $(BACKEND_DIR) && ./gradlew --stop > /dev/null 2>&1
+	@-pkill -f vite
 	@docker-compose down postgres-dev > /dev/null 2>&1
 
 .PHONY: clean
 clean: stop ## Removes add build artifacts and downloaded dependencies
 	@echo "Cleaning API build artifacts..."
-	@cd spring-boot-api && ./gradlew clean > /dev/null 2>&1 &
+	@cd $(BACKEND_DIR) && ./gradlew clean > /dev/null 2>&1 &
 	@echo "Cleaning vue application build artifacts..."
-	@cd vue-app && rm -rf node_modules && npm cache clean --force > /dev/null 2>&1 &
+	@cd $(FRONTEND_DIR) && rm -rf node_modules && npm cache clean --force > /dev/null 2>&1 &
 
 .PHONY: exec-sql
 exec-sql: ## Execute sql commands directly in the development database container
@@ -58,8 +60,8 @@ exec-sql: ## Execute sql commands directly in the development database container
 .PHONY: copy-env
 copy-env: ## Create .env file from .env.example and copy .env file in app and api
 	@cp .env.example .env
-	@cp .env ./vue-app/.env
-	@cp .env ./spring-boot-api/.env
+	@cp .env ./$(FRONTEND_DIR)/.env
+	@cp .env ./$(BACKEND_DIR)/.env
 
 
 # TODO
