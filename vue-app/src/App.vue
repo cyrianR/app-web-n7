@@ -1,30 +1,57 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
+<script>
+export default {
+  name: "app"
+};
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div id="app">
+    <nav class="navbar fixed-top navbar-light" style="background-color: #ffffff;">
+      <div class="container-fluid">
+        <router-link to="/" class="navbar-brand">
+          <img src="./assets/logo_clean_saisons_rond.png" width="50" height="50" alt="">
+        </router-link>
+        <div class="flex-row justify-content-end mx-2" id="navbarNav">
+          <ul class="navbar-nav flex-row gap-4">
+            <li class="nav-item">
+              <router-link to="" class="nav-link">Acceuil</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="" class="nav-link">Cuisine</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="" class="nav-link">Karaoke</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="" class="nav-link">Cours</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="" class="nav-link">Projection</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="" class="nav-link">Photos</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="" class="nav-link">Agenda</router-link>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <router-view />
+    </div>
+
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+
+.navbar-nav > li > a {
+  color: black;
+  font-weight: 500;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+
 </style>
+

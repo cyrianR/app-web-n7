@@ -1,5 +1,7 @@
+@import './assets/fonts/Inter/stylesheet.css';
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', sans-serif !important;
   line-height: 1.5;
   font-weight: 400;
 
@@ -23,6 +25,7 @@ a:hover {
 }
 
 body {
+  font-family: 'Inter' !important;
   margin: 0;
   display: flex;
   place-items: center;
