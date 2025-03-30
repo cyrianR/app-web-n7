@@ -25,9 +25,6 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
         System.out.println("Loading Tutorial data...");
         loadTutorialData(10);
-        for (Tutorial tutorial : tutorialRepo.findAll()) {
-            System.out.println(tutorial.toString());
-        }
     }
 
     private void loadTutorialData(int numTutorials) {
