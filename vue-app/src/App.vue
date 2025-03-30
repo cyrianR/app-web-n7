@@ -14,7 +14,7 @@ export default {
         <div class="flex-row justify-content-end mx-2" id="navbarNav">
           <ul class="navbar-nav flex-row gap-4">
             <li class="nav-item">
-              <router-link to="" class="nav-link">Accueil</router-link>
+              <router-link to="/" class="nav-link">Accueil</router-link>
             </li>
             <li class="nav-item">
               <router-link to="" class="nav-link">Cuisine</router-link>
