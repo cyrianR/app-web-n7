@@ -32,7 +32,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
         loadTutorialData(10);
 
         System.out.println("Loading User data...");
-        loadUserData(10);
+        loadUserData(1);
 
         System.out.println("Seeding completed.");
     }
