@@ -44,7 +44,7 @@ stop: ## Stop development environment
 	@test -f .env || cp .env.example .env
 	@cd $(BACKEND_DIR) && ./gradlew --stop > /dev/null 2>&1
 	@-pkill -f vite
-	@docker-compose down postgres-dev > /dev/null 2>&1
+	@docker-compose down > /dev/null 2>&1
 
 .PHONY: clean
 clean: stop ## Removes add build artifacts and downloaded dependencies
