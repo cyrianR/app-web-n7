@@ -33,4 +33,10 @@ public class SeedDatasourceDev implements CommandLineRunner{
         }
     }
 
+    private void loadUserData(int numUsers) {
+        for (int i = 0; i < numUsers; i++) {
+            userRepo.save(new User(faker.name().username(), faker.internet().emailAddress(), faker.internet().password()));
+        }
+    }
+
 }
