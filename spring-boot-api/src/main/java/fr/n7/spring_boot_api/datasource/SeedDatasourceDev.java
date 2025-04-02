@@ -9,6 +9,9 @@ import net.datafaker.Faker;
 
 import fr.n7.spring_boot_api.model.Tutorial;
 import fr.n7.spring_boot_api.repository.TutorialRepository;
+import fr.n7.spring_boot_api.repository.UserRepository;
+import fr.n7.spring_boot_api.model.User;
+import fr.n7.spring_boot_api.model.Role;
 
 @Component
 @Profile("dev")
@@ -18,6 +21,8 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
     @Autowired
     TutorialRepository tutorialRepo;
+    @Autowired
+    UserRepository userRepo;
 
     @Override
     public void run(String... args) throws Exception {
@@ -25,6 +30,11 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
         System.out.println("Loading Tutorial data...");
         loadTutorialData(10);
+
+        System.out.println("Loading User data...");
+        loadUserData(10);
+
+        System.out.println("Seeding completed.");
     }
 
     private void loadTutorialData(int numTutorials) {

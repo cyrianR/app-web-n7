@@ -1,6 +1,8 @@
 package fr.n7.spring_boot_api.model;
 
 import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -82,7 +84,7 @@ public class User {
     public void removeRole(Role role) {
         this.roles.remove(role);
     }
-    
+
     @Override
     public String toString() {
         return "User [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password + ", roles=" + roles + "]";
