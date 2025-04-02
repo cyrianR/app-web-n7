@@ -6,7 +6,7 @@ export default {
 
 <template>
   <div id="app">
-    <nav class="navbar fixed-top navbar-light">
+    <nav class="navbar fixed-top navbar-light bg-light bg-opacity-75">
       <div class="container-fluid">
         <router-link to="/" class="navbar-brand">
           <img src="./assets/logo_clean_saisons_rond.png" width="50" height="50" alt="">
@@ -39,7 +39,7 @@ export default {
       </div>
     </nav>
 
-    <div class="container mt-5">
+    <div class="container pt-5">
       <router-view />
     </div>
 
