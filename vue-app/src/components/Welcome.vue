@@ -13,9 +13,7 @@
     </div>
   </div>
 
-  <div class="dflex flex-row justify-content-center">
-    <img src="../assets/img/welcome.jpg" class="rounded mx-auto d-block" alt="Image du club">
-  </div>
+  <img src="../assets/img/welcome.jpg" class="img-fluid rounded mx-auto d-block" alt="Image du club">
 </template>
 
 <style scoped>
