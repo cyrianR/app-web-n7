@@ -10,7 +10,8 @@ public class HelloWorld {
 
     @GetMapping("/hello")
     public String hello() {
-        return "Full Stack Java with Spring Boot & VueJS !";
+        return "feur !";
     }
+    
 
 }
