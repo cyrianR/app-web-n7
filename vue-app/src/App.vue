@@ -5,13 +5,13 @@ export default {
 </script>
 
 <template>
-  <div id="app">
+  <div id="app p-0">
     <nav class="navbar fixed-top navbar-light bg-light bg-opacity-75">
-      <div class="container-fluid">
+      <div class="container-fluid ms-3 me-3">
         <router-link to="/" class="navbar-brand">
           <img src="./assets/logo_clean_saisons_rond.png" width="50" height="50" alt="">
         </router-link>
-        <div class="flex-row justify-content-end mx-2" id="navbarNav">
+        <div class="flex-row justify-content-end" id="navbarNav">
           <ul class="navbar-nav flex-row gap-4">
             <li class="nav-item">
               <router-link to="/" class="nav-link">Accueil</router-link>
@@ -39,7 +39,7 @@ export default {
       </div>
     </nav>
 
-    <div class="container pt-5">
+    <div class="container-fluid">
       <router-view />
     </div>
 
@@ -53,10 +53,10 @@ export default {
           </div>
         </div>
         
-        <div class="text-end d-flex flex-column">
-            <a href="#" class="text-dark text-decoration-none me-3">Cookies</a>
-            <a href="#" class="text-dark text-decoration-none me-3">Contactez-nous</a>
-            <a href="#" class="text-dark text-decoration-none me-3">Mentions légales</a>
+        <div class="text-end d-flex flex-column me-3">
+            <a href="#" class="text-dark text-decoration-none">Cookies</a>
+            <a href="#" class="text-dark text-decoration-none">Contactez-nous</a>
+            <a href="#" class="text-dark text-decoration-none">Mentions légales</a>
         </div>
     </div>
 </footer>
