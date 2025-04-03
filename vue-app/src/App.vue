@@ -9,7 +9,7 @@ export default {
     <nav class="navbar fixed-top navbar-light bg-light bg-opacity-75">
       <div class="container-fluid ms-3 me-3">
         <router-link to="/" class="navbar-brand">
-          <img src="./assets/logo_clean_saisons_rond.png" width="50" height="50" alt="">
+          <img src="./assets/img/logo_clean_saisons_rond.png" width="50" height="50" alt="">
         </router-link>
         <div class="flex-row justify-content-end" id="navbarNav">
           <ul class="navbar-nav flex-row gap-4">
@@ -48,8 +48,8 @@ export default {
         <div class="d-flex flex-column justify-content-between ms-3">
             <span>© Japan7 2025</span>
             <div class="d-flex">
-              <a href="https://discord.gg/mwC7jKKK4j" class="me-2"><img src="./assets/discord-outline.svg" alt="Discord" width="24"></a>
-              <a href="https://www.instagram.com/japan7_enseeiht"><img src="./assets/instagram.svg" alt="Instagram" width="24"></a>
+              <a href="https://discord.gg/mwC7jKKK4j" class="me-2"><img src="./assets/svg/discord-outline.svg" alt="Discord" width="24"></a>
+              <a href="https://www.instagram.com/japan7_enseeiht"><img src="./assets/svg/instagram.svg" alt="Instagram" width="24"></a>
           </div>
         </div>
         
