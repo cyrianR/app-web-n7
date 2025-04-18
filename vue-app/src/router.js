@@ -7,6 +7,11 @@ const routes =  [
     component: () => import("./components/Welcome.vue")
   },
   {
+    path: "/agenda",
+    name: "agenda",
+    component: () => import("./components/Agenda.vue")
+  },
+  {
     path: "/tutorials",
     name: "tutorials",
     component: () => import("./components/TutorialsList.vue")

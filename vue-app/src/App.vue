@@ -32,7 +32,7 @@ export default {
               <router-link to="" class="nav-link">Photos</router-link>
             </li>
             <li class="nav-item">
-              <router-link to="" class="nav-link">Agenda</router-link>
+              <router-link to="/agenda" class="nav-link">Agenda</router-link>
             </li>
           </ul>
         </div>
