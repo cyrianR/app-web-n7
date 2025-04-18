@@ -22,7 +22,7 @@ export default {
           today: "Mois en cours"
         },
         
-        eventClick: this.handleEventClick,
+        eventClick: (arg) => this.handleEventClick(arg),
         eventDidMount: (info) => {
             info.el.title = 'Cliquez pour plus de détails';
         },
