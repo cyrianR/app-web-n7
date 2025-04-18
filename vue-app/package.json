@@ -11,6 +11,7 @@
   "dependencies": {
     "@fullcalendar/core": "^6.1.17",
     "@fullcalendar/daygrid": "^6.1.17",
+    "@fullcalendar/interaction": "^6.1.17",
     "@fullcalendar/vue3": "^6.1.17",
     "axios": "^1.8.4",
     "bootstrap": "^5.3.3",
