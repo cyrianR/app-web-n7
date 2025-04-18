@@ -7,7 +7,7 @@ export default {
 <template>
   <div id="app p-0">
     <nav class="navbar fixed-top navbar-light bg-light bg-opacity-75">
-      <div class="container-fluid m-3">
+      <div class="container-fluid mx-3">
         <router-link to="/" class="navbar-brand">
           <img src="./assets/img/logo_clean_saisons_rond.png" width="50" height="50" alt="">
         </router-link>
