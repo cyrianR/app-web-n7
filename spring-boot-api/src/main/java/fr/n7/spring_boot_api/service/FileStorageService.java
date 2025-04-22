@@ -36,4 +36,13 @@ public class FileStorageService {
   public Stream<File> getAllFiles() {
     return fileRepository.findAll().stream();
   }
+
+  public boolean deleteFile(String id) {
+    File file = fileRepository.findById(id).orElse(null);
+    if (file != null) {
+        fileRepository.delete(file);
+        return true;
+    }
+    return false;
+}
 }

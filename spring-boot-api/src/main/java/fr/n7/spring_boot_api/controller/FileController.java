@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.DeleteMapping;
+
 
 import fr.n7.spring_boot_api.model.File;
 import fr.n7.spring_boot_api.service.FileStorageService;
@@ -49,6 +51,19 @@ public class FileController {
     } else {
       return new ResponseEntity<>(files, HttpStatus.OK);
     }
+  }
+  @DeleteMapping("/file/delete/{id}")
+  public ResponseEntity<String> deleteFile(@PathVariable String id) {
+      try {
+          boolean isDeleted = storageService.deleteFile(id);
+          if (isDeleted) {
+              return new ResponseEntity<>("File deleted successfully", HttpStatus.OK);
+          } else {
+              return new ResponseEntity<>("File not found", HttpStatus.NOT_FOUND);
+          }
+      } catch (Exception e) {
+          return new ResponseEntity<>("Error deleting file", HttpStatus.INTERNAL_SERVER_ERROR);
+      }
   }
 
   // Get file by ID
