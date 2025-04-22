@@ -1,6 +1,7 @@
 package fr.n7.spring_boot_api.service;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,11 @@ public class FileStorageService {
   }
 
   public File getFile(String id) {
-    return fileRepository.findById(id).get();
+    Optional<File> file = fileRepository.findById(id);
+    if (!file.isPresent()) {
+      throw new RuntimeException("File not found with id " + id);
+    }
+    return file.get();
   }
   
   public Stream<File> getAllFiles() {

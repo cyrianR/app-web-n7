@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class File {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     private String name;
 
@@ -27,7 +27,7 @@ public class File {
         this.data = data;
     }
     
-    public String getId() {
+    public Long getId() {
         return id;
     }
 

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +30,7 @@ public class FileController {
   private FileStorageService storageService;
 
   // Upload file
-  @GetMapping("/file/upload")
+  @PostMapping("/file/upload")
   public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
     try {
       storageService.store(file);
@@ -43,11 +44,15 @@ public class FileController {
   @GetMapping("/files")
   public ResponseEntity<List<File>> getListFiles() {
     List<File> files = storageService.getAllFiles().collect(Collectors.toList());
-    return new ResponseEntity<>(files, HttpStatus.OK);
+    if (files.isEmpty()) {
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    } else {
+      return new ResponseEntity<>(files, HttpStatus.OK);
+    }
   }
 
   // Get file by ID
-  @GetMapping("/files/{id}")
+  @GetMapping("/getfile/{id}")
   public ResponseEntity<byte[]> getFile(@PathVariable String id) {
     File file = storageService.getFile(id);
 
