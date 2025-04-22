@@ -59,7 +59,7 @@ export default {
 
 <template>
   <div class="photos-container">
-    <h1>📷 Galerie de Photos</h1>
+    <h1>📷 Galerie de photos</h1>
 
     <!-- Upload Button -->
     <div class="upload-section">
@@ -81,8 +81,8 @@ export default {
 
 <style scoped>
 .photos-container {
+  margin: 30px auto 0 auto; /* top | right | bottom | left */
   max-width: 900px;
-  margin: 0 auto;
   padding: 20px;
   text-align: center;
 }
@@ -108,7 +108,7 @@ export default {
 
 .photo-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 colonnes */
+  grid-template-columns: repeat(3, 1fr); 
   gap: 20px;
   justify-content: center; /* centre la grille dans son conteneur */
   margin-top: 20px;
@@ -136,6 +136,11 @@ export default {
 .no-photos {
   font-style: italic;
   color: gray;
+}
+@media (max-width: 1024px) {
+  .photo-grid {
+    grid-template-columns: repeat(3, 1fr); /* 3 colonnes en desktop */
+  }
 }
 @media (max-width: 768px) {
   .photo-grid {
