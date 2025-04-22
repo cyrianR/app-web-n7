@@ -18,6 +18,7 @@
 body {
   font-family: 'Inter' !important;
   margin: 0;
+  padding: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
@@ -39,10 +40,10 @@ h1 {
 }
 
 #app {
-  max-width: 1280px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
+  --bs-gutter-x: 0;
 }
 
 @media (prefers-color-scheme: light) {

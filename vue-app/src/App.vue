@@ -5,7 +5,9 @@ export default {
 </script>
 
 <template>
-  <div id="app p-0">
+  <div id="app p-0" class="d-flex flex-column min-vh-100">
+
+    <!-- Navbar -->
     <nav class="navbar fixed-top navbar-light bg-light bg-opacity-75">
       <div class="container-fluid mx-3">
         <router-link to="/" class="navbar-brand">
@@ -39,41 +41,47 @@ export default {
       </div>
     </nav>
 
-    <div class="container-fluid p-0">
+    <!-- Main content -->
+    <div class="page-content container-fluid flex-grow-1">
       <router-view />
     </div>
 
+    <!-- Footer -->
     <footer class="bg-light text-dark py-3 mt-4">
-    <div class="container-fluid d-flex justify-content-between">
+      <div class="container-fluid d-flex justify-content-between">
         <div class="d-flex flex-column justify-content-between ms-3">
-            <span>© Japan7 2025</span>
-            <div class="d-flex">
-              <a href="https://discord.gg/mwC7jKKK4j" class="me-2"><img src="./assets/svg/discord-outline.svg" alt="Discord" width="24"></a>
-              <a href="https://www.instagram.com/japan7_enseeiht"><img src="./assets/svg/instagram.svg" alt="Instagram" width="24"></a>
+          <span>© Japan7 2025</span>
+          <div class="d-flex">
+            <a href="https://discord.gg/mwC7jKKK4j" class="me-2"><img src="./assets/svg/discord-outline.svg"
+                alt="Discord" width="24"></a>
+            <a href="https://www.instagram.com/japan7_enseeiht"><img src="./assets/svg/instagram.svg" alt="Instagram"
+                width="24"></a>
           </div>
         </div>
-        
         <div class="text-end d-flex flex-column me-3">
-            <a href="#" class="text-dark text-decoration-none">Cookies</a>
-            <a href="#" class="text-dark text-decoration-none">Contactez-nous</a>
-            <a href="#" class="text-dark text-decoration-none">Mentions légales</a>
+          <a href="#" class="text-dark text-decoration-none">Cookies</a>
+          <a href="#" class="text-dark text-decoration-none">Contactez-nous</a>
+          <a href="#" class="text-dark text-decoration-none">Mentions légales</a>
         </div>
-    </div>
-</footer>
+      </div>
+    </footer>
   </div>
 </template>
 
 <style scoped>
-
-.navbar-nav > li > a {
+.navbar-nav>li>a {
   color: black;
   font-weight: 500;
 }
-footer{
-  width:100%;
-  position:absolute;
-  left:0;
+
+.page-content {
+  padding-top: 6rem;
+  max-width: 1200px;
 }
 
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
 </style>
-
