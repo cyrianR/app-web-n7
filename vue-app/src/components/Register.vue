@@ -1,10 +1,10 @@
 <template>
     <div class="page">
       <div class="register-container">
-        <h2>Register</h2>
+        <h2>Inscription</h2>
         <form @submit.prevent="handleRegister">
           <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
+            <label for="username" class="form-label">Nom d'utilisateur</label>
             <input type="text" id="username" v-model="username" class="form-control" required />
           </div>
           <div class="mb-3">
@@ -12,11 +12,11 @@
             <input type="email" id="email" v-model="email" class="form-control" required />
           </div>
           <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
+            <label for="password" class="form-label">Mot de passe</label>
             <input type="password" id="password" v-model="password" class="form-control" required />
           </div>
           <div class="mb-3">
-            <label for="confirmPassword" class="form-label">Confirm Password</label>
+            <label for="confirmPassword" class="form-label">Confirmer le mot de passe</label>
             <input type="password" id="confirmPassword" v-model="confirmPassword" class="form-control" required />
           </div>
           <button type="submit" class="btn btn-primary">Register</button>

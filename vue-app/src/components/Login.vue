@@ -1,14 +1,14 @@
 <template>
   <div class="page">
     <div class="login-container">
-      <h2>Login</h2>
+      <h2>Se connecter</h2>
       <form @submit="handleLogin">
         <div class="mb-3">
-          <label for="username" class="form-label">Username</label>
+          <label for="username" class="form-label">Nom d'utilisateur</label>
           <input type="text" id="username" v-model="username" class="form-control" required />
         </div>
         <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
+          <label for="password" class="form-label">Mot de passe</label>
           <input type="password" id="password" v-model="password" class="form-control" required />
         </div>
         <button type="submit" class="btn btn-primary">Login</button>
