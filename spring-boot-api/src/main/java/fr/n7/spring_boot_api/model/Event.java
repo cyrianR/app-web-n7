@@ -10,8 +10,8 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nom", nullable = false)
-    private String nom;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "date", nullable = false)
     private String date;
@@ -29,8 +29,8 @@ public class Event {
     public Event() {
     }
 
-    public Event(String nom, String date, EventType eventType, String description) {
-        this.nom = nom;
+    public Event(String name, String date, EventType eventType, String description) {
+        this.name = name;
         this.date = date;
         this.eventType = eventType;
         this.description = description;
@@ -43,11 +43,11 @@ public class Event {
     public void setId(Long id) {
         this.id = id;
     }
-    public String getNom() {
-        return nom;
+    public String getName() {
+        return name;
     }
-    public void setNom(String nom) {
-        this.nom = nom;
+    public void setName(String name) {
+        this.name = name;
     }
     public String getDate() {
         return date;
@@ -77,7 +77,7 @@ public class Event {
     public String toString() {
         return "Event [" +
                 "id=" + id +
-                ", nom='" + nom + '\'' +
+                ", name='" + name + '\'' +
                 ", date='" + date + '\'' +
                 ", eventType=" + eventType +
                 ", description='" + description + '\'' +
