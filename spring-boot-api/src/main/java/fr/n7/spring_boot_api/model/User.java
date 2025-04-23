@@ -22,9 +22,8 @@ public class User {
     private String password;
 
     // User's roles
-    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
     
     public User() {
@@ -34,7 +33,7 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.roles.add(Role.EXTERN);
+        this.roles.add(new Role(ERole.EXTERN)); // default role
     }	
     
     public Long getId() {
