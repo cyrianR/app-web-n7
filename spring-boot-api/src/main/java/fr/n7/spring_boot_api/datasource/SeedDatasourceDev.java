@@ -11,7 +11,6 @@ import fr.n7.spring_boot_api.model.Tutorial;
 import fr.n7.spring_boot_api.repository.TutorialRepository;
 import fr.n7.spring_boot_api.repository.UserRepository;
 import fr.n7.spring_boot_api.model.User;
-import fr.n7.spring_boot_api.model.Role;
 
 @Component
 @Profile("dev")
@@ -21,6 +20,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
     @Autowired
     TutorialRepository tutorialRepo;
+
     @Autowired
     UserRepository userRepo;
 

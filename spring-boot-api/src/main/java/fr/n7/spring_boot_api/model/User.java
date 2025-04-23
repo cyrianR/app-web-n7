@@ -1,5 +1,8 @@
 package fr.n7.spring_boot_api.model;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,17 +15,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(unique = true, nullable = false)
+    @NotBlank
+    @Column(unique = true)
+    @Size(min = 3, max = 20)
     private String username;
     
-    @Column(unique = true, nullable = false)
+    @NotBlank
+    @Email
+    @Column(unique = true)
     private String email;
     
-    @Column(nullable = false)
+    @NotBlank
+    @Size(min = 8, max = 100)
     private String password;
 
     // User's roles
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
     
