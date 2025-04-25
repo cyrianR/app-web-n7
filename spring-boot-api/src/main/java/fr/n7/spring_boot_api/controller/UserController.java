@@ -38,11 +38,11 @@ public class UserController {
         try {
             List<User> users = new ArrayList<User>();
 
-            if (username == null)
+            if (username == null) {
                 userRepository.findAll().forEach(users::add);
-            else
-                // userRepository.findByUsername(username).forEach(users::add);
+            } else {
                 userRepository.findByUsernameContaining(username).forEach(users::add);
+            }
 
             if (users.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);

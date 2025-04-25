@@ -3,7 +3,9 @@ package fr.n7.spring_boot_api.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "roles", uniqueConstraints = {
+    @UniqueConstraint(columnNames = "name")
+})
 public class Role {
 
     @Id

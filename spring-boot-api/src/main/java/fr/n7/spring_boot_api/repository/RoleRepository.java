@@ -9,4 +9,5 @@ import fr.n7.spring_boot_api.model.Role;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {
     Optional<Role> findByName(ERole name);
+    Boolean existsByName(ERole name);
 }
