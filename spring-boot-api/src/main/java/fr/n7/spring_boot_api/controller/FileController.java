@@ -21,7 +21,7 @@ import fr.n7.spring_boot_api.model.File;
 import fr.n7.spring_boot_api.service.FileStorageService;
 
 @Controller
-@CrossOrigin("http://localhost:5173")
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api")
 public class FileController {

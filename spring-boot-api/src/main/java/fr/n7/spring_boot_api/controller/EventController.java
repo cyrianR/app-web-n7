@@ -24,7 +24,7 @@ import fr.n7.spring_boot_api.repository.VoteRepository;
 import fr.n7.spring_boot_api.repository.EventRepository;
 
 // filter authorized origin
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
 public class EventController {

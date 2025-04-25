@@ -20,7 +20,7 @@ import fr.n7.spring_boot_api.model.Lesson;
 import fr.n7.spring_boot_api.repository.LessonRepository;
 
 // filter authorized origin
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
 public class LessonController {
