@@ -24,7 +24,7 @@ import fr.n7.spring_boot_api.model.User;
 import fr.n7.spring_boot_api.repository.UserRepository;
 
 // filter authorized origin
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
 public class UserController {
