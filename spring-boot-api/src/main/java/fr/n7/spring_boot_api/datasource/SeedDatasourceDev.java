@@ -70,7 +70,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
     private void loadEventData(int numEvents) {
         for (int i = 0; i < numEvents; i++) {
-            eventRepo.save(new Event(faker.book().title(), faker.date().future(30, java.util.concurrent.TimeUnit.DAYS).toString(), EventType.values()[faker.number().numberBetween(0, EventType.values().length)], faker.lorem().paragraph()));
+            eventRepo.save(new Event(faker.book().title(), faker.date().future(30, java.util.concurrent.TimeUnit.DAYS).toString(), EventType.values()[faker.number().numberBetween(0, EventType.values().length)], faker.lorem().sentence()));
         }
     }
 
