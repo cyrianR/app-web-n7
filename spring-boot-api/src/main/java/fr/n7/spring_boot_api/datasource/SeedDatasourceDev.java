@@ -25,11 +25,14 @@ public class SeedDatasourceDev implements CommandLineRunner{
     EventRepository eventRepo;
     @Autowired
     VoteRepository voteRepo;
+    @Autowired
+    LessonRepository lessonRepo;
 
     int numTutorials = 10;
     int numUsers = 1;
     int numEvents = 10;
     int numVotes = 10;
+    int numLessons = 10;
 
     @Override
     public void run(String... args) throws Exception {
@@ -46,6 +49,9 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
         System.out.println("Loading Vote data...");
         loadVoteData(numVotes);
+
+        System.out.println("Loading Lesson data...");
+        loadLessonData(numLessons);
 
         System.out.println("Seeding completed.");
     }
@@ -71,6 +77,12 @@ public class SeedDatasourceDev implements CommandLineRunner{
     private void loadVoteData(int numVotes) {
         for (int i = 0; i < numVotes; i++) {
             voteRepo.save(new Vote(((double)faker.number().numberBetween(0, 5)), eventRepo.findById(faker.number().numberBetween(1, numEvents)).orElse(null), userRepo.findById(faker.number().numberBetween(1, numUsers)).orElse(null)));
+        }
+    }
+
+    private void loadLessonData(int numLessons) {
+        for (int i = 0; i < numLessons; i++) {
+            lessonRepo.save(new Lesson(faker.book().title(), faker.file().fileName(), faker.file().fileName(), faker.file().fileName(), faker.file().fileName()));
         }
     }
 
