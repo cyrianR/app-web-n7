@@ -3,6 +3,7 @@ package fr.n7.spring_boot_api.datasource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import net.datafaker.Faker;
@@ -29,6 +30,9 @@ public class SeedDatasourceDev implements CommandLineRunner{
     @Autowired
     UserRepository userRepo;
 
+    @Autowired
+    PasswordEncoder encoder;
+
     @Override
     public void run(String... args) throws Exception {
         System.out.println("Seeding database for development environment...");
@@ -37,12 +41,12 @@ public class SeedDatasourceDev implements CommandLineRunner{
         SeederUtils.loadRoles(roleRepo);
 
         System.out.println("Loading Tutorial data...");
+        tutorialRepo.deleteAll();
         loadTutorialData(10);
 
         System.out.println("Loading User data...");
+        userRepo.deleteAll();
         loadUserData(10);
-
-        System.out.println("Loading Admin Users data...");
         loadAdminUsersData();
 
         System.out.println("Seeding completed.");
@@ -59,7 +63,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
             String uniqueUsername = faker.name().username() + i;
             String uniqueEmail = faker.internet().emailAddress(uniqueUsername);
             Role userRole;
-            User user = new User(uniqueUsername, uniqueEmail, faker.internet().password());
+            User user = new User(uniqueUsername, uniqueEmail, encoder.encode(faker.internet().password()));
             // choose random role between MEMBER and EXTERN
             if (faker.bool().bool()) {
                 userRole = roleRepo.findByName(ERole.EXTERN).orElseThrow(() -> new RuntimeException("Error: Role EXTERN is not found during seeding."));
@@ -75,7 +79,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
         // create global admin
         String uniqueUsername = "admin";
         String uniqueEmail = faker.internet().emailAddress(uniqueUsername);
-        User adminUser = new User(uniqueUsername, uniqueEmail, "admin123");
+        User adminUser = new User(uniqueUsername, uniqueEmail, encoder.encode("admin123"));
         Role adminRole = roleRepo.findByName(ERole.ADMIN).orElseThrow(() -> new RuntimeException("Error: Role ADMIN is not found during seeding."));
         adminUser.addRole(adminRole);
         userRepo.save(adminUser);
@@ -83,7 +87,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
         // create karaoke admin
         uniqueUsername = "adminKaraoke";
         uniqueEmail = faker.internet().emailAddress(uniqueUsername);
-        adminUser = new User(uniqueUsername, uniqueEmail, "admin123");
+        adminUser = new User(uniqueUsername, uniqueEmail, encoder.encode("admin123"));
         adminRole = roleRepo.findByName(ERole.KAROKE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role KAROKE_ADMIN is not found during seeding."));
         adminUser.addRole(adminRole);
         userRepo.save(adminUser);
@@ -91,7 +95,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
         // create karaoke admin
         uniqueUsername = "adminLesson";
         uniqueEmail = faker.internet().emailAddress(uniqueUsername);
-        adminUser = new User(uniqueUsername, uniqueEmail, "admin123");
+        adminUser = new User(uniqueUsername, uniqueEmail, encoder.encode("admin123"));
         adminRole = roleRepo.findByName(ERole.LESSON_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role LESSON_ADMIN is not found during seeding."));
         adminUser.addRole(adminRole);
         userRepo.save(adminUser);
