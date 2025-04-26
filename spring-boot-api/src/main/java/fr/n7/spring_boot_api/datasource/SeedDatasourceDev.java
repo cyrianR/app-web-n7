@@ -66,9 +66,9 @@ public class SeedDatasourceDev implements CommandLineRunner{
             User user = new User(uniqueUsername, uniqueEmail, encoder.encode(faker.internet().password()));
             // choose random role between MEMBER and EXTERN
             if (faker.bool().bool()) {
-                userRole = roleRepo.findByName(ERole.EXTERN).orElseThrow(() -> new RuntimeException("Error: Role EXTERN is not found during seeding."));
+                userRole = roleRepo.findByName(ERole.ROLE_EXTERN).orElseThrow(() -> new RuntimeException("Error: Role EXTERN is not found during seeding."));
             } else {
-                userRole = roleRepo.findByName(ERole.MEMBER).orElseThrow(() -> new RuntimeException("Error: Role MEMBER is not found during seeding."));
+                userRole = roleRepo.findByName(ERole.ROLE_MEMBER).orElseThrow(() -> new RuntimeException("Error: Role MEMBER is not found during seeding."));
             }
             user.addRole(userRole);
             userRepo.save(user);
@@ -80,7 +80,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
         String uniqueUsername = "admin";
         String uniqueEmail = faker.internet().emailAddress(uniqueUsername);
         User adminUser = new User(uniqueUsername, uniqueEmail, encoder.encode("admin123"));
-        Role adminRole = roleRepo.findByName(ERole.ADMIN).orElseThrow(() -> new RuntimeException("Error: Role ADMIN is not found during seeding."));
+        Role adminRole = roleRepo.findByName(ERole.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role ADMIN is not found during seeding."));
         adminUser.addRole(adminRole);
         userRepo.save(adminUser);
 
@@ -88,7 +88,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
         uniqueUsername = "adminKaraoke";
         uniqueEmail = faker.internet().emailAddress(uniqueUsername);
         adminUser = new User(uniqueUsername, uniqueEmail, encoder.encode("admin123"));
-        adminRole = roleRepo.findByName(ERole.KAROKE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role KAROKE_ADMIN is not found during seeding."));
+        adminRole = roleRepo.findByName(ERole.ROLE_KAROKE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role KAROKE_ADMIN is not found during seeding."));
         adminUser.addRole(adminRole);
         userRepo.save(adminUser);
 
@@ -96,7 +96,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
         uniqueUsername = "adminLesson";
         uniqueEmail = faker.internet().emailAddress(uniqueUsername);
         adminUser = new User(uniqueUsername, uniqueEmail, encoder.encode("admin123"));
-        adminRole = roleRepo.findByName(ERole.LESSON_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role LESSON_ADMIN is not found during seeding."));
+        adminRole = roleRepo.findByName(ERole.ROLE_LESSON_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role LESSON_ADMIN is not found during seeding."));
         adminUser.addRole(adminRole);
         userRepo.save(adminUser);
     }

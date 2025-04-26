@@ -80,7 +80,7 @@ public class AuthController {
                 encoder.encode(signUpRequest.getPassword()));
 
         // Set the default role to EXTERN
-        Role userRole = roleRepo.findByName(ERole.EXTERN)
+        Role userRole = roleRepo.findByName(ERole.ROLE_EXTERN)
           .orElseThrow(() -> new RuntimeException("Error: Role EXTERN is not found."));
 
         user.addRole(userRole);
