@@ -8,6 +8,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.n7.spring_boot_api.model.Role;
 import fr.n7.spring_boot_api.model.User;
+import fr.n7.spring_boot_api.payload.response.UserResponse;
 import fr.n7.spring_boot_api.repository.UserRepository;
 
 // filter authorized origin
@@ -34,14 +36,15 @@ public class UserController {
 
     // Get all users with optional filter by username
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers(@RequestParam(required = false) String username) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UserResponse>> getAllUsers(@RequestParam(required = false) String username) {
         try {
-            List<User> users = new ArrayList<User>();
+            List<UserResponse> users = new ArrayList<UserResponse>();
 
             if (username == null) {
-                userRepository.findAll().forEach(users::add);
+                userRepository.findAll().forEach(u -> users.add(userToUserResponse(u)));
             } else {
-                userRepository.findByUsernameContaining(username).forEach(users::add);
+                userRepository.findByUsernameContaining(username).forEach(u -> users.add(userToUserResponse(u)));
             }
 
             if (users.isEmpty()) {
@@ -56,6 +59,7 @@ public class UserController {
 
     // Get user by ID
     @GetMapping("/user/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> getUserById(@PathVariable("id") long id) {
         Optional<User> userData = userRepository.findById(id);
 
@@ -68,6 +72,7 @@ public class UserController {
 
     // Create a new user
     @PostMapping("/user")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         try {
             User _user = userRepository.save(new User(user.getUsername(), user.getEmail(), user.getPassword()));
@@ -79,6 +84,7 @@ public class UserController {
 
     // Update user by ID
     @PutMapping("/user/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> updateUser(@PathVariable("id") long id, @RequestBody User user) {
         Optional<User> userData = userRepository.findById(id);
 
@@ -95,6 +101,7 @@ public class UserController {
 
     // Update user roles by ID
     @PutMapping("/user/role/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> updateUserRoles(@PathVariable("id") long id, @RequestBody Set<Role> roles) {
         Optional<User> userData = userRepository.findById(id);
 
@@ -109,6 +116,7 @@ public class UserController {
 
     // Delete user by ID
     @DeleteMapping("/user/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") long id) {
         try {
             userRepository.deleteById(id);
@@ -116,5 +124,9 @@ public class UserController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private UserResponse userToUserResponse(User user) {
+        return new UserResponse(user.getId(), user.getUsername(), user.getEmail());
     }
 }

@@ -32,7 +32,7 @@ public class TutorialController {
 	TutorialRepository tutorialRepository;
 
 	@GetMapping("/tutorials")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('MEMBER') or hasRole('ADMIN')")
 	public ResponseEntity<List<Tutorial>> getAllTutorials(@RequestParam(required = false) String title) {
 		try {
 			List<Tutorial> tutorials = new ArrayList<Tutorial>();
@@ -53,7 +53,7 @@ public class TutorialController {
 	}
 
 	@GetMapping("/tutorials/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('MEMBER') or hasRole('ADMIN')")
 	public ResponseEntity<Tutorial> getTutorialById(@PathVariable("id") long id) {
 		Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
 
@@ -116,7 +116,7 @@ public class TutorialController {
 	}
 
 	@GetMapping("/tutorials/published")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('MEMBER') or hasRole('ADMIN')")
 	public ResponseEntity<List<Tutorial>> findByPublished() {
 		try {
 			List<Tutorial> tutorials = tutorialRepository.findByPublished(true);
