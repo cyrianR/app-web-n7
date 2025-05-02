@@ -12,14 +12,6 @@ class UserService {
     return http.get(`/user/${id}`);
   }
 
-  create(user) {
-    return http.post("/user", user);
-  }
-
-  update(id, user) {
-    return http.put(`/user/${id}`, user);
-  }
-
   updateRoles(id, roles) {
     return http.put(`/user/role/${id}`, roles);
   }

@@ -21,9 +21,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.n7.spring_boot_api.model.ERole;
 import fr.n7.spring_boot_api.model.Role;
 import fr.n7.spring_boot_api.model.User;
 import fr.n7.spring_boot_api.payload.response.UserResponse;
+import fr.n7.spring_boot_api.repository.RoleRepository;
 import fr.n7.spring_boot_api.repository.UserRepository;
 
 @CrossOrigin(origins = "*")
@@ -33,6 +35,9 @@ public class UserController {
     
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
 
     // Get all users with optional filter by username
     @GetMapping("/users")
@@ -70,43 +75,21 @@ public class UserController {
         }
     }
 
-    // Create a new user
-    @PostMapping("/user")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponse> createUser(@RequestBody User user) {
-        try {
-            User userSaved = userRepository.save(new User(user.getUsername(), user.getEmail(), user.getPassword()));
-            return new ResponseEntity<>(userToUserResponse(userSaved), HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    // Update user by ID
-    @PutMapping("/user/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable("id") long id, @RequestBody User newUser) {
-        Optional<User> userToUpdate = userRepository.findById(id);
-
-        if (userToUpdate.isPresent()) {
-            User user = userToUpdate.get();
-            user.setUsername(newUser.getUsername());
-            user.setEmail(newUser.getEmail());
-            user.setPassword(newUser.getPassword());
-            return new ResponseEntity<>(userToUserResponse(userRepository.save(user)), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
     // Update user roles by ID
     @PutMapping("/user/role/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponse> updateUserRoles(@PathVariable("id") long id, @RequestBody Set<Role> roles) {
+    public ResponseEntity<UserResponse> updateUserRoles(@PathVariable("id") long id, @RequestBody Set<String> roleNames) {
         Optional<User> user = userRepository.findById(id);
 
         if (user.isPresent()) {
             User newUser = user.get();
+            Set<Role> roles = roleNames.stream()
+                .map(roleName -> {
+                    Role role = roleRepository.findByName(ERole.valueOf(roleName))
+                            .orElseThrow(() -> new RuntimeException("Error: Role " + roleName + " is not found."));
+                    return role;
+                })
+                .collect(Collectors.toSet());
             newUser.setRoles(roles);
             return new ResponseEntity<>(userToUserResponse(userRepository.save(newUser)), HttpStatus.OK);
         } else {
