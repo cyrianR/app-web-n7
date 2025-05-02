@@ -24,6 +24,7 @@
           </button>
         </div>
         <div class="form-group mt-3">
+          <div v-if="redirectMessage" class="alert alert-warning" role="alert">{{ redirectMessage }}</div>
           <div v-if="submitMessage" class="alert alert-danger" role="alert">{{submitMessage}}</div>
         </div>
       </Form>
@@ -55,7 +56,8 @@ export default {
   data() {
     return {
       loading: false,
-      submitMessage: ''
+      submitMessage: '',
+      redirectMessage: ''
     };
   },
   computed: {
@@ -67,9 +69,14 @@ export default {
     if (this.loggedIn) {
       this.$router.push('/');
     }
+    const queryMessage = this.$route.query.message;
+    if (queryMessage === 'session-expired') {
+      this.redirectMessage = 'Votre session a expiré. Veuillez vous reconnecter.';
+    }
   },
   methods: {
     handleLogin(values) {
+      this.redirectMessage = '';
       this.submitMessage = '';
       this.loading = true;
       this.$store.dispatch('auth/login', values)

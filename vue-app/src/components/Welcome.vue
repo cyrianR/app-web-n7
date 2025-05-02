@@ -13,7 +13,7 @@
     </div>
   </div>
 
-  <img src="../assets/img/welcome.jpg" class="img-fluid rounded mx-auto d-block" alt="Image du club">
+  <img src="/img/welcome.jpg" class="img-fluid rounded mx-auto d-block" alt="Image du club">
 
   <h2 class="fw-bold tas mt-4 pb-2">Posts récents</h2>
   <section>
