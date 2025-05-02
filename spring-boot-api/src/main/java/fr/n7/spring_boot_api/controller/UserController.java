@@ -25,7 +25,6 @@ import fr.n7.spring_boot_api.model.User;
 import fr.n7.spring_boot_api.payload.response.UserResponse;
 import fr.n7.spring_boot_api.repository.UserRepository;
 
-// filter authorized origin
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
