@@ -60,11 +60,11 @@ public class UserController {
     // Get user by ID
     @GetMapping("/user/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<User> getUserById(@PathVariable("id") long id) {
-        Optional<User> userData = userRepository.findById(id);
+    public ResponseEntity<UserResponse> getUserById(@PathVariable("id") long id) {
+        Optional<User> user = userRepository.findById(id);
 
-        if (userData.isPresent()) {
-            return new ResponseEntity<>(userData.get(), HttpStatus.OK);
+        if (user.isPresent()) {
+            return new ResponseEntity<>(userToUserResponse(user.get()), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -73,10 +73,10 @@ public class UserController {
     // Create a new user
     @PostMapping("/user")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<UserResponse> createUser(@RequestBody User user) {
         try {
-            User _user = userRepository.save(new User(user.getUsername(), user.getEmail(), user.getPassword()));
-            return new ResponseEntity<>(_user, HttpStatus.CREATED);
+            User userSaved = userRepository.save(new User(user.getUsername(), user.getEmail(), user.getPassword()));
+            return new ResponseEntity<>(userToUserResponse(userSaved), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -85,15 +85,15 @@ public class UserController {
     // Update user by ID
     @PutMapping("/user/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<User> updateUser(@PathVariable("id") long id, @RequestBody User user) {
-        Optional<User> userData = userRepository.findById(id);
+    public ResponseEntity<UserResponse> updateUser(@PathVariable("id") long id, @RequestBody User newUser) {
+        Optional<User> userToUpdate = userRepository.findById(id);
 
-        if (userData.isPresent()) {
-            User _user = userData.get();
-            _user.setUsername(user.getUsername());
-            _user.setEmail(user.getEmail());
-            _user.setPassword(user.getPassword());
-            return new ResponseEntity<>(userRepository.save(_user), HttpStatus.OK);
+        if (userToUpdate.isPresent()) {
+            User user = userToUpdate.get();
+            user.setUsername(newUser.getUsername());
+            user.setEmail(newUser.getEmail());
+            user.setPassword(newUser.getPassword());
+            return new ResponseEntity<>(userToUserResponse(userRepository.save(user)), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -102,13 +102,13 @@ public class UserController {
     // Update user roles by ID
     @PutMapping("/user/role/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<User> updateUserRoles(@PathVariable("id") long id, @RequestBody Set<Role> roles) {
-        Optional<User> userData = userRepository.findById(id);
+    public ResponseEntity<UserResponse> updateUserRoles(@PathVariable("id") long id, @RequestBody Set<Role> roles) {
+        Optional<User> user = userRepository.findById(id);
 
-        if (userData.isPresent()) {
-            User _user = userData.get();
-            _user.setRoles(roles);
-            return new ResponseEntity<>(userRepository.save(_user), HttpStatus.OK);
+        if (user.isPresent()) {
+            User newUser = user.get();
+            newUser.setRoles(roles);
+            return new ResponseEntity<>(userToUserResponse(userRepository.save(newUser)), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
