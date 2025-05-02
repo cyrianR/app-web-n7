@@ -1,5 +1,7 @@
 package fr.n7.spring_boot_api.payload.response;
 
+import java.util.Set;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -16,10 +18,13 @@ public class UserResponse {
     @Email
     private String email;
 
-    public UserResponse(Long id, String username, String email) {
+    private Set<String> roles;
+
+    public UserResponse(Long id, String username, String email, Set<String> roles) {
         this.id = id;
         this.username = username;
         this.email = email;
+        this.roles = roles;
     }
 
     public Long getId() {
@@ -44,6 +49,10 @@ public class UserResponse {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Set<String> getRoles() {
+        return roles;
     }
     
 }

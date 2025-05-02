@@ -8,6 +8,12 @@ const routes =  [
     component: () => import("./components/Welcome.vue")
   },
   {
+    path: "/adminboard",
+    name: "adminboard",
+    component: () => import("./components/AdminBoard.vue"),
+    meta: { roles: ["ROLE_ADMIN"] }
+  },
+  {
     path: "/agenda",
     name: "agenda",
     component: () => import("./components/Agenda.vue")

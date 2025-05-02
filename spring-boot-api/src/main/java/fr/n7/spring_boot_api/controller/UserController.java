@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -126,6 +127,9 @@ public class UserController {
     }
 
     private UserResponse userToUserResponse(User user) {
-        return new UserResponse(user.getId(), user.getUsername(), user.getEmail());
+        Set<String> roles = user.getRoles().stream()
+            .map(role -> role.getName().name())
+            .collect(Collectors.toSet());
+        return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), roles);
     }
 }
