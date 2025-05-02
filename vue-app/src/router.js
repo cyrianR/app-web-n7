@@ -36,12 +36,14 @@ const routes =  [
   {
     path: "/tutorials/:id",
     name: "tutorial-details",
-    component: () => import("./components/Tutorial.vue")
+    component: () => import("./components/Tutorial.vue"),
+    meta: { roles: ["ROLE_ADMIN"] }
   },
   {
     path: "/add",
     name: "add",
-    component: () => import("./components/AddTutorial.vue")
+    component: () => import("./components/AddTutorial.vue"),
+    meta: { roles: ["ROLE_ADMIN"] }
   }
 ];
 
