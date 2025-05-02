@@ -67,12 +67,12 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         // Check if the username is already taken
         if (userRepo.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Username is already taken!"));
         }
 
         // Check if the email is already in use
         if (userRepo.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Email is already in use!"));
         }
 
         // Create new user's account
@@ -81,7 +81,7 @@ public class AuthController {
 
         // Set the default role to EXTERN
         Role userRole = roleRepo.findByName(ERole.ROLE_EXTERN)
-          .orElseThrow(() -> new RuntimeException("Error: Role EXTERN is not found."));
+          .orElseThrow(() -> new RuntimeException("Error : Role EXTERN is not found."));
 
         user.addRole(userRole);
         userRepo.save(user);

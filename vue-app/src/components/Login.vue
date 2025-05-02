@@ -1,38 +1,94 @@
 <template>
   <div class="page">
     <div class="login-container">
-      <h2>Se connecter</h2>
-      <form @submit="handleLogin">
+      <h2>Connection</h2>
+      <Form :validation-schema="schema" @submit="handleLogin">
         <div class="mb-3">
           <label for="username" class="form-label">Nom d'utilisateur</label>
-          <input type="text" id="username" v-model="username" class="form-control" required />
+          <Field name="username" class="form-control" type="text" placeholder="Nom d'utilisateur"/>
+          <ErrorMessage name="username" v-slot="{ message }">
+            <p class="unvalid-message">{{ message }}</p>
+          </ErrorMessage>
         </div>
         <div class="mb-3">
           <label for="password" class="form-label">Mot de passe</label>
-          <input type="password" id="password" v-model="password" class="form-control" required />
+          <Field name="password" class="form-control" type="password" placeholder="Mot de passe"/>
+          <ErrorMessage name="password" v-slot="{ message }">
+            <p class="unvalid-message">{{ message }}</p>
+          </ErrorMessage>
         </div>
-        <button type="submit" class="btn btn-primary">Login</button>
-      </form>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary" :disabled="loading">
+            <span v-show="loading" class="spinner-border spinner-border-sm"></span>
+            <span>Se connecter</span>
+          </button>
+        </div>
+        <div class="form-group mt-3">
+          <div v-if="submitMessage" class="alert alert-danger" role="alert">{{submitMessage}}</div>
+        </div>
+      </Form>
     </div>
   </div>
 </template>
 
 <script>
+import { Field, Form, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
+
+const schema = yup.object().shape({
+  username: yup.string().required('Nom d\'utilisateur requis'),
+  password: yup.string().required('Mot de passe requis')
+});
+
 export default {
   name: "Login",
-  data() {
+  components: {
+    Field,
+    Form,
+    ErrorMessage
+  },
+  setup() {
     return {
-      username: '',
-      password: ''
+      schema,
     };
   },
-  methods: {
-    handleLogin() {
-      // TODO: Implement login logic
-      console.log("Logging in with", this.username, this.password);
+  data() {
+    return {
+      loading: false,
+      submitMessage: ''
+    };
+  },
+  computed: {
+    loggedIn() {
+      return this.$store.state.auth.status.loggedIn;
     }
-  }
-};
+  },
+  created() {
+    if (this.loggedIn) {
+      this.$router.push('/');
+    }
+  },
+  methods: {
+    handleLogin(values) {
+      this.submitMessage = '';
+      this.loading = true;
+      this.$store.dispatch('auth/login', values)
+        .then(() => {
+          this.$router.push('/');
+        })
+        .catch(error => {
+          this.loading = false;
+          if (error.response && error.response.data) {
+            const { message, status } = error.response.data;
+            this.submitMessage = `Error ${status}: ${message}`;
+          } else {
+            this.submitMessage = error.message || error.toString();
+          }
+        });
+    }
+  },
+}
+
 </script>
 
 <style scoped>
@@ -51,5 +107,10 @@ export default {
   border: 1px solid #ccc;
   border-radius: 5px;
   background-color: #f9f9f9;
+}
+
+.unvalid-message {
+  color: red;
+  font-size: 0.7em;
 }
 </style>
