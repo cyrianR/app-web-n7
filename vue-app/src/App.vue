@@ -1,6 +1,11 @@
 <script>
 export default {
-  name: "app"
+  name: "app",
+  computed: {
+    isLoggedIn() {
+      return this.$store.state.auth.status.loggedIn;
+    }
+  }
 };
 </script>
 
@@ -14,7 +19,7 @@ export default {
           <img src="/img/logo_clean_saisons_rond.png" width="50" height="50" alt="">
         </router-link>
         <div class="flex-row justify-content-end" id="navbarNav">
-          <ul class="navbar-nav flex-row gap-4">
+            <ul class="navbar-nav flex-row gap-4">
             <li class="nav-item">
               <router-link to="/" class="nav-link">Accueil</router-link>
             </li>
@@ -36,7 +41,20 @@ export default {
             <li class="nav-item">
               <router-link to="/agenda" class="nav-link">Agenda</router-link>
             </li>
-          </ul>
+            <div class="auth-links d-flex flex-column justify-content-center ms-3">
+              <li v-if="isLoggedIn" class="nav-item">
+              <router-link to="/account" class="nav-link custom-auth-link">Compte</router-link>
+              </li>
+              <div v-else class="d-flex flex-row gap-3">
+                <li class="nav-item">
+                  <router-link to="/register" class="nav-link custom-auth-link">S'inscrire</router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link to="/login" class="nav-link custom-auth-link">Se connecter</router-link>
+                </li>
+              </div>
+            </div>
+            </ul>
         </div>
       </div>
     </nav>
@@ -69,9 +87,22 @@ export default {
 </template>
 
 <style scoped>
-.navbar-nav>li>a {
+.navbar-nav > li > a {
   color: black;
   font-weight: 500;
+}
+
+.custom-auth-link {
+  color: white !important;
+  background-color: black;
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.custom-auth-link:hover {
+  background-color: #333;
+  color: #ddd;
 }
 
 .page-content {
