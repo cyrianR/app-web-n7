@@ -15,7 +15,8 @@ export default {
     fetchFiles() {
       PhotosService.getListFiles()
         .then(response => {
-          this.files = response.data.reverse(); // Affiche les plus récentes d'abord
+          this.files = response.reverse();
+          
         })
         .catch(error => {
           console.error('Erreur lors de la récupération des fichiers:', error);
@@ -41,7 +42,7 @@ export default {
       this.$refs.fileInput.click();
     },
     getFileUrl(id) {
-      return PhotosService.getFileUrl(id);
+      return PhotosService.getById(id);
     },
     deleteFile(id) {
     PhotosService.deleteFile(id)

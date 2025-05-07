@@ -2,20 +2,20 @@ import http from "../http-common";
 
 class PhotosService {
   getById(id) {
-    return http.get('/getfile/${id}');
+    return http.get(`/getfile/${id}`);
   }
-  uploadFile() {
-    return http.get('/file/upload', {
+  uploadFile(formData) {
+    return http.post(`/file/upload`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
   }
   getListFiles() {
-    return http.get('/files');
+    return http.get('/files').then(response => response.data);
   }
   deleteFile(id) {
-    return http.delete('/file/${id}');
+    return http.delete(`/file/delete/${id}`);
   }
 }
 
