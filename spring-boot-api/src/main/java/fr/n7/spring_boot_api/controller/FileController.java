@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.DeleteMapping;
-
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import fr.n7.spring_boot_api.model.File;
 import fr.n7.spring_boot_api.service.FileStorageService;
@@ -33,6 +33,8 @@ public class FileController {
 
   // Upload file
   @PostMapping("/file/upload")
+  @PreAuthorize("hasRole('MEMBER') or hasRole('ADMIN')")
+
   public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
     try {
       storageService.store(file);
@@ -44,6 +46,7 @@ public class FileController {
 
   // Get all files
   @GetMapping("/files")
+  @PreAuthorize("hasRole('MEMBER') or hasRole('ADMIN')")
   public ResponseEntity<List<File>> getListFiles() {
     List<File> files = storageService.getAllFiles().collect(Collectors.toList());
     if (files.isEmpty()) {
@@ -53,6 +56,7 @@ public class FileController {
     }
   }
   @DeleteMapping("/file/delete/{id}")
+  @PreAuthorize("hasRole('MEMBER') or hasRole('ADMIN')")
   public ResponseEntity<String> deleteFile(@PathVariable String id) {
       try {
           boolean isDeleted = storageService.deleteFile(id);
@@ -68,6 +72,7 @@ public class FileController {
 
   // Get file by ID
   @GetMapping("/getfile/{id}")
+  @PreAuthorize("hasRole('MEMBER') or hasRole('ADMIN')")
   public ResponseEntity<byte[]> getFile(@PathVariable String id) {
     File file = storageService.getFile(id);
 

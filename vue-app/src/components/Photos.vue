@@ -1,5 +1,6 @@
 <script>
 import axios from 'axios';
+import PhotosService from '../services/PhotosService';
 
 export default {
   data() {
@@ -12,7 +13,7 @@ export default {
   },
   methods: {
     fetchFiles() {
-      axios.get('http://localhost:8080/api/files')
+      PhotosService.getListFiles()
         .then(response => {
           this.files = response.data.reverse(); // Affiche les plus récentes d'abord
         })
@@ -27,9 +28,7 @@ export default {
       const formData = new FormData();
       formData.append('file', file);
 
-      axios.post('http://localhost:8080/api/file/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      })
+      PhotosService.uploadFile(formData)
       .then(() => {
         this.fetchFiles();
         this.$refs.fileInput.value = null;
@@ -42,10 +41,10 @@ export default {
       this.$refs.fileInput.click();
     },
     getFileUrl(id) {
-      return `http://localhost:8080/api/getfile/${id}`;
+      return PhotosService.getFileUrl(id);
     },
     deleteFile(id) {
-    axios.delete(`http://localhost:8080/api/file/delete/${id}`)
+    PhotosService.deleteFile(id)
       .then(() => {
         this.fetchFiles(); // Refresh after deletion
       })
