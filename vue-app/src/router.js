@@ -38,6 +38,11 @@ const routes =  [
     name: "register",
     component: () => import("./components/Register.vue")
   },
+  {  
+    path: "/photos",
+    name: "photos",
+    component: () => import("./components/Photos.vue")
+  },
   {
     path: "/tutorials",
     name: "tutorials",

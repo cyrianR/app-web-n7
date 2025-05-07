@@ -36,7 +36,7 @@ export default {
               <router-link to="" class="nav-link">Projection</router-link>
             </li>
             <li class="nav-item">
-              <router-link to="" class="nav-link">Photos</router-link>
+              <router-link to="/photos" class="nav-link">Photos</router-link>
             </li>
             <li class="nav-item">
               <router-link to="/agenda" class="nav-link">Agenda</router-link>
