@@ -56,6 +56,11 @@ public class SeedDatasourceDev implements CommandLineRunner{
         tutorialRepo.deleteAll();
         loadTutorialData(numTutorials);
 
+        System.out.println("Loading User data...");
+        userRepo.deleteAll();
+        loadUserData(numUsers);
+        loadAdminUsersData();
+
         System.out.println("Loading Event data...");
         eventRepo.deleteAll();
         loadEventData(numEvents);
@@ -67,11 +72,6 @@ public class SeedDatasourceDev implements CommandLineRunner{
         System.out.println("Loading Lesson data...");
         lessonRepo.deleteAll();
         loadLessonData(numLessons);
-
-        System.out.println("Loading User data...");
-        userRepo.deleteAll();
-        loadUserData(numUsers);
-        loadAdminUsersData();
 
         System.out.println("Seeding completed.");
     }
