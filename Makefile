@@ -54,7 +54,7 @@ clean: stop ## Removes add build artifacts and downloaded dependencies
 	@cd $(FRONTEND_DIR) && rm -rf node_modules && npm cache clean --force > /dev/null 2>&1 &
 
 .PHONY: exec-sql
-exec-sql: ## Execute sql commands directly in the development database container
+exec-sql: ## Execute sql commands directly in the development database container, usage : make exec-sql SQL="<sql command>"
 	@docker exec -it postgres-dev psql -U dev -d app-web-n7-db -c "$(SQL)"
 
 .PHONY: copy-env

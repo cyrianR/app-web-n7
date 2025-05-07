@@ -1,5 +1,8 @@
 package fr.n7.spring_boot_api.model;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,19 +15,23 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "username", unique = true, nullable = false)
+    @NotBlank
+    @Column(unique = true)
+    @Size(min = 3, max = 20)
     private String username;
     
-    @Column(name = "email", unique = true, nullable = false)
+    @NotBlank
+    @Email
+    @Column(unique = true)
     private String email;
     
-    @Column(name = "password", nullable = false)
+    @NotBlank
+    @Size(min = 8, max = 100)
     private String password;
 
-    // Liste de rôles de l'utilisateur (un role est un enum)
-    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    // User's roles
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
     
     public User() {
@@ -34,15 +41,10 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.roles.add(Role.EXTERN);
     }	
     
     public Long getId() {
         return id;
-    }
-    
-    public void setId(Long id) {
-        this.id = id;
     }
     
     public String getUsername() {

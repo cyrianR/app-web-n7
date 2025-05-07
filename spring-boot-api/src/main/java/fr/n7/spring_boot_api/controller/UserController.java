@@ -2,29 +2,39 @@ package fr.n7.spring_boot_api.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping; 
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.n7.spring_boot_api.model.ERole;
 import fr.n7.spring_boot_api.model.Role;
 import fr.n7.spring_boot_api.model.User;
+import fr.n7.spring_boot_api.payload.request.PasswordUpdateRequest;
+import fr.n7.spring_boot_api.payload.response.MessageResponse;
+import fr.n7.spring_boot_api.payload.response.UserResponse;
+import fr.n7.spring_boot_api.repository.RoleRepository;
 import fr.n7.spring_boot_api.repository.UserRepository;
+import fr.n7.spring_boot_api.security.services.UserDetailsImpl;
+import jakarta.validation.Valid;
 
-// filter authorized origin
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
 public class UserController {
@@ -32,17 +42,24 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    RoleRepository roleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     // Get all users with optional filter by username
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers(@RequestParam(required = false) String username) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UserResponse>> getAllUsers(@RequestParam(required = false) String username) {
         try {
-            List<User> users = new ArrayList<User>();
+            List<UserResponse> users = new ArrayList<UserResponse>();
 
-            if (username == null)
-                userRepository.findAll().forEach(users::add);
-            else
-                // userRepository.findByUsername(username).forEach(users::add);
-                userRepository.findByUsernameContaining(username).forEach(users::add);
+            if (username == null) {
+                userRepository.findAll().forEach(u -> users.add(userToUserResponse(u)));
+            } else {
+                userRepository.findByUsernameContaining(username).forEach(u -> users.add(userToUserResponse(u)));
+            }
 
             if (users.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -56,38 +73,12 @@ public class UserController {
 
     // Get user by ID
     @GetMapping("/user/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") long id) {
-        Optional<User> userData = userRepository.findById(id);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserResponse> getUserById(@PathVariable("id") long id) {
+        Optional<User> user = userRepository.findById(id);
 
-        if (userData.isPresent()) {
-            return new ResponseEntity<>(userData.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    // Create a new user
-    @PostMapping("/user")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        try {
-            User _user = userRepository.save(new User(user.getUsername(), user.getEmail(), user.getPassword()));
-            return new ResponseEntity<>(_user, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    // Update user by ID
-    @PutMapping("/user/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable("id") long id, @RequestBody User user) {
-        Optional<User> userData = userRepository.findById(id);
-
-        if (userData.isPresent()) {
-            User _user = userData.get();
-            _user.setUsername(user.getUsername());
-            _user.setEmail(user.getEmail());
-            _user.setPassword(user.getPassword());
-            return new ResponseEntity<>(userRepository.save(_user), HttpStatus.OK);
+        if (user.isPresent()) {
+            return new ResponseEntity<>(userToUserResponse(user.get()), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -95,13 +86,21 @@ public class UserController {
 
     // Update user roles by ID
     @PutMapping("/user/role/{id}")
-    public ResponseEntity<User> updateUserRoles(@PathVariable("id") long id, @RequestBody Set<Role> roles) {
-        Optional<User> userData = userRepository.findById(id);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserResponse> updateUserRoles(@PathVariable("id") long id, @RequestBody Set<String> roleNames) {
+        Optional<User> user = userRepository.findById(id);
 
-        if (userData.isPresent()) {
-            User _user = userData.get();
-            _user.setRoles(roles);
-            return new ResponseEntity<>(userRepository.save(_user), HttpStatus.OK);
+        if (user.isPresent()) {
+            User newUser = user.get();
+            Set<Role> roles = roleNames.stream()
+                .map(roleName -> {
+                    Role role = roleRepository.findByName(ERole.valueOf(roleName))
+                            .orElseThrow(() -> new RuntimeException("Error: Role " + roleName + " is not found."));
+                    return role;
+                })
+                .collect(Collectors.toSet());
+            newUser.setRoles(roles);
+            return new ResponseEntity<>(userToUserResponse(userRepository.save(newUser)), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -109,6 +108,7 @@ public class UserController {
 
     // Delete user by ID
     @DeleteMapping("/user/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") long id) {
         try {
             userRepository.deleteById(id);
@@ -116,5 +116,104 @@ public class UserController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PutMapping("/user/username")
+    public ResponseEntity<?> updateUsername(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody Map<String, String> request) {
+        try {
+            String username = request.get("username");
+
+            // Check if the username is null or empty
+            if (username == null || username.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Username cannot be empty"));
+            }
+
+            // Check if the username is already taken
+            if (userRepository.existsByUsername(username)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(new MessageResponse("Email is already in use!"));
+            }
+
+            // Retrieve the currently authenticated user
+            Optional<User> user = userRepository.findById(userDetails.getId());
+            if (user.isPresent()) {
+                User currentUser = user.get();
+                currentUser.setUsername(username);
+                userRepository.save(currentUser);
+
+                return ResponseEntity.ok(new MessageResponse("Username updated successfully!"));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("User not found"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("An error occurred while updating the username"));
+        }
+    }
+
+    @PutMapping("/user/email")
+    public ResponseEntity<?> updateEmail(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+
+            // Check if the email is null or empty
+            if (email == null || email.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Email cannot be empty"));
+            }
+        
+            // Check if the email is already taken
+            if (userRepository.existsByEmail(email)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(new MessageResponse("Email is already in use!"));
+            }
+        
+            // Retrieve the currently authenticated user
+            Optional<User> user = userRepository.findById(userDetails.getId());
+            if (user.isPresent()) {
+                User currentUser = user.get();
+                currentUser.setEmail(email);
+                userRepository.save(currentUser);
+            
+                return ResponseEntity.ok(new MessageResponse("Email updated successfully!"));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("User not found"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("An error occurred while updating the email"));
+        }
+    }
+
+    @PutMapping("/user/password")
+    public ResponseEntity<?> updatePassword(@AuthenticationPrincipal UserDetailsImpl userDetails, @Valid @RequestBody PasswordUpdateRequest passwordUpdateRequest) {
+        try {
+            String newPassword = passwordUpdateRequest.getNewPassword();
+            String oldPassword = passwordUpdateRequest.getOldPassword();
+
+            // Retrieve the currently authenticated user
+            Optional<User> user = userRepository.findById(userDetails.getId());
+            if (user.isPresent()) {
+                User currentUser = user.get();
+
+                // Check if the old password matches the stored password
+                if (!passwordEncoder.matches(oldPassword, currentUser.getPassword())) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Old password is incorrect"));
+                }
+
+                // Encode the new password and update it
+                currentUser.setPassword(passwordEncoder.encode(newPassword));
+                userRepository.save(currentUser);
+            
+                return ResponseEntity.ok(new MessageResponse("Password updated successfully!"));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("User not found"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("An error occurred while updating the password"));
+        }
+    }
+
+
+    private UserResponse userToUserResponse(User user) {
+        Set<String> roles = user.getRoles().stream()
+            .map(role -> role.getName().name())
+            .collect(Collectors.toSet());
+        return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), roles);
     }
 }

@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <div class="row pt-5">
+  <div class="row">
     <div class="col-lg-8 tas">
       <h1 class="fw-bold">Japan7</h1>
       <p class="fs-6 text-justify">
@@ -13,7 +13,7 @@
     </div>
   </div>
 
-  <img src="../assets/img/welcome.jpg" class="img-fluid rounded mx-auto d-block" alt="Image du club">
+  <img src="/img/welcome.jpg" class="img-fluid rounded mx-auto d-block" alt="Image du club">
 
   <h2 class="fw-bold tas mt-4 pb-2">Posts récents</h2>
   <section>
@@ -37,7 +37,7 @@
         </div>
       </div>
     </div>
-    
+
   </section>
 </template>
 
