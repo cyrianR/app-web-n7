@@ -47,12 +47,10 @@ public class FileController {
   @PreAuthorize("hasRole('MEMBER') or hasRole('ADMIN')")
   public ResponseEntity<List<File>> getListFiles() {
     List<File> files = storageService.getAllFiles().collect(Collectors.toList());
-    if (files.isEmpty()) {
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    } else {
-      return new ResponseEntity<>(files, HttpStatus.OK);
-    }
+    return new ResponseEntity<>(files, HttpStatus.OK);
+    
   }
+  
   @DeleteMapping("/file/delete/{id}")
   @PreAuthorize("hasRole('MEMBER') or hasRole('ADMIN')")
   public ResponseEntity<String> deleteFile(@PathVariable String id) {

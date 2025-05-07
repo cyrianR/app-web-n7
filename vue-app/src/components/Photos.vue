@@ -16,7 +16,6 @@ export default {
       PhotosService.getListFiles()
         .then(response => {
           this.files = response.reverse();
-          
         })
         .catch(error => {
           console.error('Erreur lors de la récupération des fichiers:', error);
