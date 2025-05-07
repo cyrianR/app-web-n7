@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -67,12 +68,12 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         // Check if the username is already taken
         if (userRepo.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Username is already taken!"));
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new MessageResponse("Username is already taken!"));
         }
 
         // Check if the email is already in use
         if (userRepo.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Email is already in use!"));
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new MessageResponse("Email is already in use!"));
         }
 
         // Create new user's account

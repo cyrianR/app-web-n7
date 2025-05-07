@@ -19,6 +19,25 @@ class UserService {
   delete(id) {
     return http.delete(`/user/${id}`);
   }
+
+  updateUsername(username) {
+    return http.put("user/username", {
+      username: username
+    });
+  }
+
+  updateEmail(email) {
+    return http.put("user/email", {
+      email: email
+    });
+  }
+
+  updatePassword(oldPassword, newPassword) {
+    return http.put("user/password", {
+      oldPassword: oldPassword,
+      newPassword: newPassword
+    });
+  }
 }
 
 export default new UserService();

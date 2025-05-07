@@ -73,6 +73,18 @@ export default {
     if (queryMessage === 'session-expired') {
       this.redirectMessage = 'Votre session a expiré. Veuillez vous reconnecter.';
     }
+    if (queryMessage === 'logout-success') {
+      this.redirectMessage = 'Vous avez été déconnecté avec succès.';
+    }
+    if (queryMessage === 'register-success') {
+      this.redirectMessage = 'Inscription réussie. Veuillez vous connecter.';
+    }
+    if (queryMessage === 'not-logged-in') {
+      this.redirectMessage = 'Veuillez vous connecter pour accéder à cette page.';
+    }
+    if (queryMessage === 'user-updated') {
+      this.redirectMessage = 'Veuillez vous reconnecter.';
+    }
   },
   methods: {
     handleLogin(values) {

@@ -92,7 +92,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
         adminUser.addRole(adminRole);
         userRepo.save(adminUser);
 
-        // create karaoke admin
+        // create lesson admin
         uniqueUsername = "adminLesson";
         uniqueEmail = faker.internet().emailAddress(uniqueUsername);
         adminUser = new User(uniqueUsername, uniqueEmail, encoder.encode("admin123"));

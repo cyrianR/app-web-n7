@@ -94,7 +94,7 @@ export default {
           this.submitMessage = data.message;
           this.successful = true;
           setTimeout(() => {
-            this.$router.push('/login');
+            this.$router.push({ path: '/login', query: { message: 'register-success' } });
           }, 2000);
         })
         .catch(error => {

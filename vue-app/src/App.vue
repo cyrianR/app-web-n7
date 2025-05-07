@@ -43,7 +43,7 @@ export default {
             </li>
             <div class="auth-links d-flex flex-column justify-content-center ms-3">
               <li v-if="isLoggedIn" class="nav-item">
-              <router-link to="/account" class="nav-link custom-auth-link">Compte</router-link>
+              <router-link to="/profile" class="nav-link custom-auth-link">Compte</router-link>
               </li>
               <div v-else class="d-flex flex-row gap-3">
                 <li class="nav-item">

@@ -19,6 +19,11 @@ const routes =  [
     component: () => import("./components/Agenda.vue")
   },
   {
+    path: "/profile",
+    name: "profile",
+    component: () => import("./components/Profile.vue")
+  },
+  {
     path: "/login",
     name: "login",
     component: () => import("./components/Login.vue")
