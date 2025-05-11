@@ -41,16 +41,16 @@ export default {
             <li class="nav-item">
               <router-link to="/agenda" class="nav-link">Agenda</router-link>
             </li>
-            <div class="auth-links d-flex flex-column justify-content-center ms-3">
+            <div class="d-flex flex-column justify-content-center">
               <li v-if="isLoggedIn" class="nav-item">
-              <router-link to="/profile" class="nav-link custom-auth-link">Compte</router-link>
+                <router-link to="/profile" class="btn btn-primary">Compte</router-link>
               </li>
               <div v-else class="d-flex flex-row gap-3">
                 <li class="nav-item">
-                  <router-link to="/register" class="nav-link custom-auth-link">S'inscrire</router-link>
+                  <router-link to="/register" class="btn btn-primary">S'inscrire</router-link>
                 </li>
                 <li class="nav-item">
-                  <router-link to="/login" class="nav-link custom-auth-link">Se connecter</router-link>
+                  <router-link to="/login" class="btn btn-primary">Se connecter</router-link>
                 </li>
               </div>
             </div>
@@ -90,19 +90,6 @@ export default {
 .navbar-nav > li > a {
   color: black;
   font-weight: 500;
-}
-
-.custom-auth-link {
-  color: white !important;
-  background-color: black;
-  padding: 5px 10px;
-  border-radius: 5px;
-  text-decoration: none;
-}
-
-.custom-auth-link:hover {
-  background-color: #333;
-  color: #ddd;
 }
 
 .page-content {
