@@ -7,11 +7,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import net.datafaker.Faker;
-import fr.n7.spring_boot_api.model.ERole;
-import fr.n7.spring_boot_api.model.Role;
-import fr.n7.spring_boot_api.model.Tutorial;
+import fr.n7.spring_boot_api.model.*;
 import fr.n7.spring_boot_api.repository.*;
 import fr.n7.spring_boot_api.model.*;
+
+import java.util.List;
 
 @Component
 @Profile("dev")
@@ -127,19 +127,29 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
     private void loadEventData(int numEvents) {
         for (int i = 0; i < numEvents; i++) {
-            eventRepo.save(new Event(faker.book().title(), faker.date().future(30, java.util.concurrent.TimeUnit.DAYS).toString(), EventType.values()[faker.number().numberBetween(0, EventType.values().length)], faker.lorem().sentence()));
+            eventRepo.save(new Event(faker.book().title(),
+                faker.date().future(30, java.util.concurrent.TimeUnit.DAYS).toString(),
+                EventType.values()[faker.number().numberBetween(0, EventType.values().length)],
+                faker.lorem().sentence()));
         }
     }
 
     private void loadVoteData(int numVotes) {
+        List<Event> events = eventRepo.findAll();
+        List<User> users = userRepo.findAll();
         for (int i = 0; i < numVotes; i++) {
-            voteRepo.save(new Vote(((double)faker.number().numberBetween(0, 5)), eventRepo.findById(faker.number().numberBetween(1, numEvents)).orElse(null), userRepo.findById(faker.number().numberBetween(1, numUsers)).orElse(null)));
+            voteRepo.save(new Vote(((double)faker.number().numberBetween(0, 5)),
+                events.get(faker.number().numberBetween(0, numEvents - 1)),
+                users.get(faker.number().numberBetween(0, numUsers -1))));
         }
     }
 
     private void loadLessonData(int numLessons) {
         for (int i = 0; i < numLessons; i++) {
-            lessonRepo.save(new Lesson(faker.book().title(), faker.file().fileName(), faker.file().fileName(), faker.file().fileName(), faker.file().fileName()));
+            lessonRepo.save(new Lesson(faker.book().title(), faker.file().fileName(),
+                faker.file().fileName(),
+                faker.file().fileName(),
+                faker.file().fileName()));
         }
     }
 
