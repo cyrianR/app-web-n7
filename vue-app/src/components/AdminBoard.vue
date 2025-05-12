@@ -1,10 +1,10 @@
 <template>
   <div class="admin-board">
-    <h1>Admin Board</h1>
+    <h1 class="pb-2">Admin Board</h1>
 
     <!-- Search Users -->
     <div class="search-bar">
-      <input v-model="searchQuery" @input="fetchUsers" type="text" placeholder="Search users by username"
+      <input v-model="searchQuery" @input="fetchUsers" type="text" placeholder="Rechercher par nom"
         class="form-control" />
     </div>
 
@@ -13,9 +13,9 @@
       <thead>
         <tr>
           <th>ID</th>
-          <th>Username</th>
+          <th>Nom</th>
           <th>Email</th>
-          <th>Roles</th>
+          <th>Rôles</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -30,8 +30,8 @@
             </span>
           </td>
           <td>
-            <button @click="deleteUser(user.id)" class="btn btn-danger btn-sm me-2">Delete</button>
-            <button @click="openRoleModal(user)" class="btn btn-warning btn-sm">Change Roles</button>
+            <button @click="deleteUser(user.id)" class="btn btn-danger btn-sm me-2">Supprimer</button>
+            <button @click="openRoleModal(user)" class="btn btn-warning btn-sm">Changer Rôles</button>
           </td>
         </tr>
       </tbody>

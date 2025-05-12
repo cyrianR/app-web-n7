@@ -8,7 +8,7 @@
         <h5 class="card-title">Informations du compte</h5>
         <p><strong>Nom d'utilisateur :</strong> {{ user.username }}</p>
         <p><strong>Email :</strong> {{ user.email }}</p>
-        <p><strong>Rôles :</strong>
+        <p><strong>Rôles : </strong>
           <span v-for="role in user.roles" :key="role" class="badge bg-primary me-1">
             {{ role }}
           </span>

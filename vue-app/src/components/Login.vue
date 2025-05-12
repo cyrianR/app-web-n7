@@ -19,7 +19,7 @@
         </div>
         <div class="form-group">
           <button type="submit" class="btn btn-primary" :disabled="loading">
-            <span v-show="loading" class="spinner-border spinner-border-sm"></span>
+            <span v-show="loading" class="spinner-border spinner-border-sm me-2"></span>
             <span>Se connecter</span>
           </button>
         </div>
