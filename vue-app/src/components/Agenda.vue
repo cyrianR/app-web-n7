@@ -1,12 +1,20 @@
+<template>
+  <h2 class="pt-5">Agenda</h2>
+  <FullCalendar :options="calendarOptions" /> 
+</template>
+
 <script>
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import EventService from "../services/EventService";
 
 export default {
+
   components: {
     FullCalendar
   },
+
   data() {
     return {
       calendarOptions: {
@@ -21,62 +29,68 @@ export default {
         buttonText: {
           today: "Mois en cours"
         },
-        
+        events: [],
+        eventDisplay: 'block',
+
         eventClick: (arg) => this.handleEventClick(arg),
         eventDidMount: (info) => {
             info.el.title = 'Cliquez pour plus de détails';
         },
-        events: [
-        { 
-          title: 'Cuisine', 
-          start: '2025-04-05',
-          backgroundColor: '#fff9c4',
-          textColor: '#333',
-          borderColor: '#fff9c4'
-        },
-        { 
-          title: 'Projo', 
-          start: '2025-04-09',
-          backgroundColor: '#f6e6fa',
-          textColor: '#333',
-          borderColor: '#f6e6fa'
-        },
-        { 
-          title: 'Cours', 
-          start: '2025-04-09',
-          backgroundColor: '#e0f7fa', 
-          textColor: '#333',
-          borderColor: '#e0f7fa'
-        },
-        { 
-          title: 'Kara', 
-          start: '2025-04-14',
-          backgroundColor: '#e0ffe0',
-          textColor: '#333',
-          borderColor: '#e0ffe0'
-        },
-        { 
-          title: 'Cours', 
-          start: '2025-04-24',
-          backgroundColor: '#e0f7fa',
-          textColor: '#333',
-          borderColor: '#e0f7fa'
-        }
-        ]
-      }
-    }
+        
+      },
+      events : []
+    };
   },
+
+  created() {
+      this.retrieveEvents();
+  },
+
   methods: {
+
+    retrieveEvents: function() {
+      EventService.getAll()
+        .then(response => {
+          this.events = response.data.map(event => ({
+            title: this.getFrenchForEventType(event.eventType),
+            start: event.date,
+            backgroundColor: this.getColorForEventType(event.eventType),
+            textColor: '#333',
+            borderColor: this.getColorForEventType(event.eventType)
+          }));
+          this.calendarOptions.events = this.events;
+        })
+        .catch(e => {
+          console.log("Error retrieving events: ", e);
+        });
+    },
+
     handleEventClick: function(arg) {
       alert(arg.event.title) // TODO : faire un lien vers une page de l'évènement (attribut url de event) et/ou un meilleur pop-up pour l'évènement
+    },
+
+    getColorForEventType: function(event_type) {
+    const colorMap = {
+      projo: '#f6e6fa',
+      lesson: '#e0f7fa',
+      cooking: '#fff9c4',
+      karaoke: '#e0ffe0'
     }
+    return colorMap[event_type.toLowerCase()] || '#cccccc'
+   },
+
+   getFrenchForEventType: function(event_type) {
+    const frenchMap = {
+      projo: 'Projo',
+      lesson: 'Leçon',
+      cooking: 'Cuisine',
+      karaoke: 'Karaoke'
+    }
+    return frenchMap[event_type.toLowerCase()] || 'Autre'
+   }
   }
 }
 </script>
-<template>
-    <h2 class="pt-5">Agenda</h2>
-    <FullCalendar :options="calendarOptions" /> 
-</template>
 
 <style lang="css">
 .fc-event {
