@@ -3,6 +3,9 @@ package fr.n7.spring_boot_api.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,6 +55,30 @@ public class EventController {
             return new ResponseEntity<>(events, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Get all events between two dates
+    @GetMapping("/event/between")
+    public ResponseEntity<List<Event>> getEventsBetweenDates(
+            @RequestParam String start,
+            @RequestParam String end) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+            ZonedDateTime startDate = ZonedDateTime.parse(start, formatter);
+            ZonedDateTime endDate = ZonedDateTime.parse(end, formatter);
+
+            List<Event> events = eventRepository.findByDateGreaterThanEqualAndDateLessThan(startDate, endDate);
+
+            if (events.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(events, HttpStatus.OK);
+        } catch (DateTimeParseException e) {
+            System.out.println(e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
