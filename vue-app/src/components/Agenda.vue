@@ -5,9 +5,10 @@
 
 <script>
 import FullCalendar from '@fullcalendar/vue3'
+import bootstrap5Plugin from '@fullcalendar/bootstrap5'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import EventService from "../services/EventService";
+import EventService from "../services/EventService"
 
 export default {
 
@@ -18,12 +19,14 @@ export default {
   data() {
     return {
       calendarOptions: {
-        plugins: [ dayGridPlugin, interactionPlugin],
+        plugins: [ bootstrap5Plugin, dayGridPlugin, interactionPlugin],
         initialView: 'dayGridMonth',
         firstDay: 1,
         locale: 'fr',
         editable: false,
         selectable: false,
+
+        themeSystem: 'bootstrap5',
 
         height: 'auto',
         buttonText: {
@@ -81,15 +84,16 @@ export default {
 
    getFrenchForEventType: function(event_type) {
     const frenchMap = {
-      projo: 'Projo',
-      lesson: 'Leçon',
-      cooking: 'Cuisine',
-      karaoke: 'Karaoke'
+      projo: '📺 Projo',
+      lesson: '📖 Leçon',
+      cooking: '🍳 Cuisine',
+      karaoke: '🎤 Karaoke'
     }
     return frenchMap[event_type.toLowerCase()] || 'Autre'
    }
   }
-}
+};
+
 </script>
 
 <style lang="css">
@@ -103,6 +107,10 @@ export default {
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   z-index: 100;
   text-decoration: underline;
+}
+
+.fc-h-event .fc-event-main-frame {
+  flex-direction: row-reverse;
 }
 
 .fc .fc-col-header-cell-cushion {
