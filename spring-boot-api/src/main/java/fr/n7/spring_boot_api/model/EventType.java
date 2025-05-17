@@ -4,5 +4,5 @@ public enum EventType {
     KARAOKE,
     LESSON,
     COOKING,
-    PROJ
+    PROJO
 }

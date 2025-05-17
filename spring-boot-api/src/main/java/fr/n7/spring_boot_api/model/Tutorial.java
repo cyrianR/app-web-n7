@@ -13,7 +13,7 @@ public class Tutorial {
 	@Column(name = "title")
 	private String title;
 
-	@Column(name = "description")
+	@Column(name = "description", length = 2048)
 	private String description;
 
 	@Column(name = "published")

@@ -2,6 +2,8 @@ package fr.n7.spring_boot_api.model;
 
 import jakarta.persistence.*;
 
+import java.time.ZonedDateTime;
+
 @Entity
 @Table(name = "events")
 public class Event {
@@ -13,8 +15,8 @@ public class Event {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "date", nullable = false)
-    private String date;
+    @Column(name = "date", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime date;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "event_type", nullable = false)
@@ -29,7 +31,7 @@ public class Event {
     public Event() {
     }
 
-    public Event(String name, String date, EventType eventType, String description) {
+    public Event(String name, ZonedDateTime date, EventType eventType, String description) {
         this.name = name;
         this.date = date;
         this.eventType = eventType;
@@ -49,10 +51,10 @@ public class Event {
     public void setName(String name) {
         this.name = name;
     }
-    public String getDate() {
+    public ZonedDateTime getDate() {
         return date;
     }
-    public void setDate(String date) {
+    public void setDate(ZonedDateTime date) {
         this.date = date;
     }
     public EventType getEventType() {

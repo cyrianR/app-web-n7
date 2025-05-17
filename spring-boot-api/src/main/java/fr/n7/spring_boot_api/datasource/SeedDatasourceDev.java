@@ -12,6 +12,10 @@ import fr.n7.spring_boot_api.repository.*;
 import fr.n7.spring_boot_api.model.*;
 
 import java.util.List;
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
+import java.util.concurrent.ThreadLocalRandom;
+import java.time.Instant;
 
 @Component
 @Profile("dev")
@@ -126,9 +130,20 @@ public class SeedDatasourceDev implements CommandLineRunner{
     }
 
     private void loadEventData(int numEvents) {
+
+        ZoneId zone = ZoneId.systemDefault();
+        ZonedDateTime now = ZonedDateTime.now(zone);
+        ZonedDateTime max = now.plusDays(30);
+
+        long startEpoch = now.toEpochSecond();
+        long endEpoch = max.toEpochSecond();
+
         for (int i = 0; i < numEvents; i++) {
+            long randomEpoch = ThreadLocalRandom.current().nextLong(startEpoch, endEpoch);
+            ZonedDateTime randomDateTime = Instant.ofEpochSecond(randomEpoch).atZone(zone);
+
             eventRepo.save(new Event(faker.book().title(),
-                faker.date().future(30, java.util.concurrent.TimeUnit.DAYS).toString(),
+                randomDateTime,
                 EventType.values()[faker.number().numberBetween(0, EventType.values().length)],
                 faker.lorem().sentence()));
         }
