@@ -5,6 +5,10 @@ class EventService {
     return http.get("/event");
   }
 
+  getBetween(start, end){
+    return http.get(`/event/between?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`)
+  }
+
   getById(id) {
     return http.get(`/event/${id}`);
   }
