@@ -4,7 +4,8 @@ import EventService from '../services/EventService';
 export default {
   data() {
     return {
-      event: []
+      event : [],
+      vote: []
     };
   },
 
@@ -21,6 +22,10 @@ export default {
         .catch(error => {
           console.error("Error retrieving event:", error);
         });
+    },
+
+    retrieveVote() {
+      
     },
 
     getFormattedEventType(eventType) {
@@ -56,8 +61,8 @@ export default {
           <h5 class="card-title"> {{ event.name }}</h5>  
           <p class="card-text">{{ event.description }}</p>
           <div class="d-flex justify-content-between align-items-center">
-            <div class="btn-group">
-              <!-- TODO Votes : juste des likes ça suffira et un compteur de likes -->
+            <div>
+              <i class="bi bi-discord"></i>
             </div>
             <router-link to="/agenda" class="card-link">{{ formatDate(event.date) }}</router-link>
           </div>
