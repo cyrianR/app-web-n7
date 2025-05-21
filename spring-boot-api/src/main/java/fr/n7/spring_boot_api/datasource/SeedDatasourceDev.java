@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import net.datafaker.Faker;
 import fr.n7.spring_boot_api.model.*;
 import fr.n7.spring_boot_api.repository.*;
-import fr.n7.spring_boot_api.model.*;
 
 import java.util.List;
 import java.time.ZonedDateTime;
@@ -31,6 +30,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
     @Autowired
     UserRepository userRepo;
+
     @Autowired
     EventRepository eventRepo;
 
@@ -61,28 +61,22 @@ public class SeedDatasourceDev implements CommandLineRunner{
         SeederUtils.loadRoles(roleRepo);
 
         System.out.println("Loading Tutorial data...");
-        tutorialRepo.deleteAll();
         loadTutorialData(numTutorials);
 
         System.out.println("Loading User data...");
-        userRepo.deleteAll();
         loadUserData(numUsers);
         loadAdminUsersData();
 
         System.out.println("Loading Event data...");
-        eventRepo.deleteAll();
         loadEventData(numEvents);
 
         System.out.println("Loading Vote data...");
-        voteRepo.deleteAll();
         loadVoteData(numVotes);
 
         System.out.println("Loading Lesson data...");
-        lessonRepo.deleteAll();
         loadLessonData(numLessons);
 
         System.out.println("Loading Post data...");
-        postRepo.deleteAll();
         loadPostData(numPosts);
 
         System.out.println("Seeding completed.");
@@ -176,8 +170,9 @@ public class SeedDatasourceDev implements CommandLineRunner{
     }
 
     private void loadPostData(int numPosts) {
+        List<User> users = userRepo.findAll();
         for (int i = 0; i < numPosts; i++) {
-            postRepo.save(new Post(faker.book().title(), faker.date().future(30, java.util.concurrent.TimeUnit.DAYS).toString(), userRepo.findById(faker.number().numberBetween(1, numUsers)).orElse(null)));
+            postRepo.save(new Post(faker.book().title(), faker.date().future(30, java.util.concurrent.TimeUnit.DAYS).toString(), users.get(faker.number().numberBetween(0, numUsers -1))));
         }
     }
 
