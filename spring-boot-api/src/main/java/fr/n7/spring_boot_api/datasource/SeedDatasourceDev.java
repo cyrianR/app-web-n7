@@ -40,11 +40,15 @@ public class SeedDatasourceDev implements CommandLineRunner{
     @Autowired
     LessonRepository lessonRepo;
 
+    @Autowired
+    PostRepository postRepo;
+
     int numTutorials = 10;
     int numUsers = 1;
     int numEvents = 10;
     int numVotes = 10;
     int numLessons = 10;
+    int numPosts = 10;
 
     @Autowired
     PasswordEncoder encoder;
@@ -76,6 +80,10 @@ public class SeedDatasourceDev implements CommandLineRunner{
         System.out.println("Loading Lesson data...");
         lessonRepo.deleteAll();
         loadLessonData(numLessons);
+
+        System.out.println("Loading Post data...");
+        postRepo.deleteAll();
+        loadPostData(numPosts);
 
         System.out.println("Seeding completed.");
     }
@@ -165,6 +173,12 @@ public class SeedDatasourceDev implements CommandLineRunner{
                 faker.file().fileName(),
                 faker.file().fileName(),
                 faker.file().fileName()));
+        }
+    }
+
+    private void loadPostData(int numPosts) {
+        for (int i = 0; i < numPosts; i++) {
+            postRepo.save(new Post(faker.book().title(), faker.date().future(30, java.util.concurrent.TimeUnit.DAYS).toString(), userRepo.findById(faker.number().numberBetween(1, numUsers)).orElse(null)));
         }
     }
 
