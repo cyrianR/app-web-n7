@@ -13,7 +13,7 @@ export default {
   },
 
   created() {
-      this.retrievePosts();
+    this.retrievePosts();
   },
 
   methods: {

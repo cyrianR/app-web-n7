@@ -4,10 +4,24 @@ import EventService from '../services/EventService';
 export default {
   data() {
     return {
-      
+      event: []
     };
   },
+
+  created() {
+    this.retrieveEvent();
+  },
+
   methods: {
+    retrieveEvent() {
+      EventService.getById(this.$route.params.id)
+        .then(response => {
+          this.event = response.data;
+        })
+        .catch(error => {
+          console.error("Error retrieving event:", error);
+        });
+    }
   }
 };
 </script>
@@ -15,16 +29,15 @@ export default {
 <template>
 <div class="card">
     <div class="card-body">
-      <h4 class="card-title">Card title</h4>
-      <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional
-        content. This content is a little bit longer.</p>
+      <h4 class="card-title">{{ event.name }}</h4>
+      <p class="card-text">{{ event.description }}</p>
       <div class="d-flex justify-content-between align-items-center">
         <div class="btn-group">
           <button href="#" class="btn btn-primary">Lire la suite</button>
           <button href="#" class="btn btn-secondary">Voir sur l'agenda</button>
         </div>
         <div class="text-muted ">
-          2 days ago
+          {{ event.date }}
         </div>
       </div>
     </div>
