@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +29,7 @@ import fr.n7.spring_boot_api.model.Role;
 import fr.n7.spring_boot_api.model.User;
 import fr.n7.spring_boot_api.payload.request.PasswordUpdateRequest;
 import fr.n7.spring_boot_api.payload.response.MessageResponse;
+import fr.n7.spring_boot_api.payload.response.RoleUpdateResponse;
 import fr.n7.spring_boot_api.payload.response.UserResponse;
 import fr.n7.spring_boot_api.repository.RoleRepository;
 import fr.n7.spring_boot_api.repository.UserRepository;
@@ -47,6 +49,9 @@ public class UserController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     // Get all users with optional filter by username
     @GetMapping("/users")
@@ -100,6 +105,16 @@ public class UserController {
                 })
                 .collect(Collectors.toSet());
             newUser.setRoles(roles);
+
+            RoleUpdateResponse roleUpdateResponse = new RoleUpdateResponse(
+                newUser.getId(),
+                newUser.getUsername(),
+                roles.stream().map(Role::getName).collect(Collectors.toList())
+            );
+
+            // Send WebSocket notification
+            messagingTemplate.convertAndSend("/topic/roles", roleUpdateResponse);
+
             return new ResponseEntity<>(userToUserResponse(userRepository.save(newUser)), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

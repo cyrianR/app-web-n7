@@ -1,11 +1,33 @@
 <script>
+import { mapActions } from 'vuex';
+import WebSocketService from './services/WebSocketService';
+
 export default {
   name: "app",
   computed: {
     isLoggedIn() {
       return this.$store.state.auth.status.loggedIn;
     }
-  }
+  },
+  mounted() {
+    // Connect to WebSocket and listen for role updates
+    WebSocketService.connect();
+    WebSocketService.subscribeToRoleUpdates((message) => {
+      console.log("Role update received:", message);
+      if (message.userId === this.$store.state.auth.user.id) {
+        // Update roles
+        this.updateRoles(message.roles);
+        alert("Your roles have been updated!");
+      }
+    });
+  },
+  beforeDestroy() {
+    // Disconnect WebSocket when the app is destroyed
+    WebSocketService.disconnect();
+  },
+  methods: {
+    ...mapActions('auth', ['updateRoles']),
+  },
 };
 </script>
 

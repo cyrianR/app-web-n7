@@ -1,5 +1,6 @@
 package fr.n7.spring_boot_api.datasource;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Component;
 import net.datafaker.Faker;
 import fr.n7.spring_boot_api.model.*;
 import fr.n7.spring_boot_api.repository.*;
-import fr.n7.spring_boot_api.model.*;
 
 import java.util.List;
 import java.time.ZonedDateTime;
@@ -31,6 +31,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
     @Autowired
     UserRepository userRepo;
+
     @Autowired
     EventRepository eventRepo;
 
@@ -57,24 +58,19 @@ public class SeedDatasourceDev implements CommandLineRunner{
         SeederUtils.loadRoles(roleRepo);
 
         System.out.println("Loading Tutorial data...");
-        tutorialRepo.deleteAll();
         loadTutorialData(numTutorials);
 
         System.out.println("Loading User data...");
-        userRepo.deleteAll();
         loadUserData(numUsers);
         loadAdminUsersData();
 
         System.out.println("Loading Event data...");
-        eventRepo.deleteAll();
         loadEventData(numEvents);
 
         System.out.println("Loading Vote data...");
-        voteRepo.deleteAll();
         loadVoteData(numVotes);
 
         System.out.println("Loading Lesson data...");
-        lessonRepo.deleteAll();
         loadLessonData(numLessons);
 
         System.out.println("Seeding completed.");
