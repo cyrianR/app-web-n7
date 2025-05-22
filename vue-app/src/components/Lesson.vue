@@ -35,6 +35,13 @@
           </span>
           <span v-else>Non disponible</span>
         </div>
+        <button
+          v-if="isAdmin"
+          @click="removeLesson(lesson.id)"
+          class="remove-btn"
+        >
+          Supprimer
+        </button>
       </li>
     </ul>
   </div>
@@ -47,17 +54,44 @@ export default {
   name: "LessonList",
   data() {
     return {
-      lessons: []
+      lessons: [],
+      userRoles: []
     };
   },
+  computed: {
+    isAdmin() {
+        return this.userRoles.includes("ROLE_ADMIN") || this.userRoles.includes("ROLE_MODERATOR");
+    }
+  },
+  methods: {
+    fetchLessons() {
+      LessonService.getAll()
+        .then(response => {
+          this.lessons = response.data;
+        })
+        .catch(() => {
+          this.lessons = [];
+        });
+    },
+    removeLesson(id) {
+      if (confirm("Voulez-vous vraiment supprimer cette leçon ?")) {
+        LessonService.delete(id)
+          .then(() => {
+            this.lessons = this.lessons.filter(lesson => lesson.id !== id);
+          })
+          .catch(() => {
+            alert("Erreur lors de la suppression.");
+          });
+      }
+    },
+    fetchUserRoles() {
+      user = state.auth.user,
+      this.userRoles = user.roles;
+    }
+  },
   mounted() {
-    LessonService.getAll()
-      .then(response => {
-        this.lessons = response.data;
-      })
-      .catch(() => {
-        this.lessons = [];
-      });
+    this.fetchUserRoles();
+    this.fetchLessons();
   }
 };
 </script>
@@ -68,5 +102,17 @@ export default {
   padding: 1em;
   margin-bottom: 1em;
   border-radius: 5px;
+}
+.remove-btn {
+  margin-top: 1em;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.5em 1em;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.remove-btn:hover {
+  background: #c0392b;
 }
 </style>

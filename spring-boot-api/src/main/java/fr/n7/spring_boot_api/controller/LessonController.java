@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -63,6 +64,7 @@ public class LessonController {
 
     // Create a new lesson (without vocab and ex files)
     @PostMapping("/lesson")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LESSON_ADMIN')")
     public ResponseEntity<Lesson> createLesson(@RequestBody Lesson lesson) {
         try {
             Lesson newLesson = lessonRepository.save(new Lesson(lesson.getTitle(), lesson.getFile(), lesson.getCulturalFile()));
@@ -74,6 +76,7 @@ public class LessonController {
 
     // Create a new lesson (with vocab and ex files)
     @PostMapping("/lesson/full")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LESSON_ADMIN')")
     public ResponseEntity<Lesson> createFullLesson(@RequestBody Lesson lesson) {
         try {
             Lesson newLesson = lessonRepository.save(new Lesson(lesson.getTitle(), lesson.getFile(), lesson.getVocabFile(), lesson.getExFile(), lesson.getCulturalFile()));
@@ -85,6 +88,7 @@ public class LessonController {
 
     // Add vocab file to lesson
     @PutMapping("/lesson/{id}/vocab")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LESSON_ADMIN')")
     public ResponseEntity<Lesson> addVocabFile(@PathVariable("id") long id, @RequestBody String vocabFile) {
         Optional<Lesson> lessonData = lessonRepository.findById(id);
         if (lessonData.isPresent()) {
@@ -98,6 +102,7 @@ public class LessonController {
 
     // Add ex file to lesson
     @PutMapping("/lesson/{id}/ex")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LESSON_ADMIN')")
     public ResponseEntity<Lesson> addExFile(@PathVariable("id") long id, @RequestBody String exFile) {
         Optional<Lesson> lessonData = lessonRepository.findById(id);
         if (lessonData.isPresent()) {
@@ -111,6 +116,7 @@ public class LessonController {
 
     // Update a lesson
     @PutMapping("/lesson/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LESSON_ADMIN')")
     public ResponseEntity<Lesson> updateLesson(@PathVariable("id") long id, @RequestBody Lesson lesson) {
         Optional<Lesson> lessonData = lessonRepository.findById(id);
         if (lessonData.isPresent()) {
@@ -128,6 +134,7 @@ public class LessonController {
 
     // Delete a lesson
     @DeleteMapping("/lesson/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LESSON_ADMIN')")
     public ResponseEntity<HttpStatus> deleteLesson(@PathVariable("id") long id) {
         try {
             lessonRepository.deleteById(id);
