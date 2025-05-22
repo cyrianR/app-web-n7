@@ -11,6 +11,6 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
     
     List<Lesson> findByTitle(String file);
     List<Lesson> findByTitleContaining(String file);
-
+    List<Lesson> findAllByOrderByOrderNumAsc();
     Optional<Lesson> findById(long id);
 }

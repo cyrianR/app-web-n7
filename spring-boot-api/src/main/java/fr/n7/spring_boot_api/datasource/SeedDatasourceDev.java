@@ -166,7 +166,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
             lessonRepo.save(new Lesson((i+1) + " - " + faker.book().title(), faker.file().fileName(),
                 faker.file().fileName(),
                 faker.file().fileName(),
-                faker.file().fileName()));
+                faker.file().fileName(),i+1));
         }
     }
 

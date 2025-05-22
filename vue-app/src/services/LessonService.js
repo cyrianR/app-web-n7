@@ -21,18 +21,6 @@ class LessonService {
     return http.post("/lesson/full", lesson);
   }
 
-  addVocabFile(id, vocabFile) {
-    return http.put(`/lesson/${id}/vocab`, vocabFile, {
-      headers: { "Content-Type": "application/json" }
-    });
-  }
-
-  addExFile(id, exFile) {
-    return http.put(`/lesson/${id}/ex`, exFile, {
-      headers: { "Content-Type": "application/json" }
-    });
-  }
-
   update(id, lesson) {
     return http.put(`/lesson/${id}`, lesson);
   }

@@ -25,6 +25,9 @@ public class Lesson {
     @Column(name = "cultural_file", nullable = false)
     private String culturalFile;
 
+    @Column(name = "order_num")
+    private int orderNum; // if optionnal, it's a bonus lesson
+
     public Lesson() {
     }
 
@@ -32,14 +35,16 @@ public class Lesson {
         this.title = title;
         this.file = file;
         this.culturalFile = culturalFile;
+        this.orderNum = 0; // default value
     }
 
-    public Lesson(String title, String file, String vocabFile, String exFile, String culturalFile) {
+    public Lesson(String title, String file, String vocabFile, String exFile, String culturalFile, int orderNum) {
         this.title = title;
         this.file = file;
         this.vocabFile = vocabFile;
         this.exFile = exFile;
         this.culturalFile = culturalFile;
+        this.orderNum = orderNum;
     }
 
     public Long getId() {
@@ -78,6 +83,12 @@ public class Lesson {
     public void setCulturalFile(String culturalFile) {
         this.culturalFile = culturalFile;
     }
+    public int getOrderNum() {
+        return orderNum;
+    }
+    public void setOrderNum(int orderNum) {
+        this.orderNum = orderNum;
+    }
     @Override
     public String toString() {
         return "Lesson{" +
@@ -86,6 +97,8 @@ public class Lesson {
                 ", vocabFile='" + vocabFile + '\'' +
                 ", exFile='" + exFile + '\'' +
                 ", culturalFile='" + culturalFile + '\'' +
+                ", orderNum=" + orderNum +
+                ", title='" + title + '\'' +
                 '}';
     }
 

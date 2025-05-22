@@ -62,6 +62,28 @@ public class LessonController {
         }
     }
 
+    // Get all lessons ordered by orderNum
+    @GetMapping("/lesson/order")
+    public ResponseEntity<List<Lesson>> getAllLessonsOrdered() {
+        List<Lesson> lessons = lessonRepository.findAllByOrderByOrderNumAsc();
+        lessons.sort((l1, l2) -> { // this is a comparator
+            if (l1.getOrderNum() == 0 && l2.getOrderNum() == 0) {
+                return 0;
+            } else if (l1.getOrderNum() == 0) {
+                return 1;
+            } else if (l2.getOrderNum() == 0) {
+                return -1;
+            } else {
+                return Integer.compare(l1.getOrderNum(), l2.getOrderNum());
+            }
+        });
+        if (lessons.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(lessons, HttpStatus.OK);
+        }
+    }
+
     // Create a new lesson (without vocab and ex files)
     @PostMapping("/lesson")
     @PreAuthorize("hasRole('ADMIN') or hasRole('LESSON_ADMIN')")
@@ -74,43 +96,15 @@ public class LessonController {
         }
     }
 
-    // Create a new lesson (with vocab and ex files)
+    // Create a new lesson (with everything)
     @PostMapping("/lesson/full")
     @PreAuthorize("hasRole('ADMIN') or hasRole('LESSON_ADMIN')")
     public ResponseEntity<Lesson> createFullLesson(@RequestBody Lesson lesson) {
         try {
-            Lesson newLesson = lessonRepository.save(new Lesson(lesson.getTitle(), lesson.getFile(), lesson.getVocabFile(), lesson.getExFile(), lesson.getCulturalFile()));
+            Lesson newLesson = lessonRepository.save(new Lesson(lesson.getTitle(), lesson.getFile(), lesson.getVocabFile(), lesson.getExFile(), lesson.getCulturalFile(), lesson.getOrderNum()));
             return new ResponseEntity<>(newLesson, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    // Add vocab file to lesson
-    @PutMapping("/lesson/{id}/vocab")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('LESSON_ADMIN')")
-    public ResponseEntity<Lesson> addVocabFile(@PathVariable("id") long id, @RequestBody String vocabFile) {
-        Optional<Lesson> lessonData = lessonRepository.findById(id);
-        if (lessonData.isPresent()) {
-            Lesson lesson = lessonData.get();
-            lesson.setVocabFile(vocabFile);
-            return new ResponseEntity<>(lessonRepository.save(lesson), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    // Add ex file to lesson
-    @PutMapping("/lesson/{id}/ex")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('LESSON_ADMIN')")
-    public ResponseEntity<Lesson> addExFile(@PathVariable("id") long id, @RequestBody String exFile) {
-        Optional<Lesson> lessonData = lessonRepository.findById(id);
-        if (lessonData.isPresent()) {
-            Lesson lesson = lessonData.get();
-            lesson.setExFile(exFile);
-            return new ResponseEntity<>(lessonRepository.save(lesson), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -126,6 +120,7 @@ public class LessonController {
             _lesson.setVocabFile(lesson.getVocabFile());
             _lesson.setExFile(lesson.getExFile());
             _lesson.setCulturalFile(lesson.getCulturalFile());
+            _lesson.setOrderNum(lesson.getOrderNum());
             return new ResponseEntity<>(lessonRepository.save(_lesson), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

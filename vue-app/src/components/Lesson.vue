@@ -15,8 +15,18 @@
     <div v-if="lessons.length === 0">
       <p>Aucune leçon trouvée.</p>
     </div>
-    <ul v-else style="list-style-type: none; padding: 0;">
-      <li v-for="lesson in lessons" :key="lesson.id" class="lesson-item">
+    <ul v-else class="lesson-list">
+      <li
+        v-for="(lesson, idx) in lessons"
+        :key="lesson.id"
+        class="lesson-item"
+        :draggable="isAdmin"
+        @dragstart="onDragStart(idx)"
+        @dragover.prevent="onDragOver(idx)"
+        @drop="onDrop(idx)"
+        :class="{ dragging: dragIndex === idx }"
+      >
+        <div class="drag-handle" v-if="isAdmin" title="Déplacer">&#9776;</div>
         <h3>{{ lesson.title }}</h3>
         <div>
           <strong>Fichier principal :</strong>
@@ -46,20 +56,20 @@
           </span>
           <span v-else>Non disponible</span>
         </div>
-        <button
-          v-if="isAdmin"
-          @click="removeLesson(lesson.id)"
-          class="remove-btn"
-        >
-          Supprimer
-        </button>
-        <button
-          v-if="isAdmin"
-          @click="openUpdateModal(lesson)"
-          class="update-btn"
-        >
-          Modifier
-        </button>
+        <div class="lesson-actions" v-if="isAdmin">
+          <button
+            @click="openUpdateModal(lesson)"
+            class="update-btn small-btn"
+          >
+            Modifier
+          </button>
+          <button
+            @click="removeLesson(lesson.id)"
+            class="remove-btn small-btn"
+          >
+            Supprimer
+          </button>
+        </div>
       </li>
     </ul>
 
@@ -73,8 +83,10 @@
           <input v-model="lessonToUpdate.vocabFile" placeholder="URL fichier vocabulaire" />
           <input v-model="lessonToUpdate.exFile" placeholder="URL fichier exercices" />
           <input v-model="lessonToUpdate.culturalFile" placeholder="URL fichier culturel" required/>
-          <button type="submit">Enregistrer</button>
-          <button type="button" @click="closeUpdateModal">Annuler</button>
+          <div class="modal-actions">
+            <button type="submit" class="update-btn small-btn">Enregistrer</button>
+            <button type="button" @click="closeUpdateModal" class="remove-btn small-btn">Annuler</button>
+          </div>
         </form>
       </div>
     </div>
@@ -105,7 +117,9 @@ export default {
         vocabFile: "",
         exFile: "",
         culturalFile: ""
-      }
+      },
+      dragIndex: null,
+      dragOverIndex: null
     };
   },
   computed: {
@@ -123,7 +137,7 @@ export default {
       }
       LessonService.getAll()
         .then(response => {
-          this.lessons = response.data;
+          this.lessons = response.data.sort((a, b) => (a.orderNum ?? 9999) - (b.orderNum ?? 9999));
         })
         .catch(() => {
           this.lessons = [];
@@ -170,6 +184,7 @@ export default {
             exFile: "",
             culturalFile: ""
           };
+          this.fetchLessons();
         })
         .catch(() => {
           alert("Erreur lors de l'ajout de la leçon.");
@@ -210,10 +225,44 @@ export default {
             this.lessons[idx] = response.data;
           }
           this.closeUpdateModal();
+          this.fetchLessons();
         })
         .catch(() => {
           alert("Erreur lors de la mise à jour.");
         });
+    },
+    onDragStart(idx) {
+      if (!this.isAdmin) return;
+      this.dragIndex = idx;
+    },
+    onDragOver(idx) {
+      if (!this.isAdmin) return;
+      this.dragOverIndex = idx;
+    },
+    onDrop(idx) {
+      if (!this.isAdmin || this.dragIndex === null || this.dragIndex === idx) return;
+      const movedLesson = this.lessons[this.dragIndex];
+      this.lessons.splice(this.dragIndex, 1);
+      this.lessons.splice(idx, 0, movedLesson);
+
+      // Met à jour les orderNum pour chaque leçon
+      this.lessons.forEach((lesson, i) => {
+        lesson.orderNum = i + 1;
+      });
+
+      // Envoie la nouvelle position au backend pour toutes les leçons
+      this.lessons.forEach(lesson => {
+        LessonService.update(lesson.id, lesson);
+      });
+
+      this.dragIndex = null;
+      this.dragOverIndex = null;
+      // Assure que le DOM est mis à jour avant de rafraîchir les leçons
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.fetchLessons();
+        }, 500);
+      });
     }
   },
   mounted() {
@@ -224,31 +273,56 @@ export default {
 </script>
 
 <style scoped>
+.lesson-list {
+  list-style-type: none;
+  padding: 0;
+}
 .lesson-item {
   border: 1px solid #ccc;
   padding: 1em;
   margin-bottom: 1em;
   border-radius: 5px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  cursor: grab;
+  position: relative;
+}
+.lesson-item.dragging {
+  opacity: 0.5;
+}
+.drag-handle {
+  cursor: grab;
+  font-size: 1.5em;
+  margin-right: 0.7em;
+  user-select: none;
+  display: inline-block;
+}
+.lesson-actions {
+  display: flex;
+  gap: 0.5em;
+  margin-top: 0.5em;
+  justify-content: center;
+}
+.small-btn {
+  padding: 0.2em 0.7em;
+  font-size: 1em;
+  border-radius: 3px;
+  min-width: 90px;
 }
 .remove-btn {
-  margin-top: 1em;
   background: #e74c3c;
   color: white;
   border: none;
-  padding: 0.5em 1em;
-  border-radius: 3px;
   cursor: pointer;
 }
 .remove-btn:hover {
   background: #c0392b;
 }
 .update-btn {
-  margin-left: 1em;
   background: #2980b9;
   color: white;
   border: none;
-  padding: 0.5em 1em;
-  border-radius: 3px;
   cursor: pointer;
 }
 .update-btn:hover {
@@ -298,7 +372,9 @@ export default {
   width: 100%;
   padding: 0.5em;
 }
-.modal-content button {
-  margin-right: 0.5em;
+.modal-actions {
+  display: flex;
+  gap: 0.5em;
+  justify-content: center;
 }
 </style>
