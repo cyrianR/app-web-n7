@@ -60,11 +60,15 @@ export default {
   },
   computed: {
     isAdmin() {
-        return this.userRoles.includes("ROLE_ADMIN") || this.userRoles.includes("ROLE_MODERATOR");
+        return this.userRoles.includes("ROLE_ADMIN") || this.userRoles.includes("ROLE_LESSON_ADMIN");
     }
   },
   methods: {
     fetchLessons() {
+      // if logged in
+      if (!this.$store.state.auth.user) {
+        return;
+      }
       LessonService.getAll()
         .then(response => {
           this.lessons = response.data;
@@ -85,7 +89,11 @@ export default {
       }
     },
     fetchUserRoles() {
-      user = state.auth.user,
+      const user = this.$store.state.auth.user;
+      // if loged in
+      if (!user) {
+          return;
+      }
       this.userRoles = user.roles;
     }
   },
