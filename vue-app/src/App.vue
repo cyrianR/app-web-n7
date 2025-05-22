@@ -30,7 +30,7 @@ export default {
               <router-link to="" class="nav-link">Karaoke</router-link>
             </li>
             <li class="nav-item">
-              <router-link to="" class="nav-link">Cours</router-link>
+              <router-link to="/lesson" class="nav-link">Cours</router-link>
             </li>
             <li class="nav-item">
               <router-link to="" class="nav-link">Projection</router-link>
