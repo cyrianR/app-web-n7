@@ -163,7 +163,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
     private void loadLessonData(int numLessons) {
         for (int i = 0; i < numLessons; i++) {
-            lessonRepo.save(new Lesson(faker.book().title(), faker.file().fileName(),
+            lessonRepo.save(new Lesson((i+1) + " - " + faker.book().title(), faker.file().fileName(),
                 faker.file().fileName(),
                 faker.file().fileName(),
                 faker.file().fileName()));
