@@ -2,7 +2,7 @@ import http from "../http-common";
 
 class PhotosService {
   getById(id) {
-    return http.get(`/getfile/${id}`);
+    return `${http.defaults.baseURL}/getfile/${id}`;
   }
   uploadFile(formData) {
     return http.post(`/file/upload`, formData, {
@@ -17,7 +17,7 @@ class PhotosService {
   deleteFile(id) {
     return http.delete(`/file/delete/${id}`);
   }
+  
 }
 
 export default new PhotosService();
-
