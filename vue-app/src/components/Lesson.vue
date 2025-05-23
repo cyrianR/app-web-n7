@@ -27,45 +27,33 @@
         :class="{ dragging: dragIndex === idx }"
       >
         <div class="drag-handle" v-if="isAdmin" title="Déplacer">&#9776;</div>
-        <h3>{{ lesson.title }}</h3>
+        
         <div>
-          <strong>Fichier principal :</strong>
-          <span v-if="lesson.file">
-            <a :href="lesson.file" target="_blank" rel="noopener">{{ lesson.file }}</a>
-          </span>
-          <span v-else>Non disponible</span>
-        </div>
-        <div>
-          <strong>Fichier vocabulaire :</strong>
-          <span v-if="lesson.vocabFile">
-            <a :href="lesson.vocabFile" target="_blank" rel="noopener">{{ lesson.vocabFile }}</a>
-          </span>
-          <span v-else>Non disponible</span>
-        </div>
-        <div>
-          <strong>Fichier exercices :</strong>
-          <span v-if="lesson.exFile">
-            <a :href="lesson.exFile" target="_blank" rel="noopener">{{ lesson.exFile }}</a>
-          </span>
-          <span v-else>Non disponible</span>
-        </div>
-        <div>
-          <strong>Fichier culturel :</strong>
-          <span v-if="lesson.culturalFile">
-            <a :href="lesson.culturalFile" target="_blank" rel="noopener">{{ lesson.culturalFile }}</a>
-          </span>
-          <span v-else>Non disponible</span>
+          <strong>{{ lesson.title }} :</strong>
+          &nbsp;
+          <template v-if="lesson.file">
+            <a :href="lesson.file" target="_blank" rel="noopener">Cours</a>
+          </template>
+          <template v-if="lesson.vocabFile">
+            | <a :href="lesson.vocabFile" target="_blank" rel="noopener">Vocabulaire</a>
+          </template>
+          <template v-if="lesson.exFile">
+            | <a :href="lesson.exFile" target="_blank" rel="noopener">Exercices</a>
+          </template>
+          <template v-if="lesson.culturalFile">
+            | <a :href="lesson.culturalFile" target="_blank" rel="noopener">Culture</a>
+          </template>
         </div>
         <div class="lesson-actions" v-if="isAdmin">
           <button
             @click="openUpdateModal(lesson)"
-            class="update-btn small-btn"
+            class="update-btn btn"
           >
             Modifier
           </button>
           <button
             @click="removeLesson(lesson.id)"
-            class="remove-btn small-btn"
+            class="remove-btn btn"
           >
             Supprimer
           </button>
@@ -84,8 +72,8 @@
           <input v-model="lessonToUpdate.exFile" placeholder="URL fichier exercices" />
           <input v-model="lessonToUpdate.culturalFile" placeholder="URL fichier culturel" required/>
           <div class="modal-actions">
-            <button type="submit" class="update-btn small-btn">Enregistrer</button>
-            <button type="button" @click="closeUpdateModal" class="remove-btn small-btn">Annuler</button>
+            <button type="submit" class="update-btn btn">Enregistrer</button>
+            <button type="button" @click="closeUpdateModal" class="remove-btn btn">Annuler</button>
           </div>
         </form>
       </div>
@@ -304,12 +292,6 @@ export default {
   margin-top: 0.5em;
   justify-content: center;
 }
-.small-btn {
-  padding: 0.2em 0.7em;
-  font-size: 1em;
-  border-radius: 3px;
-  min-width: 90px;
-}
 .remove-btn {
   background: #e74c3c;
   color: white;
@@ -345,7 +327,7 @@ export default {
   color: white;
   border: none;
   padding: 0.5em 1em;
-  border-radius: 3px;
+  border-radius: 7px;
   cursor: pointer;
 }
 .add-lesson-form button:hover {
