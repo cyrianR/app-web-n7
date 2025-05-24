@@ -7,7 +7,10 @@
         <div v-for="anime in notFinishedAnimes" :key="anime.id" class="anime-card" :style="anime.coverUrl ? { backgroundImage: `url(${anime.coverUrl})` } : {}">
           <div class="anime-title">{{ anime.name }}</div>
           <div class="anime-info">Episodes: {{ anime.currentEpisode }} / {{ anime.nbEpisodes }}</div>
+          <div v-if="anime.malScore !== null" class="anime-info">MAL Score: {{ anime.malScore }}</div>
           <a :href="anime.malLink" target="_blank" class="mal-link"><strong>View on MAL</strong></a>
+          <button v-if="isAdmin" class="update-arrow" @click="openUpdateModal(anime)" title="Modifier">↑</button>
+          <button v-if="isAdmin" class="delete-cross" @click="deleteAnime(anime.id)" title="Supprimer">✕</button>
         </div>
       </div>
     </div>
@@ -17,8 +20,27 @@
       <div v-else class="gallery-grid">
         <div v-for="anime in finishedAnimes" :key="anime.id" class="anime-card" :style="anime.coverUrl ? { backgroundImage: `url(${anime.coverUrl})` } : {}">
           <div class="anime-title">{{ anime.name }}</div>
+          <div v-if="anime.malScore !== null" class="anime-info">MAL Score: {{ anime.malScore }}</div>
           <a :href="anime.malLink" target="_blank" class="mal-link"><strong>View on MAL</strong></a>
+          <button v-if="isAdmin" class="update-arrow" @click="openUpdateModal(anime)" title="Modifier">↑</button>
+          <button v-if="isAdmin" class="delete-cross" @click="deleteAnime(anime.id)" title="Supprimer">✕</button>
         </div>
+      </div>
+    </div>
+    <!-- Update Anime Modal -->
+    <div v-if="showUpdateModal" class="modal-overlay">
+      <div class="modal-content">
+        <h3>Modifier l'anime</h3>
+        <form @submit.prevent="updateAnime">
+          <input v-model="animeToUpdate.name" placeholder="Nom" required />
+          <input v-model.number="animeToUpdate.nbEpisodes" placeholder="Nombre d'épisodes" type="number" min="1" required />
+          <input v-model.number="animeToUpdate.currentEpisode" placeholder="Épisode actuel" type="number" min="0" required />
+          <input v-model="animeToUpdate.malLink" placeholder="Lien MAL" required />
+          <div class="modal-actions">
+            <button type="submit" class="update-btn btn">Enregistrer</button>
+            <button type="button" @click="closeUpdateModal" class="remove-btn btn">Annuler</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -33,27 +55,46 @@ export default {
     return {
       finishedAnimes: [],
       notFinishedAnimes: [],
+      showUpdateModal: false,
+      animeToUpdate: {
+        id: null,
+        name: '',
+        nbEpisodes: 1,
+        currentEpisode: 0,
+        malLink: ''
+      },
     };
+  },
+  computed: {
+    isAdmin() {
+      const user = this.$store?.state?.auth?.user;
+      return user && (user.roles.includes('ROLE_ADMIN'));
+    }
   },
   mounted() {
     this.fetchAnimes();
   },
   methods: {
-    async getAnimeCover(malLink) {
+    async getAnimeCoverAndScore(malLink) {
       const match = malLink.match(/anime\/(\d+)/);
-      if (!match) return '';
+      if (!match) return { coverUrl: '', score: null };
       const animeId = match[1];
       try {
         const res = await fetch(`https://api.jikan.moe/v4/anime/${animeId}`);
         const data = await res.json();
-        return data.data.images.jpg.large_image_url;
+        return {
+          coverUrl: data.data.images.jpg.large_image_url,
+          score: data.data.score
+        };
       } catch {
-        return '';
+        return { coverUrl: '', score: null };
       }
     },
     async fetchCovers(animeList) {
       for (const anime of animeList) {
-        anime.coverUrl = await this.getAnimeCover(anime.malLink);
+        const { coverUrl, score } = await this.getAnimeCoverAndScore(anime.malLink);
+        anime.coverUrl = coverUrl;
+        anime.malScore = score;
       }
     },
     async fetchAnimes() {
@@ -71,8 +112,73 @@ export default {
       } catch {
         this.notFinishedAnimes = [];
       }
-    }
-  }
+    },
+    deleteAnime(id) {
+      if (confirm('Voulez-vous vraiment supprimer cet anime ?')) {
+        this.$options.$_ProjService.deleteAnime(id)
+          .then(() => {
+            this.finishedAnimes = this.finishedAnimes.filter(anime => anime.id !== id);
+            this.notFinishedAnimes = this.notFinishedAnimes.filter(anime => anime.id !== id);
+          })
+          .catch(() => {
+            alert('Erreur lors de la suppression.');
+          });
+      }
+    },
+    openUpdateModal(anime) {
+      this.animeToUpdate = { ...anime };
+      this.showUpdateModal = true;
+    },
+    closeUpdateModal() {
+      this.showUpdateModal = false;
+      this.animeToUpdate = {
+        id: null,
+        name: '',
+        nbEpisodes: 1,
+        currentEpisode: 0,
+        malLink: ''
+      };
+    },
+    updateAnime() {
+      if (!this.animeToUpdate.name) {
+        alert("Le nom est obligatoire.");
+        return;
+      }
+      if (!this.animeToUpdate.nbEpisodes || this.animeToUpdate.nbEpisodes < 1) {
+        alert("Le nombre d'épisodes est obligatoire et doit être supérieur à 0.");
+        return;
+      }
+      if (this.animeToUpdate.currentEpisode > this.animeToUpdate.nbEpisodes) {
+        alert("L'épisode actuel ne peut pas être supérieur au nombre total d'épisodes.");
+        return;
+      }
+      if (this.animeToUpdate.currentEpisode < 0) {
+        alert("L'épisode actuel doit être positif.");
+        return;
+      }
+      if (!this.animeToUpdate.malLink) {
+        alert("Le lien MAL est obligatoire.");
+        return;
+      }
+      this.$options.$_ProjService.updateAnime(this.animeToUpdate.id, this.animeToUpdate)
+        .then(response => {
+          // Replace in both lists if present
+          const updateList = list => {
+            const idx = list.findIndex(a => a.id === this.animeToUpdate.id);
+            if (idx !== -1) list[idx] = response.data;
+          };
+          updateList(this.finishedAnimes);
+          updateList(this.notFinishedAnimes);
+          this.closeUpdateModal();
+          this.fetchAnimes();
+        })
+        .catch(() => {
+          alert("Erreur lors de la mise à jour.");
+        });
+    },
+  },
+  // Provide ProjService for deleteAnime method
+  $_ProjService: ProjService,
 }
 </script>
 
@@ -144,5 +250,91 @@ export default {
   color: #888;
   font-style: italic;
   margin: 1rem 0;
+}
+.update-arrow {
+  position: absolute;
+  right: 48px;
+  bottom: 10px;
+  background: rgba(10, 130, 210, 0.75);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.2s;
+}
+.update-arrow:hover {
+  background: #5ea7db;
+}
+.delete-cross {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  background: rgba(185, 4, 4, 0.75);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.2s;
+}
+.delete-cross:hover {
+  background: #c0392b;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: white;
+  padding: 2em;
+  border-radius: 8px;
+  min-width: 300px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.modal-content input {
+  margin-bottom: 1em;
+  width: 100%;
+  padding: 0.5em;
+}
+.modal-actions {
+  display: flex;
+  gap: 0.5em;
+  justify-content: center;
+}
+.remove-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.remove-btn:hover {
+  background: #c0392b;
+}
+.update-btn {
+  background: #2980b9;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.update-btn:hover {
+  background: #1c5d8c;
 }
 </style>
