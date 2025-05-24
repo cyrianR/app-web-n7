@@ -1,20 +1,23 @@
 <template>
   <div class="anime-gallery">
-    <h2>Ongoing Anime</h2>
+    <h2>Anime en cours</h2>
     <div class="gallery-section">
       <div v-if="notFinishedAnimes.length === 0" class="empty-msg">No ongoing anime.</div>
       <div v-else class="gallery-grid">
+        <div v-if="isAdmin" class="anime-card add-anime-card" @click="openAddModal" title="Ajouter un anime">
+          <span class="add-plus">+</span>
+        </div>
         <div v-for="anime in notFinishedAnimes" :key="anime.id" class="anime-card" :style="anime.coverUrl ? { backgroundImage: `url(${anime.coverUrl})` } : {}">
           <div class="anime-title">{{ anime.name }}</div>
           <div class="anime-info">Episodes: {{ anime.currentEpisode }} / {{ anime.nbEpisodes }}</div>
           <div v-if="anime.malScore !== null" class="anime-info">MAL Score: {{ anime.malScore }}</div>
           <a :href="anime.malLink" target="_blank" class="mal-link"><strong>View on MAL</strong></a>
-          <button v-if="isAdmin" class="update-arrow" @click="openUpdateModal(anime)" title="Modifier">↑</button>
-          <button v-if="isAdmin" class="delete-cross" @click="deleteAnime(anime.id)" title="Supprimer">✕</button>
+          <button v-if="isAdmin" class="update-arrow" @click.stop="openUpdateModal(anime)" title="Modifier">↑</button>
+          <button v-if="isAdmin" class="delete-cross" @click.stop="deleteAnime(anime.id)" title="Supprimer">✕</button>
         </div>
       </div>
     </div>
-    <h2>Finished Anime</h2>
+    <h2>Anime finis</h2>
     <div class="gallery-section">
       <div v-if="finishedAnimes.length === 0" class="empty-msg">No finished anime.</div>
       <div v-else class="gallery-grid">
@@ -43,6 +46,28 @@
         </form>
       </div>
     </div>
+    <!-- Add Anime Modal -->
+    <div v-if="showAddModal" class="modal-overlay">
+      <div class="modal-content">
+        <h3>Ajouter un anime</h3>
+        <form @submit.prevent="addAnime">
+          <input v-model="newAnime.name" placeholder="Nom" required @input="searchMalAnime" autocomplete="off" />
+          <ul v-if="malSuggestions.length > 0" class="mal-suggestions">
+            <li v-for="suggestion in malSuggestions" :key="suggestion.mal_id" @click.prevent="selectMalSuggestion(suggestion)">
+              <img :src="suggestion.images.jpg.image_url" alt="cover" class="mal-suggestion-img" />
+              <span>{{ suggestion.title }} <span v-if="suggestion.episodes">({{ suggestion.episodes }} ep)</span></span>
+            </li>
+          </ul>
+          <input v-model.number="newAnime.nbEpisodes" placeholder="Nombre d'épisodes" type="number" min="1" required />
+          <input v-model.number="newAnime.currentEpisode" placeholder="Épisode actuel" type="number" min="0" required />
+          <input v-model="newAnime.malLink" placeholder="Lien MAL" required />
+          <div class="modal-actions">
+            <button type="submit" class="update-btn btn">Ajouter</button>
+            <button type="button" @click="closeAddModal" class="remove-btn btn">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -56,6 +81,7 @@ export default {
       finishedAnimes: [],
       notFinishedAnimes: [],
       showUpdateModal: false,
+      showAddModal: false,
       animeToUpdate: {
         id: null,
         name: '',
@@ -63,6 +89,14 @@ export default {
         currentEpisode: 0,
         malLink: ''
       },
+      newAnime: {
+        name: '',
+        nbEpisodes: 1,
+        currentEpisode: 0,
+        malLink: ''
+      },
+      malSuggestions: [],
+      malSearchTimeout: null,
     };
   },
   computed: {
@@ -174,6 +208,76 @@ export default {
         })
         .catch(() => {
           alert("Erreur lors de la mise à jour.");
+        });
+    },
+    openAddModal() {
+      this.showAddModal = true;
+      this.newAnime = {
+        name: '',
+        nbEpisodes: 1,
+        currentEpisode: 0,
+        malLink: ''
+      };
+    },
+    closeAddModal() {
+      this.showAddModal = false;
+      this.newAnime = {
+        name: '',
+        nbEpisodes: 1,
+        currentEpisode: 0,
+        malLink: ''
+      };
+    },
+    async searchMalAnime() {
+      clearTimeout(this.malSearchTimeout);
+      if (!this.newAnime.name || this.newAnime.name.length < 2) {
+        this.malSuggestions = [];
+        return;
+      }
+      this.malSearchTimeout = setTimeout(async () => {
+        try {
+          const res = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(this.newAnime.name)}&limit=5`);
+          const data = await res.json();
+          this.malSuggestions = data.data || [];
+        } catch {
+          this.malSuggestions = [];
+        }
+      }, 350);
+    },
+    selectMalSuggestion(suggestion) {
+      this.newAnime.name = suggestion.title;
+      this.newAnime.nbEpisodes = suggestion.episodes || 1;
+      this.newAnime.malLink = `https://myanimelist.net/anime/${suggestion.mal_id}`;
+      this.malSuggestions = [];
+    },
+    addAnime() {
+      if (!this.newAnime.name) {
+        alert("Le nom est obligatoire.");
+        return;
+      }
+      if (!this.newAnime.nbEpisodes || this.newAnime.nbEpisodes < 1) {
+        alert("Le nombre d'épisodes est obligatoire et doit être supérieur à 0.");
+        return;
+      }
+      if (this.newAnime.currentEpisode > this.newAnime.nbEpisodes) {
+        alert("L'épisode actuel ne peut pas être supérieur au nombre total d'épisodes.");
+        return;
+      }
+      if (this.newAnime.currentEpisode < 0) {
+        alert("L'épisode actuel doit être positif.");
+        return;
+      }
+      if (!this.newAnime.malLink) {
+        alert("Le lien MAL est obligatoire.");
+        return;
+      }
+      this.$options.$_ProjService.createAnime(this.newAnime)
+        .then(() => {
+          this.closeAddModal();
+          this.fetchAnimes();
+        })
+        .catch(() => {
+          alert("Erreur lors de l'ajout de l'anime.");
         });
     },
   },
@@ -336,5 +440,63 @@ export default {
 }
 .update-btn:hover {
   background: #1c5d8c;
+}
+.add-anime-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f3f3;
+  color: #2980b9;
+  border: 2px dashed #2980b9;
+  cursor: pointer;
+  min-width: 220px;
+  max-width: 220px;
+  min-height: 280px;
+  max-height: 280px;
+  font-size: 3em;
+  font-weight: bold;
+  position: relative;
+  transition: background 0.2s, border 0.2s;
+}
+.add-anime-card:hover {
+  background: #eaf6fb;
+  border-color: #1c5d8c;
+}
+.add-plus {
+  font-size: 3em;
+  line-height: 1;
+  user-select: none;
+}
+.mal-suggestions {
+  list-style: none;
+  margin: 0 0 0.5em 0;
+  padding: 0;
+  background: #fff;
+  border: 1px solid #b3b3b3;
+  border-radius: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+  position: absolute;
+  z-index: 10;
+  width: 90%;
+  left: 5%;
+}
+.mal-suggestions li {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  padding: 0.4em 0.7em;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.mal-suggestions li:hover {
+  background: #eaf6fb;
+}
+.mal-suggestion-img {
+  width: 32px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 3px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 </style>
