@@ -5,14 +5,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import net.datafaker.Faker;
 import fr.n7.spring_boot_api.model.*;
 import fr.n7.spring_boot_api.repository.*;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.time.ZonedDateTime;
 import java.time.ZoneId;
 import java.util.concurrent.ThreadLocalRandom;
@@ -85,9 +83,9 @@ public class SeedDatasourceDev implements CommandLineRunner{
     }
 
     private void loadTutorialData(int numTutorials) {
-        // for (int i = 0; i < numTutorials; i++) {
-        //     tutorialRepo.save(new Tutorial(faker.zelda().game(), faker.lorem().paragraph(), faker.bool().bool()));
-        // }
+        for (int i = 0; i < numTutorials; i++) {
+            tutorialRepo.save(new Tutorial(faker.zelda().game(), faker.lorem().paragraph(), faker.bool().bool()));
+        }
     }
 
     private void loadUserData(int numUsers) {
@@ -156,26 +154,9 @@ public class SeedDatasourceDev implements CommandLineRunner{
     private void loadVoteData(int numVotes) {
         List<Event> events = eventRepo.findAll();
         List<User> users = userRepo.findAll();
-        List<Integer> user_ids = new ArrayList<>();
-        List<Integer> event_ids = new ArrayList<>();
-        int userIndex;
-        int eventIndex;
         for (int i = 0; i < numVotes; i++) {
-            userIndex = faker.number().numberBetween(0, numUsers - 1);
-            eventIndex = faker.number().numberBetween(0, numEvents - 1);
-            while (user_ids.contains(userIndex) && event_ids.contains(eventIndex)) {
-                userIndex = faker.number().numberBetween(0, numUsers- 1);
-                eventIndex = faker.number().numberBetween(0, numEvents - 1);
-            }
-            
-            user_ids.add(userIndex);
-            event_ids.add(eventIndex);
-
-            Event event = events.get(userIndex);
-            User user = users.get(userIndex);
-            Vote vote = new Vote(user, event);
-
-            voteRepo.save(vote);
+            voteRepo.save(new Vote(events.get(faker.number().numberBetween(0, numEvents - 1)),
+                users.get(faker.number().numberBetween(0, numUsers -1))));
         }
     }
 

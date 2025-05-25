@@ -4,34 +4,40 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "votes")
+@IdClass(VoteId.class)
 public class Vote {
 
-    @EmbeddedId
-    private VoteId id;
-
+    @Id
     @ManyToOne
-    @MapsId("userId")
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Id
     @ManyToOne
-    @MapsId("eventId")
-    @JoinColumn(name = "event_id", insertable = false, updatable = false)
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
     public Vote() {
     }
 
-    public Vote(User user, Event event) {
-        this.id = new VoteId(user.getId(), event.getId());
+    public Vote(Event event, User user) {
+        this.event = event;
         this.user = user;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
         this.event = event;
     }
 
-    public VoteId getId() { return id; }
-    public void setId(VoteId id) { this.id = id; }
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-    public Event getEvent() { return event; }
-    public void setEvent(Event event) { this.event = event; }
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

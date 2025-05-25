@@ -141,7 +141,7 @@ public class EventController {
             for (Vote vote : votes) {
                 Optional<User> userData = userRepository.findById(vote.getUser().getId());
                 if (userData.isPresent()) {
-                    VoteId voteId = new VoteId(userData.get().getId(), eventData.get().getId());
+                    VoteId voteId = new VoteId(userData.get(), eventData.get());
                     voteRepository.deleteById(voteId);
                 }
             }
