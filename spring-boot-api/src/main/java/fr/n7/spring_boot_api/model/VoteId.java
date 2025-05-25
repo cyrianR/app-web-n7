@@ -1,37 +1,43 @@
 package fr.n7.spring_boot_api.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Embeddable
 public class VoteId implements Serializable {
-    private User user;
-    private Event event;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    @Column(name = "event_id", nullable = false)
+    private Long eventId;
 
     public VoteId() {}
 
-    public VoteId(User user, Event event) {
-        this.user = user;
-        this.event = event;
+    public VoteId(Long user, Long event) {
+        this.userId = userId;
+        this.eventId = eventId;
     }
 
     // Getters and setters
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 
-    public Event getEvent() { return event; }
-    public void setEvent(Event event) { this.event = event; }
+    public Long getEventId() { return eventId; }
+    public void setEventId(Long eventId) { this.eventId = eventId; }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VoteId voteId = (VoteId) o;
-        return Objects.equals(user.getId(), voteId.user.getId()) &&
-               Objects.equals(event.getId(), voteId.event.getId());
+        return Objects.equals(userId, voteId.userId) &&
+               Objects.equals(eventId, voteId.eventId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(user.getId(), event.getId());
+        return Objects.hash(userId, eventId);
     }
 }

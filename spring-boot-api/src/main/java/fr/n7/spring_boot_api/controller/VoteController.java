@@ -105,7 +105,7 @@ public class VoteController {
             Optional<User> user = userRepository.findById(userId);
             Optional<Event> event = eventRepository.findById(eventId);
             if (user.isPresent() && event.isPresent()) {
-                VoteId voteId = new VoteId(user.get(), event.get());
+                VoteId voteId = new VoteId(user.get().getId(), event.get().getId());
                 voteRepository.deleteById(voteId);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
