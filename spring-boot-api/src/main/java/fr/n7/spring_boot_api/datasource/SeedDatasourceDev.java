@@ -155,8 +155,11 @@ public class SeedDatasourceDev implements CommandLineRunner{
         List<Event> events = eventRepo.findAll();
         List<User> users = userRepo.findAll();
         for (int i = 0; i < numVotes; i++) {
-            voteRepo.save(new Vote(events.get(faker.number().numberBetween(0, numEvents - 1)),
+            Event event = events.get(faker.number().numberBetween(0, numEvents - 1));
+            voteRepo.save(new Vote(event,
                 users.get(faker.number().numberBetween(0, numUsers -1))));
+            event.setNote(event.getNote() + 1);
+            eventRepo.save(event);
         }
     }
 

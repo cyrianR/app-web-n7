@@ -74,7 +74,25 @@ public class VoteController {
         }
     }
 
-    // Create a new vote
+    // Get vote by user and event
+    @GetMapping("/vote/user/{userId}/event/{eventId}")
+    public ResponseEntity<Vote> getVoteByUserAndEvent(@PathVariable("userId") long userId, @PathVariable("eventId") long eventId) {
+        Optional<User> userData = userRepository.findById(userId);
+        Optional<Event> eventData = eventRepository.findById(eventId);
+
+        if (userData.isPresent() && eventData.isPresent()) {
+            Optional<Vote> voteData = voteRepository.findByUserAndEvent(userData.get(), eventData.get());
+            if (voteData.isPresent()) {
+                return new ResponseEntity<>(voteData.get(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Add a new vote
     @PostMapping("/vote")
     public ResponseEntity<Vote> createVote(@RequestBody Vote vote) {
         try {
