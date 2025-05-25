@@ -74,7 +74,7 @@ public class VoteController {
         }
     }
 
-    // Create a new vote and update event note
+    // Create a new vote
     @PostMapping("/vote")
     public ResponseEntity<Vote> createVote(@RequestBody Vote vote) {
         try {
@@ -82,6 +82,11 @@ public class VoteController {
             Optional<User> userData = userRepository.findById(vote.getUser().getId());
 
             if (eventData.isPresent() && userData.isPresent()) {
+                Optional<Vote> existingVote = voteRepository.findByUserAndEvent(userData.get(), eventData.get());
+                if (existingVote.isPresent()) {
+                    return new ResponseEntity<>(HttpStatus.CONFLICT);
+                }
+
                 // new vote
                 vote.setEvent(eventData.get());
                 vote.setUser(userData.get());
@@ -90,12 +95,7 @@ public class VoteController {
                 // update event note
                 Event _event = eventData.get();
                 List<Vote> votes = voteRepository.findByEvent(_event);
-                double totalNote = 0;
-                for (Vote v : votes) {
-                    totalNote += v.getNote();
-                }
-                double averageNote = totalNote / votes.size();
-                _event.setNote(averageNote);
+                _event.setNote(votes.size());
                 eventRepository.save(_event);
 
                 return new ResponseEntity<>(_vote, HttpStatus.CREATED);
@@ -104,35 +104,6 @@ public class VoteController {
             }
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    // Update a vote and update event note
-    @PutMapping("/vote/{id}")
-    public ResponseEntity<Vote> updateVote(@PathVariable("id") long id, @RequestBody Vote vote) {
-        Optional<Vote> voteData = voteRepository.findById(id);
-
-        if (voteData.isPresent()) {
-            Vote _vote = voteData.get();
-            _vote.setNote(vote.getNote());
-            _vote.setEvent(vote.getEvent());
-            _vote.setUser(vote.getUser());
-            Vote updatedVote = voteRepository.save(_vote);
-
-            // update event note
-            Event _event = _vote.getEvent();
-            List<Vote> votes = voteRepository.findByEvent(_event);
-            double totalNote = 0;
-            for (Vote v : votes) {
-                totalNote += v.getNote();
-            }
-            double averageNote = totalNote / votes.size();
-            _event.setNote(averageNote);
-            eventRepository.save(_event);
-
-            return new ResponseEntity<>(updatedVote, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
