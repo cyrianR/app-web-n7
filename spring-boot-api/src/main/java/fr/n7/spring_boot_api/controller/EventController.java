@@ -22,12 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.n7.spring_boot_api.model.Vote;
-import fr.n7.spring_boot_api.model.VoteId;
 import fr.n7.spring_boot_api.model.Event;
-import fr.n7.spring_boot_api.model.User;
 import fr.n7.spring_boot_api.repository.VoteRepository;
 import fr.n7.spring_boot_api.repository.EventRepository;
-import fr.n7.spring_boot_api.repository.UserRepository;
 
 // filter authorized origin
 @CrossOrigin(origins = "*")
@@ -37,8 +34,6 @@ public class EventController {
     
     @Autowired
     EventRepository eventRepository;
-    @Autowired
-    UserRepository userRepository;
     @Autowired
     VoteRepository voteRepository;
 
@@ -139,11 +134,7 @@ public class EventController {
             // Delete all votes associated with the event
             List<Vote> votes = voteRepository.findByEvent(eventData.get());
             for (Vote vote : votes) {
-                Optional<User> userData = userRepository.findById(vote.getUser().getId());
-                if (userData.isPresent()) {
-                    VoteId voteId = new VoteId(userData.get(), eventData.get());
-                    voteRepository.deleteById(voteId);
-                }
+                voteRepository.deleteById(vote.getId());
             }
             eventRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

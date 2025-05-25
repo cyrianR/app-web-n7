@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.n7.spring_boot_api.model.Vote;
-import fr.n7.spring_boot_api.model.VoteId;
 import fr.n7.spring_boot_api.model.Event;
 import fr.n7.spring_boot_api.model.User;
 import fr.n7.spring_boot_api.repository.VoteRepository;
@@ -36,6 +35,18 @@ public class VoteController {
     EventRepository eventRepository;
     @Autowired
     UserRepository userRepository;
+
+    // Get vote by ID
+    @GetMapping("/vote/{id}")
+    public ResponseEntity<Vote> getVoteById(@PathVariable("id") long id) {
+        Optional<Vote> voteData = voteRepository.findById(id);
+
+        if (voteData.isPresent()) {
+            return new ResponseEntity<>(voteData.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
     
     // Get votes by event
     @GetMapping("/vote/event/{eventId}")
@@ -63,10 +74,7 @@ public class VoteController {
         }
     }
 
-    // Get vote by user and event
-
-
-    // Create a new vote
+    // Create a new vote and update event note
     @PostMapping("/vote")
     public ResponseEntity<Vote> createVote(@RequestBody Vote vote) {
         try {
@@ -74,10 +82,6 @@ public class VoteController {
             Optional<User> userData = userRepository.findById(vote.getUser().getId());
 
             if (eventData.isPresent() && userData.isPresent()) {
-                Optional<Vote> existingVote = voteRepository.findByUserAndEvent(userData.get(), eventData.get());
-                if (existingVote.isPresent()) {
-                    return new ResponseEntity<>(HttpStatus.CONFLICT);
-                }
                 // new vote
                 vote.setEvent(eventData.get());
                 vote.setUser(userData.get());
@@ -86,7 +90,12 @@ public class VoteController {
                 // update event note
                 Event _event = eventData.get();
                 List<Vote> votes = voteRepository.findByEvent(_event);
-                _event.setNote(votes.size());
+                double totalNote = 0;
+                for (Vote v : votes) {
+                    totalNote += v.getNote();
+                }
+                double averageNote = totalNote / votes.size();
+                _event.setNote(averageNote);
                 eventRepository.save(_event);
 
                 return new ResponseEntity<>(_vote, HttpStatus.CREATED);
@@ -98,18 +107,41 @@ public class VoteController {
         }
     }
 
-    // Delete a vote
-    @DeleteMapping("/vote/{userId}/{eventId}")
-    public ResponseEntity<HttpStatus> deleteVote(@PathVariable long userId, @PathVariable long eventId) {
-        try {
-            Optional<User> user = userRepository.findById(userId);
-            Optional<Event> event = eventRepository.findById(eventId);
-            if (user.isPresent() && event.isPresent()) {
-                VoteId voteId = new VoteId(user.get(), event.get());
-                voteRepository.deleteById(voteId);
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    // Update a vote and update event note
+    @PutMapping("/vote/{id}")
+    public ResponseEntity<Vote> updateVote(@PathVariable("id") long id, @RequestBody Vote vote) {
+        Optional<Vote> voteData = voteRepository.findById(id);
+
+        if (voteData.isPresent()) {
+            Vote _vote = voteData.get();
+            _vote.setNote(vote.getNote());
+            _vote.setEvent(vote.getEvent());
+            _vote.setUser(vote.getUser());
+            Vote updatedVote = voteRepository.save(_vote);
+
+            // update event note
+            Event _event = _vote.getEvent();
+            List<Vote> votes = voteRepository.findByEvent(_event);
+            double totalNote = 0;
+            for (Vote v : votes) {
+                totalNote += v.getNote();
             }
+            double averageNote = totalNote / votes.size();
+            _event.setNote(averageNote);
+            eventRepository.save(_event);
+
+            return new ResponseEntity<>(updatedVote, HttpStatus.OK);
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Delete a vote
+    @DeleteMapping("/vote/{id}")
+    public ResponseEntity<HttpStatus> deleteVote(@PathVariable("id") long id) {
+        try {
+            voteRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

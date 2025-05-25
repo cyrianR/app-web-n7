@@ -26,7 +26,7 @@ public class Event {
     private String description;
 
     @Column(name = "note", nullable = false)
-    private int note;
+    private Double note;
 
     public Event() {
     }
@@ -36,7 +36,7 @@ public class Event {
         this.date = date;
         this.eventType = eventType;
         this.description = description;
-        this.note = 0;
+        this.note = 0.0;
     }
 
     public Long getId() {
@@ -69,10 +69,10 @@ public class Event {
     public void setDescription(String description) {
         this.description = description;
     }
-    public int getNote() {
+    public Double getNote() {
         return note;
     }
-    public void setNote(int note) {
+    public void setNote(Double note) {
         this.note = note;
     }
     @Override
