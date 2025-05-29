@@ -1,5 +1,4 @@
 <script>
-import axios from 'axios';
 import PhotosService from '../services/PhotosService';
 
 export default {
@@ -70,7 +69,7 @@ export default {
     <div v-if="files.length === 0" class="no-photos">Aucune photo pour le moment.</div>
     <div v-else class="photo-grid">
       <div class="photo-item" v-for="file in files" :key="file.id">
-      <img :src="getFileUrl(file.id)" alt="photo" />
+      <img :src="`data:${file.type};base64,${file.data}`" alt="photo" />
       <button class="delete-icon" @click="deleteFile(file.id)">×</button>
       </div>
     </div>

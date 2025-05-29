@@ -24,6 +24,16 @@ const routes =  [
     component: () => import("./components/Profile.vue")
   },
   {
+    path: "/lesson",
+    name: "lesson",
+    component: () => import("./components/Lesson.vue")
+  },
+  {
+    path: "/proj",
+    name: "proj",
+    component: () => import("./components/Proj.vue")
+  },
+  {
     path: "/login",
     name: "login",
     component: () => import("./components/Login.vue")
@@ -42,6 +52,11 @@ const routes =  [
     path: "/photos",
     name: "photos",
     component: () => import("./components/Photos.vue")
+  },
+  {  
+    path: "/event/:id",
+    name: "event",
+    component: () => import("./components/Event.vue")
   },
   {
     path: "/tutorials",

@@ -61,10 +61,10 @@ export default {
               <router-link to="" class="nav-link">Karaoke</router-link>
             </li>
             <li class="nav-item">
-              <router-link to="" class="nav-link">Cours</router-link>
+              <router-link to="/lesson" class="nav-link">Cours</router-link>
             </li>
             <li class="nav-item">
-              <router-link to="" class="nav-link">Projection</router-link>
+              <router-link to="/proj" class="nav-link">Projection</router-link>
             </li>
             <li class="nav-item">
               <router-link to="/photos" class="nav-link">Photos</router-link>
@@ -138,11 +138,13 @@ export default {
       <div class="container-fluid d-flex justify-content-between">
         <div class="d-flex flex-column justify-content-between ms-3">
           <span>© Japan7 2025</span>
-          <div class="d-flex">
-            <a href="https://discord.gg/mwC7jKKK4j" class="me-2"><img src="/svg/discord-outline.svg"
-                alt="Discord" width="24"></a>
-            <a href="https://www.instagram.com/japan7_enseeiht"><img src="/svg/instagram.svg" alt="Instagram"
-                width="24"></a>
+          <div class="d-flex align-items-end">
+            <a href="https://discord.gg/mwC7jKKK4j" class="me-2">
+              <i class="bi bi-discord"></i>
+            </a>
+            <a href="https://www.instagram.com/japan7_enseeiht">
+              <i class="bi bi-instagram"></i>
+            </a>
           </div>
         </div>
         <div class="text-end d-flex flex-column me-3">
@@ -164,6 +166,11 @@ export default {
 .navbar-nav > li > a {
   color: black;
   font-weight: 500;
+}
+
+.bi {
+  color: rgba(var(--bs-dark-rgb),var(--bs-text-opacity)) !important;
+  font-size: 22px !important;
 }
 
 .page-content {

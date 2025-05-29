@@ -39,6 +39,15 @@ h1 {
   background-color: #222 !important;
 }
 
+.btn-outline-primary {
+  color: #222 !important;
+  border-color: #222 !important;
+}
+.btn-outline-primary:hover {
+  background-color: #222 !important;
+  color: #fff !important;
+}
+
 #app {
   max-width: 100%;
   margin: 0 auto;

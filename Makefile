@@ -32,9 +32,11 @@ dev-verbose-api: stop copy-env ## Development environment with verbose api, laun
 	@docker-compose up -d postgres-dev > /dev/null 2>&1
 	@echo "Gradle continuous build starting..."
 	@cd $(BACKEND_DIR) && ./gradlew build --continuous > ../logs/gradle-build-logs.txt 2>&1 &
+	@sleep 5
 	@echo "Vue application starting..."
 	@cd $(FRONTEND_DIR) && npm install > /dev/null 2>&1
 	@cd $(FRONTEND_DIR) && npm run dev > ../logs/npm-run-dev-logs.txt 2>&1 &
+	@sleep 5
 	@echo "API starting..."
 	@cd $(BACKEND_DIR) && ./gradlew bootRun
 
