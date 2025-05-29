@@ -71,7 +71,7 @@ export default {
       searchQuery: "", // Search query for filtering users
       selectedUser: null, // User selected for role update
       selectedRoles: [], // Roles selected for the user
-      availableRoles: ["ROLE_LESSON_ADMIN", "ROLE_KAROKE_ADMIN", "ROLE_ADMIN", "ROLE_MEMBER", "ROLE_EXTERN", "ROLE_PROJ_ADMIN"], // Available roles
+      availableRoles: ["ROLE_LESSON_ADMIN", "ROLE_KARAOKE_ADMIN", "ROLE_ADMIN", "ROLE_MEMBER", "ROLE_EXTERN", "ROLE_PROJ_ADMIN"], // Available roles
     };
   },
   created() {
