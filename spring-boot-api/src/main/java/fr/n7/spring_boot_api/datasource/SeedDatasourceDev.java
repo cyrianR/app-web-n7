@@ -43,6 +43,9 @@ public class SeedDatasourceDev implements CommandLineRunner{
     @Autowired
     PostRepository postRepo;
 
+    @Autowired
+    AnimeRepository animeRepo;
+
     int numTutorials = 10;
     int numUsers = 1;
     int numEvents = 10;
@@ -78,6 +81,9 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
         System.out.println("Loading Post data...");
         loadPostData(numPosts);
+
+        System.out.println("Loading Anime data...");
+        loadAnimeData();
 
         System.out.println("Seeding completed.");
     }
@@ -175,6 +181,14 @@ public class SeedDatasourceDev implements CommandLineRunner{
         for (int i = 0; i < numPosts; i++) {
             postRepo.save(new Post(faker.book().title(), faker.date().future(30, java.util.concurrent.TimeUnit.DAYS).toString(), users.get(faker.number().numberBetween(0, numUsers -1))));
         }
+    }
+
+    private void loadAnimeData() {
+        animeRepo.save(new Anime("Attack on Titan", 88, 88, "https://myanimelist.net/anime/16498/Shingeki_no_Kyojin"));
+        animeRepo.save(new Anime("Death Note", 37, 37, "https://myanimelist.net/anime/1535/Death_Note"));
+        animeRepo.save(new Anime("Naruto", 220, 219, "https://myanimelist.net/anime/20/Naruto"));
+        animeRepo.save(new Anime("One Piece", 1000, 1000, "https://myanimelist.net/anime/21/One_Piece"));
+        animeRepo.save(new Anime("Demon Slayer", 26, 3, "https://myanimelist.net/anime/38000/Kimetsu_no_Yaiba"));
     }
 
 }
