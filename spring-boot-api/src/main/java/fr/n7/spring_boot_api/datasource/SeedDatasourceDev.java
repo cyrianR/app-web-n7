@@ -5,12 +5,15 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import net.datafaker.Faker;
 import fr.n7.spring_boot_api.model.*;
 import fr.n7.spring_boot_api.repository.*;
 
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.time.ZonedDateTime;
 import java.time.ZoneId;
 import java.util.concurrent.ThreadLocalRandom;
@@ -33,9 +36,6 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
     @Autowired
     EventRepository eventRepo;
-
-    @Autowired
-    VoteRepository voteRepo;
     
     @Autowired
     LessonRepository lessonRepo;
@@ -46,7 +46,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
     int numTutorials = 10;
     int numUsers = 1;
     int numEvents = 10;
-    int numVotes = 10;
+    int numLikes = 6;
     int numLessons = 10;
     int numPosts = 10;
 
@@ -63,15 +63,12 @@ public class SeedDatasourceDev implements CommandLineRunner{
         System.out.println("Loading Tutorial data...");
         loadTutorialData(numTutorials);
 
-        System.out.println("Loading User data...");
-        loadUserData(numUsers);
-        loadAdminUsersData();
-
         System.out.println("Loading Event data...");
         loadEventData(numEvents);
 
-        System.out.println("Loading Vote data...");
-        loadVoteData(numVotes);
+        System.out.println("Loading User data...");
+        loadUserData(numUsers);
+        loadAdminUsersData();
 
         System.out.println("Loading Lesson data...");
         loadLessonData(numLessons);
@@ -90,6 +87,8 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
     private void loadUserData(int numUsers) {
         for (int i = 0; i < numUsers; i++) {
+            List<Event> allEvents = eventRepo.findAll();  // Get seeded events
+
             String uniqueUsername = faker.name().username() + i;
             String uniqueEmail = faker.internet().emailAddress(uniqueUsername);
             Role userRole;
@@ -101,6 +100,22 @@ public class SeedDatasourceDev implements CommandLineRunner{
                 userRole = roleRepo.findByName(ERole.ROLE_MEMBER).orElseThrow(() -> new RuntimeException("Error: Role MEMBER is not found during seeding."));
             }
             user.addRole(userRole);
+
+            // Add random likes (between 0 and numLikes)
+            if (!allEvents.isEmpty()) {
+                int likesCount = faker.number().numberBetween(0, numLikes);
+                Set<Event> likedEvents = new HashSet<>();
+                
+                while (likedEvents.size() < likesCount) {
+                    Event randomEvent = allEvents.get(
+                        faker.number().numberBetween(0, allEvents.size())
+                    );
+                    likedEvents.add(randomEvent);
+                }
+                
+                user.getLikedEvents().addAll(likedEvents);
+            }
+
             userRepo.save(user);
         }
     }
@@ -148,18 +163,6 @@ public class SeedDatasourceDev implements CommandLineRunner{
                 randomDateTime,
                 EventType.values()[faker.number().numberBetween(0, EventType.values().length)],
                 faker.lorem().sentence()));
-        }
-    }
-
-    private void loadVoteData(int numVotes) {
-        List<Event> events = eventRepo.findAll();
-        List<User> users = userRepo.findAll();
-        for (int i = 0; i < numVotes; i++) {
-            Event event = events.get(faker.number().numberBetween(0, numEvents - 1));
-            voteRepo.save(new Vote(event,
-                users.get(faker.number().numberBetween(0, numUsers -1))));
-            event.setNote(event.getNote() + 1);
-            eventRepo.save(event);
         }
     }
 

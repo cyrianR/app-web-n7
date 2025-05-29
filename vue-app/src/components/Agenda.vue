@@ -36,11 +36,12 @@ export default {
           EventService.getBetween(fetchInfo.startStr, fetchInfo.endStr)
             .then(response => {
               successCallback(response.data.map(event => ({
-              title: this.getFormattedEventType(event.eventType),
-              start: event.date,
-              backgroundColor: this.getColorForEventType(event.eventType),
-              textColor: '#333',
-              borderColor: this.getColorForEventType(event.eventType)
+                id: event.id,
+                title: this.getFormattedEventType(event.eventType),
+                start: event.date,
+                backgroundColor: this.getColorForEventType(event.eventType),
+                textColor: '#333',
+                borderColor: this.getColorForEventType(event.eventType)
               })))
             })
             .catch(e => {
@@ -61,7 +62,7 @@ export default {
   methods: {
 
     handleEventClick: function(arg) {
-      alert(arg.event.title) // TODO : faire un lien vers une page de l'évènement (attribut url de event) et/ou un meilleur pop-up pour l'évènement
+      this.$router.push("/event/" + arg.event.id);
     },
 
     getFormattedEventType(eventType) {

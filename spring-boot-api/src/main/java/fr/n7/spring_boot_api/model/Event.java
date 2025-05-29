@@ -3,6 +3,8 @@ package fr.n7.spring_boot_api.model;
 import jakarta.persistence.*;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "events")
@@ -25,8 +27,8 @@ public class Event {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "note", nullable = false)
-    private int note;
+    @ManyToMany(mappedBy = "likedEvents")
+    private Set<User> likedBy = new HashSet<>();
 
     public Event() {
     }
@@ -36,7 +38,6 @@ public class Event {
         this.date = date;
         this.eventType = eventType;
         this.description = description;
-        this.note = 0;
     }
 
     public Long getId() {
@@ -69,12 +70,13 @@ public class Event {
     public void setDescription(String description) {
         this.description = description;
     }
-    public int getNote() {
-        return note;
+    public Set<User> getLikedBy() {
+        return likedBy;
     }
-    public void setNote(int note) {
-        this.note = note;
+    public void setLikedBy(Set<User> likedBy) {
+        this.likedBy = likedBy;
     }
+
     @Override
     public String toString() {
         return "Event [" +
@@ -83,7 +85,7 @@ public class Event {
                 ", date='" + date + '\'' +
                 ", eventType=" + eventType +
                 ", description='" + description + '\'' +
-                ", note=" + note +
+                ", note=" + likedBy.size() +
                 ']';
     }
 }

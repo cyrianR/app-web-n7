@@ -1,23 +1,19 @@
 <script>
 import EventService from '../services/EventService';
-import VoteService from '../services/VoteService';
+import LikeService from '../services/LikeService';
 
 export default {
   data() {
     return {
       event : [],
-      vote : [],
-      voted : 0,
-      myvote : {
-        event: [],
-        user: []
-      },
+      user : this.$store.state.auth.user,
+      liked : false
     };
   },
 
   created() {
     this.retrieveEvent();
-    this.retrieveUserVote();
+    this.retrieveUserLike();
   },
 
   methods: {
@@ -31,48 +27,44 @@ export default {
         });
     },
 
-    retrieveUserVote() {
+    retrieveUserLike() {
       const user = this.$store.state.auth.user;
       if (!user) {
         return;
       }
-      VoteService.getVoteByUserAndEvent(user.id, this.$route.params.id)
+      LikeService.getLikeByUserAndEvent(user.id, this.$route.params.id)
         .then(response => {
-          // user has voted
-          this.vote = response.data;
-          this.voted = 1;
+          this.liked = response.data;
         })
        .catch(error => {
-          // user has not voted
+          console.error('Error retrieving like:', error);
         });
     },
 
-    changeVote(){
+    changeLike(){
       const user = this.$store.state.auth.user;
       if (!user) {
         return;
       }
-      this.myvote.event = this.event;
-      this.myvote.user = this.$store.state.auth.user;
 
-      if (this.voted === 1) {
-        VoteService.deleteVote(myvote)
+      if (this.liked === true) {
+        LikeService.deleteLike(this.user.id, this.event.id)
           .then(() => {
-            this.retrieveEvent();
+            this.event.likes -= 1;
           })
           .catch(error => {
-            console.error("Error deleting vote:", error);
+            console.error("Error deleting like:", error);
           });
-          this.voted = 0;
+          this.liked = false;
       } else {
-        VoteService.addVote(this.myvote)
+        LikeService.addLike(this.user.id, this.event.id)
           .then(() => {
-            this.retrieveEvent();
+            this.event.likes += 1;
           })
           .catch(error => {
-            console.error("Error creating vote:", error);
+            console.error("Error creating like:", error);
           });
-          this.voted = 1;
+          this.liked = true;
       }
     },
 
@@ -111,10 +103,10 @@ export default {
           <div class="d-flex justify-content-between align-items-center">
             <div>
               
-              <button @click="changeVote" class="btn">
-                <i class="bi bi-heart-fill text-danger me-1" v-if="voted"></i>
+              <button @click="changeLike" class="btn">
+                <i class="bi bi-heart-fill text-danger me-1" v-if="liked"></i>
                 <i class="bi bi-heart me-1" v-else></i>
-                {{ event.note }}
+                {{ this.event.likes }}
               </button>
             </div>
             <router-link to="/agenda" class="card-link">{{ formatDate(event.date) }}</router-link>

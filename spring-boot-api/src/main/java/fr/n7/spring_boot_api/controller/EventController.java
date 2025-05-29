@@ -3,6 +3,7 @@ package fr.n7.spring_boot_api.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.time.format.DateTimeFormatter;
@@ -21,10 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.n7.spring_boot_api.model.Vote;
 import fr.n7.spring_boot_api.model.Event;
-import fr.n7.spring_boot_api.repository.VoteRepository;
 import fr.n7.spring_boot_api.repository.EventRepository;
+import fr.n7.spring_boot_api.payload.EventDTO;
+import fr.n7.spring_boot_api.payload.EventMapper;
 
 // filter authorized origin
 @CrossOrigin(origins = "*")
@@ -34,12 +35,10 @@ public class EventController {
     
     @Autowired
     EventRepository eventRepository;
-    @Autowired
-    VoteRepository voteRepository;
 
     // Get all events with optional filter by name
     @GetMapping("/event")
-    public ResponseEntity<List<Event>> getAllEvents(@RequestParam(required = false) String name) {
+    public ResponseEntity<List<EventDTO>> getAllEvents(@RequestParam(required = false) String name) {
         try {
             List<Event> events = new ArrayList<Event>();
 
@@ -52,7 +51,11 @@ public class EventController {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
 
-            return new ResponseEntity<>(events, HttpStatus.OK);
+            List<EventDTO> eventResponses = events.stream()
+            .map(EventMapper::toResponse)
+            .collect(Collectors.toList());
+
+            return new ResponseEntity<>(eventResponses, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -60,7 +63,7 @@ public class EventController {
 
     // Get all events between two dates
     @GetMapping("/event/between")
-    public ResponseEntity<List<Event>> getEventsBetweenDates(
+    public ResponseEntity<List<EventDTO>> getEventsBetweenDates(
             @RequestParam String start,
             @RequestParam String end) {
         try {
@@ -73,7 +76,12 @@ public class EventController {
             if (events.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            return new ResponseEntity<>(events, HttpStatus.OK);
+
+            List<EventDTO> eventResponses = events.stream()
+            .map(EventMapper::toResponse)
+            .collect(Collectors.toList());
+            
+            return new ResponseEntity<>(eventResponses, HttpStatus.OK);
         } catch (DateTimeParseException e) {
             System.out.println(e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -84,11 +92,12 @@ public class EventController {
 
     // Get event by ID
     @GetMapping("/event/{id}")
-    public ResponseEntity<Event> getEventById(@PathVariable("id") long id) {
+    public ResponseEntity<EventDTO> getEventById(@PathVariable("id") long id) {
         Optional<Event> eventData = eventRepository.findById(id);
 
         if (eventData.isPresent()) {
-            return new ResponseEntity<>(eventData.get(), HttpStatus.OK);
+            EventDTO dto = EventMapper.toResponse(eventData.get());
+            return new ResponseEntity<>(dto, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -96,10 +105,10 @@ public class EventController {
 
     // Create a new event
     @PostMapping("/event")
-    public ResponseEntity<Event> createEvent(@RequestBody Event event) {
+    public ResponseEntity<EventDTO> createEvent(@RequestBody EventDTO event) {
         try {
             Event _event = eventRepository.save(new Event(event.getName(), event.getDate(), event.getEventType(), event.getDescription()));
-            return new ResponseEntity<>(_event, HttpStatus.CREATED);
+            return new ResponseEntity<>(EventMapper.toResponse(_event), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -107,7 +116,7 @@ public class EventController {
 
     // Update an event
     @PutMapping("/event/{id}")
-    public ResponseEntity<Event> updateEvent(@PathVariable("id") long id, @RequestBody Event event) {
+    public ResponseEntity<Event> updateEvent(@PathVariable("id") long id, @RequestBody EventDTO event) {
         Optional<Event> eventData = eventRepository.findById(id);
 
         if (eventData.isPresent()) {
@@ -122,7 +131,7 @@ public class EventController {
         }
     }
 
-    // Delete an event and all its votes
+    // Delete an event
     @DeleteMapping("/event/{id}")
     public ResponseEntity<HttpStatus> deleteEvent(@PathVariable("id") long id) {
         try {
@@ -130,11 +139,6 @@ public class EventController {
             Optional<Event> eventData = eventRepository.findById(id);
             if (!eventData.isPresent()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            // Delete all votes associated with the event
-            List<Vote> votes = voteRepository.findByEvent(eventData.get());
-            for (Vote vote : votes) {
-                voteRepository.deleteById(vote.getId());
             }
             eventRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
