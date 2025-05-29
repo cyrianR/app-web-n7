@@ -1,11 +1,38 @@
 <script>
+import { mapActions } from 'vuex';
+import WebSocketService from './services/WebSocketService';
+
 export default {
   name: "app",
   computed: {
     isLoggedIn() {
       return this.$store.state.auth.status.loggedIn;
+    },
+    isAdmin() {
+      return this.$store.state.auth.user.roles.includes("ROLE_ADMIN");
     }
-  }
+  },
+  mounted() {
+    // Connect to WebSocket and listen for role updates
+    WebSocketService.connect();
+    WebSocketService.subscribeToRoleUpdates((message) => {
+      if (message.userId === this.$store.state.auth.user.id) {
+        // Update roles
+        this.updateRoles(message.roles);
+      }
+    });
+  },
+  beforeDestroy() {
+    // Disconnect WebSocket when the app is destroyed
+    WebSocketService.disconnect();
+  },
+  methods: {
+    ...mapActions('auth', ['updateRoles']),
+    logout() {
+      this.$store.dispatch("auth/logout");
+      this.$router.push({ path: '/login', query: { message: 'logout-success' } });
+    },
+  },
 };
 </script>
 
@@ -13,13 +40,17 @@ export default {
   <div id="app p-0" class="d-flex flex-column min-vh-100">
 
     <!-- Navbar -->
-    <nav class="navbar fixed-top navbar-light bg-light bg-opacity-75">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light bg-opacity-75">
       <div class="container-fluid mx-3">
         <router-link to="/" class="navbar-brand">
           <img src="/img/logo_clean_saisons_rond.png" width="50" height="50" alt="">
         </router-link>
-        <div class="flex-row justify-content-end" id="navbarNav">
-            <ul class="navbar-nav flex-row gap-4">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+      aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
             <li class="nav-item">
               <router-link to="/" class="nav-link">Accueil</router-link>
             </li>
@@ -41,20 +72,58 @@ export default {
             <li class="nav-item">
               <router-link to="/agenda" class="nav-link">Agenda</router-link>
             </li>
-            <div class="d-flex flex-column justify-content-center">
-              <li v-if="isLoggedIn" class="nav-item">
-                <router-link to="/profile" class="btn btn-primary">Compte</router-link>
-              </li>
-              <div v-else class="d-flex flex-row gap-3">
-                <li class="nav-item">
-                  <router-link to="/register" class="btn btn-primary">S'inscrire</router-link>
+            <li class="nav-item dropdown ms-lg-3">
+              <a
+                class="nav-link"
+                href="#"
+                id="userDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="bi bi-person-fill" style="font-size: 1.5rem;"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li v-if="isLoggedIn">
+                  <router-link to="/profile" class="dropdown-item">Mon profil</router-link>
                 </li>
-                <li class="nav-item">
-                  <router-link to="/login" class="btn btn-primary">Se connecter</router-link>
+                <li v-if="isLoggedIn && isAdmin">
+                  <router-link to="/adminboard" class="dropdown-item">Zone admin</router-link>
                 </li>
-              </div>
-            </div>
-            </ul>
+                <li v-if="isLoggedIn">
+                  <button @click="logout" class="dropdown-item">Se déconnecter</button>
+                </li>
+                <div v-else>
+                  <li class="nav-item">
+                    <router-link to="/register" class="dropdown-item">S'inscrire</router-link>
+                  </li>
+                  <li class="nav-item">
+                    <router-link to="/login" class="dropdown-item">Se connecter</router-link>
+                  </li>
+                </div>
+              </ul>
+            </li>
+            <li v-if="isLoggedIn && isAdmin" class="nav-item dropdown ms-lg-3">
+              <a
+                class="nav-link"
+                href="#"
+                id="userDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="bi bi-plus-circle" style="font-size: 1.5rem;"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li>
+                  <router-link to="" class="dropdown-item">Post</router-link>
+                </li>
+                <li>
+                  <router-link to="" class="dropdown-item">Évènement</router-link>
+                </li>
+              </ul>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
@@ -89,6 +158,11 @@ export default {
 </template>
 
 <style scoped>
+
+.navbar-nav {
+  align-items: center;
+}
+
 .navbar-nav > li > a {
   color: black;
   font-weight: 500;
