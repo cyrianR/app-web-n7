@@ -186,7 +186,7 @@ export default {
         alert("Le fichier culturel est obligatoire.");
         return;
       }
-      LessonService.create(this.newLesson)
+      LessonService.createFull(this.newLesson)
         .then(response => {
           this.lessons.push(response.data);
           this.newLesson = {
