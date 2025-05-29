@@ -1,5 +1,7 @@
 <template>
   <div class="anime-gallery">
+    <h2>Prochaines projections</h2>
+    
     <h2>Anime en cours</h2>
     <div class="gallery-section">
       <div v-if="notFinishedAnimes.length === 0" class="empty-msg">No ongoing anime.</div>
@@ -12,7 +14,8 @@
           <div class="anime-info">Episodes: {{ anime.currentEpisode }} / {{ anime.nbEpisodes }}</div>
           <div v-if="anime.malScore !== null" class="anime-info">MAL Score: {{ anime.malScore }}</div>
           <a :href="anime.malLink" target="_blank" class="mal-link"><strong>View on MAL</strong></a>
-          <button v-if="isAdmin" class="update-arrow" @click.stop="openUpdateModal(anime)" title="Modifier">↑</button>
+          <button v-if="isAdmin" class="minus arrow" @click="decrementEpisode(anime)" title="-1">↓</button>
+          <button v-if="isAdmin" class="plus arrow" @click="incrementEpisode(anime)" title="+1">↑</button>
           <button v-if="isAdmin" class="delete-cross" @click.stop="deleteAnime(anime.id)" title="Supprimer">✕</button>
         </div>
       </div>
@@ -25,7 +28,8 @@
           <div class="anime-title">{{ anime.name }}</div>
           <div v-if="anime.malScore !== null" class="anime-info">MAL Score: {{ anime.malScore }}</div>
           <a :href="anime.malLink" target="_blank" class="mal-link"><strong>View on MAL</strong></a>
-          <button v-if="isAdmin" class="update-arrow" @click="openUpdateModal(anime)" title="Modifier">↑</button>
+          <button v-if="isAdmin" class="minus arrow" @click="decrementEpisode(anime)" title="-1">↓</button>
+          <button v-if="isAdmin" class="plus arrow" @click="incrementEpisode(anime)" title="+1">↑</button>
           <button v-if="isAdmin" class="delete-cross" @click="deleteAnime(anime.id)" title="Supprimer">✕</button>
         </div>
       </div>
@@ -109,40 +113,16 @@ export default {
     this.fetchAnimes();
   },
   methods: {
-    async getAnimeCoverAndScore(malLink) {
-      const match = malLink.match(/anime\/(\d+)/);
-      if (!match) return { coverUrl: '', score: null };
-      const animeId = match[1];
-      try {
-        const res = await fetch(`https://api.jikan.moe/v4/anime/${animeId}`);
-        const data = await res.json();
-        return {
-          coverUrl: data.data.images.jpg.large_image_url,
-          score: data.data.score
-        };
-      } catch {
-        return { coverUrl: '', score: null };
-      }
-    },
-    async fetchCovers(animeList) {
-      for (const anime of animeList) {
-        const { coverUrl, score } = await this.getAnimeCoverAndScore(anime.malLink);
-        anime.coverUrl = coverUrl;
-        anime.malScore = score;
-      }
-    },
     async fetchAnimes() {
       try {
         const finishedRes = await ProjService.getAllFinishedAnimes();
         this.finishedAnimes = finishedRes.data;
-        await this.fetchCovers(this.finishedAnimes);
       } catch {
         this.finishedAnimes = [];
       }
       try {
         const notFinishedRes = await ProjService.getAllNotFinishedAnimes();
         this.notFinishedAnimes = notFinishedRes.data;
-        await this.fetchCovers(this.notFinishedAnimes);
       } catch {
         this.notFinishedAnimes = [];
       }
@@ -158,6 +138,48 @@ export default {
             alert('Erreur lors de la suppression.');
           });
       }
+    },
+    incrementEpisode(anime) {
+      if (anime.currentEpisode >= anime.nbEpisodes) {
+        alert("Vous avez déjà terminé cet anime.");
+        return;
+      }
+      const updated = { ...anime, currentEpisode: anime.currentEpisode + 1 };
+      this.$options.$_ProjService.updateAnime(anime.id, updated)
+        .then(response => {
+          // Update in both lists if present
+          const updateList = list => {
+            const idx = list.findIndex(a => a.id === anime.id);
+            if (idx !== -1) list[idx] = response.data;
+          };
+          updateList(this.finishedAnimes);
+          updateList(this.notFinishedAnimes);
+          this.fetchAnimes();
+        })
+        .catch(() => {
+          alert("Erreur lors de l'incrément de l'épisode.");
+        });
+    },
+    decrementEpisode(anime) {
+      if (anime.currentEpisode <= 0) {
+        alert("L'épisode actuel ne peut pas être inférieur à 0.");
+        return;
+      }
+      const updated = { ...anime, currentEpisode: anime.currentEpisode - 1 };
+      this.$options.$_ProjService.updateAnime(anime.id, updated)
+        .then(response => {
+      // Update in both lists if present
+      const updateList = list => {
+        const idx = list.findIndex(a => a.id === anime.id);
+        if (idx !== -1) list[idx] = response.data;
+      };
+      updateList(this.finishedAnimes);
+      updateList(this.notFinishedAnimes);
+      this.fetchAnimes();
+        })
+        .catch(() => {
+      alert("Erreur lors de la décrémentation de l'épisode.");
+        });
     },
     openUpdateModal(anime) {
       this.animeToUpdate = { ...anime };
@@ -355,10 +377,17 @@ export default {
   font-style: italic;
   margin: 1rem 0;
 }
-.update-arrow {
+.plus {
   position: absolute;
   right: 48px;
   bottom: 10px;
+}
+.minus {
+  position: absolute;
+  right: 86px;
+  bottom: 10px;
+}
+.arrow {
   background: rgba(10, 130, 210, 0.75);
   color: #fff;
   border: none;
@@ -373,7 +402,7 @@ export default {
   z-index: 2;
   transition: background 0.2s;
 }
-.update-arrow:hover {
+.arrow:hover {
   background: #5ea7db;
 }
 .delete-cross {

@@ -22,6 +22,12 @@ public class Anime {
     @Column(name = "mal_link", nullable = false)
     private String malLink;
 
+    @Column(name = "cover_url")
+    private String coverUrl;
+
+    @Column(name = "mal_score")
+    private double malScore;
+
     public Anime() {
     }
 
@@ -62,6 +68,18 @@ public class Anime {
     public void setMalLink(String malLink) {
         this.malLink = malLink;
     }
+    public String getCoverUrl() {
+        return coverUrl;
+    }
+    public void setCoverUrl(String coverUrl) {
+        this.coverUrl = coverUrl;
+    }
+    public double getMalScore() {
+        return malScore;
+    }
+    public void setMalScore(double malScore) {
+        this.malScore = malScore;
+    }
 
     @Override
     public String toString() {
@@ -71,6 +89,8 @@ public class Anime {
                 ", nbEpisodes=" + nbEpisodes +
                 ", currentEpisode=" + currentEpisode +
                 ", malLink='" + malLink + '\'' +
+                ", coverImage='" + coverUrl + '\'' +
+                ", malScore=" + malScore +
                 '}';
     }
 }

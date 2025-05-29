@@ -67,7 +67,56 @@ public class AnimeController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Anime> createAnime(@RequestBody Anime anime) {
         try {
-            Anime newAnime = animeRepository.save(new Anime(anime.getName(), anime.getNbEpisodes(), anime.getCurrentEpisode(), anime.getMalLink()));
+            Anime newAnime = new Anime(anime.getName(), anime.getNbEpisodes(), anime.getCurrentEpisode(), anime.getMalLink());
+            if (anime.getMalLink() != null && !anime.getMalLink().isEmpty()) {
+                try {
+                    // Extract MAL ID from the malLink (e.g., https://myanimelist.net/anime/5114/Fullmetal_Alchemist__Brotherhood)
+                    String[] parts = anime.getMalLink().split("/");
+                    String malId = null;
+                    for (int i = 0; i < parts.length; i++) {
+                        if (parts[i].equals("anime") && i + 1 < parts.length) {
+                            malId = parts[i + 1];
+                            break;
+                        }
+                    }
+                    if (malId != null) {
+                        // Fetch from Jikan API
+                        java.net.URL url = new java.net.URL("https://api.jikan.moe/v4/anime/" + malId);
+                        java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+                        conn.setRequestMethod("GET");
+                        conn.setConnectTimeout(3000);
+                        conn.setReadTimeout(3000);
+
+                        int status = conn.getResponseCode();
+                        if (status == 200) {
+                            java.io.InputStream is = conn.getInputStream();
+                            java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+                            String response = s.hasNext() ? s.next() : "";
+                            s.close();
+                            is.close();
+
+                            // Parse JSON
+                            com.fasterxml.jackson.databind.JsonNode root = new com.fasterxml.jackson.databind.ObjectMapper().readTree(response);
+                            com.fasterxml.jackson.databind.JsonNode data = root.get("data");
+                            if (data != null) {
+                                // coverUrl
+                                com.fasterxml.jackson.databind.JsonNode images = data.get("images");
+                                if (images != null && images.get("jpg") != null && images.get("jpg").get("large_image_url") != null) {
+                                    newAnime.setCoverUrl(images.get("jpg").get("large_image_url").asText());
+                                }
+                                // malScore
+                                if (data.get("score") != null && !data.get("score").isNull()) {
+                                    newAnime.setMalScore(data.get("score").asDouble());
+                                }
+                            }
+                        }
+                        conn.disconnect();
+                    }
+                } catch (Exception ex) {
+                    // Ignore errors from Jikan API, proceed without coverUrl/malScore
+                }
+            }
+            animeRepository.save(newAnime);
             return new ResponseEntity<>(newAnime, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
