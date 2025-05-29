@@ -24,6 +24,26 @@ class EventService {
   updateEvent(id, event) {
     return http.put(`/event/${id}`, event);
   }
+
+  formatEventType(eventType) {
+    const frenchMap = {
+      PROJO: '📺 Projo',
+      LESSON: '📖 Leçon',
+      COOKING: '🍳 Cuisine',
+      KARAOKE: '🎤 Karaoke'
+    }
+    return frenchMap[eventType] || 'Autre'
+  }
+
+  colorEvent(eventType) {
+    const colorMap = {
+      PROJO: '#f6e6fa',
+      LESSON: '#e0f7fa',
+      COOKING: '#fff9c4',
+      KARAOKE: '#e0ffe0'
+    }
+    return colorMap[eventType] || '#cccccc'
+  }
 }
 
 export default new EventService();

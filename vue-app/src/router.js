@@ -53,6 +53,11 @@ const routes =  [
     name: "photos",
     component: () => import("./components/Photos.vue")
   },
+  {  
+    path: "/event/:id",
+    name: "event",
+    component: () => import("./components/Event.vue")
+  },
   {
     path: "/tutorials",
     name: "tutorials",
