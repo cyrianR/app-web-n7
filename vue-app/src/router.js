@@ -49,6 +49,11 @@ const routes =  [
     name: "photos",
     component: () => import("./components/Photos.vue")
   },
+  {  
+    path: "/karaoke",
+    name: "karaoke",
+    component: () => import("./components/Song.vue")
+  },
   {
     path: "/tutorials",
     name: "tutorials",
