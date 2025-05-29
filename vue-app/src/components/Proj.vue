@@ -1,7 +1,6 @@
 <template>
   <div class="anime-gallery">
-    <h2>Prochaines projections</h2>
-    
+    <EventTypedList eventType="PROJO" class="mb-3" />
     <h2>Anime en cours</h2>
     <div class="gallery-section">
       <div v-if="notFinishedAnimes.length === 0" class="empty-msg">No ongoing anime.</div>
@@ -77,9 +76,13 @@
 
 <script>
 import ProjService from '../services/ProjService';
+import EventTypedList from './EventTypedList.vue';
 
 export default {
   name: 'Proj',
+  components: {
+    EventTypedList
+  },
   data() {
     return {
       finishedAnimes: [],
