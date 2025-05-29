@@ -11,6 +11,17 @@ export default {
     };
   },
 
+  computed: {
+    isAdmin() {
+      return (
+        this.user.roles.includes("ROLE_ADMIN") ||
+        (this.user.roles.includes("ROLE_LESSON_ADMIN") && this.event.type === "LESSON") ||
+        (this.user.roles.includes("ROLE_KAROKE_ADMIN") && this.event.type === "KAROKE") ||
+        (this.user.roles.includes("ROLE_PROJ_ADMIN") && this.event.type === "PROJO")
+      );
+    }
+  },
+
   created() {
     this.retrieveEvent();
     this.retrieveUserLike();
@@ -68,6 +79,10 @@ export default {
       }
     },
 
+    updateEvent() {
+
+    },
+
     getFormattedEventType(eventType) {
       return EventService.formatEventType(eventType);
     },
@@ -94,15 +109,19 @@ export default {
 <div class="d-flex justify-content-center align-items-start">
   <div class="col-12 col-md-8 col-lg-10">
     <div class="card">
-        <h3 class="card-header" :style="{ backgroundColor: getColorForEventType(event.eventType) }">
-          {{ getFormattedEventType(event.eventType) }} 
-        </h3>
+        <div class="card-header" :style="{ backgroundColor: getColorForEventType(event.eventType) }">
+        <h3 class="m-0"> {{ getFormattedEventType(event.eventType) }} </h3>
+        <div v-if="isAdmin" class="position-absolute" style="top: 0.5rem; right: 0.5rem;">
+          <button @click="changeLike" class="btn btn-primary">
+            <i class="bi bi-pencil-square"></i>
+          </button>
+        </div>
+        </div>
         <div class="card-body text-start">
           <h5 class="card-title"> {{ event.name }}</h5>  
           <p class="card-text">{{ event.description }}</p>
           <div class="d-flex justify-content-between align-items-center">
             <div>
-              
               <button @click="changeLike" class="btn">
                 <i class="bi bi-heart-fill text-danger me-1" v-if="liked"></i>
                 <i class="bi bi-heart me-1" v-else></i>

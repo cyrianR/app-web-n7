@@ -116,7 +116,7 @@ public class EventController {
 
     // Update an event
     @PutMapping("/event/{id}")
-    public ResponseEntity<Event> updateEvent(@PathVariable("id") long id, @RequestBody EventDTO event) {
+    public ResponseEntity<EventDTO> updateEvent(@PathVariable("id") long id, @RequestBody EventDTO event) {
         Optional<Event> eventData = eventRepository.findById(id);
 
         if (eventData.isPresent()) {
@@ -125,7 +125,7 @@ public class EventController {
             _event.setDate(event.getDate());
             _event.setEventType(event.getEventType());
             _event.setDescription(event.getDescription());
-            return new ResponseEntity<>(eventRepository.save(_event), HttpStatus.OK);
+            return new ResponseEntity<>(EventMapper.toResponse(eventRepository.save(_event)), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
