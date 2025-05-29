@@ -139,7 +139,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
         uniqueUsername = "adminKaraoke";
         uniqueEmail = faker.internet().emailAddress(uniqueUsername);
         adminUser = new User(uniqueUsername, uniqueEmail, encoder.encode("admin123"));
-        adminRole = roleRepo.findByName(ERole.ROLE_KAROAKE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role KAROKE_ADMIN is not found during seeding."));
+        adminRole = roleRepo.findByName(ERole.ROLE_KARAOKE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role KAROAKE_ADMIN is not found during seeding."));
         adminUser.addRole(adminRole);
         userRepo.save(adminUser);
 
