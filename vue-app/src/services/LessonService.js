@@ -13,10 +13,6 @@ class LessonService {
     return http.get(`/lesson/title/${title}`);
   }
 
-  create(lesson) {
-    return http.post("/lesson", lesson);
-  }
-
   createFull(lesson) {
     return http.post("/lesson/full", lesson);
   }
