@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.time.format.DateTimeFormatter;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.n7.spring_boot_api.model.Event;
+import fr.n7.spring_boot_api.model.EventType;
 import fr.n7.spring_boot_api.repository.EventRepository;
 import fr.n7.spring_boot_api.payload.EventDTO;
 import fr.n7.spring_boot_api.payload.EventMapper;
@@ -85,6 +87,35 @@ public class EventController {
         } catch (DateTimeParseException e) {
             System.out.println(e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Get all future events of a specific type
+    @GetMapping("/event/future")
+    public ResponseEntity<List<EventDTO>> getFutureEventsByType(@RequestParam String eventType) {
+        try {
+            ZoneId zone = ZoneId.systemDefault();
+            ZonedDateTime now = ZonedDateTime.now(zone);
+
+            fr.n7.spring_boot_api.model.EventType type = fr.n7.spring_boot_api.model.EventType.valueOf(eventType);
+            List<Event> events = eventRepository.findByEventTypeAndDateAfter(type, now);
+
+            if (events.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            List<EventDTO> eventResponses = events.stream()
+            .map(EventMapper::toResponse)
+            .collect(Collectors.toList());
+
+            // Take the first 5 events
+            if (eventResponses.size() > 5) {
+                eventResponses = eventResponses.subList(0, 5);
+            }
+
+            return new ResponseEntity<>(eventResponses, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

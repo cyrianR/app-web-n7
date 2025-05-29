@@ -9,6 +9,10 @@ class EventService {
     return http.get(`/event/between?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`)
   }
 
+  getFutureEvents(eventType) {
+    return http.get(`/event/future?eventType=${encodeURIComponent(eventType)}`);
+  }
+
   getById(id) {
     return http.get(`/event/${id}`);
   }

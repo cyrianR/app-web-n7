@@ -1,5 +1,6 @@
 <template>
   <div>
+    <EventTypedList eventType="LESSON" class="mb-3" />
     <h2>Liste des Leçons</h2>
     <div v-if="isAdmin" class="add-lesson-form">
       <h3>Ajouter une leçon</h3>
@@ -83,9 +84,13 @@
 
 <script>
 import LessonService from "../services/LessonService";
+import EventTypedList from './EventTypedList.vue';
 
 export default {
   name: "LessonList",
+  components: {
+    EventTypedList
+  },
   data() {
     return {
       lessons: [],
