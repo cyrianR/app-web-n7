@@ -32,8 +32,8 @@ class EventService {
   formatEventType(eventType) {
     const frenchMap = {
       PROJO: '📺 Projo',
-      LESSON: '📖 Leçon',
-      COOKING: '🍳 Cuisine',
+      LESSON: '📖 Cours',
+      COOKING: '🍳 Atelier cuisine',
       KARAOKE: '🎤 Karaoke'
     }
     return frenchMap[eventType] || 'Autre'
