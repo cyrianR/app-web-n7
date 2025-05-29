@@ -114,6 +114,7 @@ public class AnimeController {
                     }
                 } catch (Exception ex) {
                     // Ignore errors from Jikan API, proceed without coverUrl/malScore
+                    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             }
             animeRepository.save(newAnime);
