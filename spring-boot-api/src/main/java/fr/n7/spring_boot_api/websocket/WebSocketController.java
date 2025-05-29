@@ -4,6 +4,7 @@ import fr.n7.spring_boot_api.payload.response.RoleUpdateResponse;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 @Controller
 public class WebSocketController {

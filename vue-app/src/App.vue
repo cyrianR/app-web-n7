@@ -13,7 +13,6 @@ export default {
     // Connect to WebSocket and listen for role updates
     WebSocketService.connect();
     WebSocketService.subscribeToRoleUpdates((message) => {
-      console.log("Role update received:", message);
       if (message.userId === this.$store.state.auth.user.id) {
         // Update roles
         this.updateRoles(message.roles);

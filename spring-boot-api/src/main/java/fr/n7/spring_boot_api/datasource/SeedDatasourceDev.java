@@ -1,6 +1,5 @@
 package fr.n7.spring_boot_api.datasource;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
