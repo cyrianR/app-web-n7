@@ -36,7 +36,7 @@ class EventService {
       COOKING: '🍳 Atelier cuisine',
       KARAOKE: '🎤 Karaoke'
     }
-    return frenchMap[eventType] || 'Autre'
+    return frenchMap[eventType] || 'Aucun évènement'
   }
 
   colorEvent(eventType) {

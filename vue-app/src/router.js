@@ -4,7 +4,7 @@ import store from "./store";
 const routes =  [
   {
     path: "/",
-    name: "accueil",
+    name: "home",
     component: () => import("./components/Welcome.vue")
   },
   {
