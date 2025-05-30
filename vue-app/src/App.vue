@@ -40,7 +40,7 @@ export default {
   <div id="app p-0" class="d-flex flex-column min-vh-100">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light bg-opacity-75">
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid mx-3">
         <router-link to="/" class="navbar-brand">
           <img src="/img/logo_clean_saisons_rond.png" width="50" height="50" alt="">
@@ -91,7 +91,7 @@ export default {
                   <router-link to="/adminboard" class="dropdown-item">Zone admin</router-link>
                 </li>
                 <li v-if="isLoggedIn">
-                  <button @click="logout" class="dropdown-item">Se déconnecter</button>
+                  <button @click="logout" id="disconnect" class="dropdown-item">Se déconnecter</button>
                 </li>
                 <div v-else>
                   <li class="nav-item">
@@ -173,6 +173,12 @@ export default {
   font-size: 22px !important;
 }
 
+#disconnect:active,
+#disconnect.active,
+#disconnect:focus {
+  --bs-dropdown-link-active-bg: #b51212;
+}
+
 .page-content {
   padding-top: 6rem;
   max-width: 1200px;
@@ -182,5 +188,16 @@ export default {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+}
+
+nav {
+  background-color: rgba(248, 249, 250, 0.75) !important; /* Bootstrap's bg-light with 75% opacity */
+  transition: background-color 0.3s;
+}
+
+@media (max-width: 991.98px) {
+  nav {
+    background-color: #f8f9fa !important; /* Bootstrap's bg-light with 100% opacity */
+  }
 }
 </style>

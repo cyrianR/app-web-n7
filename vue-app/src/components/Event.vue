@@ -202,8 +202,8 @@ export default {
             <input v-model="newEvent.description" class="form-control mb-2" placeholder="Description" required />
           </div>
           <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Enregistrer</button>
             <button type="button" @click="closeUpdateModal" class="btn btn-secondary">Annuler</button>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
           </div>
         </form>
       </div>

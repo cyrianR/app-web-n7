@@ -30,8 +30,8 @@
             </span>
           </td>
           <td>
-            <button @click="deleteUser(user.id)" class="btn btn-danger btn-sm me-2">Supprimer</button>
-            <button @click="openRoleModal(user)" class="btn btn-warning btn-sm">Changer Rôles</button>
+            <button @click="openRoleModal(user)" class="btn btn-warning btn-sm me-2">Changer Rôles</button>
+            <button @click="deleteUser(user.id)" class="btn btn-danger btn-sm">Supprimer</button>
           </td>
         </tr>
       </tbody>
@@ -52,8 +52,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="closeRoleModal">Cancel</button>
-            <button type="button" class="btn btn-primary" @click="updateRoles">Save Changes</button>
+            <button type="button" class="btn btn-secondary" @click="closeRoleModal">Annuler</button>
+            <button type="button" class="btn btn-primary" @click="updateRoles">Enregistrer</button>
           </div>
         </div>
       </div>
@@ -71,7 +71,7 @@ export default {
       searchQuery: "", // Search query for filtering users
       selectedUser: null, // User selected for role update
       selectedRoles: [], // Roles selected for the user
-      availableRoles: ["ROLE_LESSON_ADMIN", "ROLE_KARAOKE_ADMIN", "ROLE_ADMIN", "ROLE_MEMBER", "ROLE_EXTERN", "ROLE_PROJ_ADMIN"], // Available roles
+      availableRoles: ["ROLE_ADMIN", "ROLE_LESSON_ADMIN", "ROLE_KARAOKE_ADMIN", "ROLE_PROJ_ADMIN",  "ROLE_MEMBER", "ROLE_EXTERN"], // Available roles
     };
   },
   created() {
@@ -91,7 +91,7 @@ export default {
 
     // Delete a user
     deleteUser(id) {
-      if (confirm("Are you sure you want to delete this user?")) {
+      if (confirm("Êtes-vous certain de vouloir supprimer cet utilisateur ?")) {
         UserService.delete(id)
           .then(() => {
             this.fetchUsers(); // Refresh the user list
