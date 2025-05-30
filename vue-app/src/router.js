@@ -68,6 +68,11 @@ const routes =  [
     name: "post",
     component: () => import("./components/Post.vue")
   },
+  {  
+    path: "/post/new",
+    name: "post",
+    component: () => import("./components/NewPost.vue")
+  },
   {
     path: "/tutorials",
     name: "tutorials",

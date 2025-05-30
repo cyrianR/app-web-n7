@@ -116,7 +116,7 @@ export default {
               </a>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                 <li>
-                  <router-link to="" class="dropdown-item">Post</router-link>
+                  <router-link to="/post/new" class="dropdown-item">Post</router-link>
                 </li>
                 <li>
                   <router-link to="" class="dropdown-item">Évènement</router-link>
