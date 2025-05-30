@@ -16,7 +16,8 @@ const routes =  [
   {
     path: "/agenda",
     name: "agenda",
-    component: () => import("./components/Agenda.vue")
+    component: () => import("./components/Agenda.vue"),
+    meta: { roles: ["ROLE_MEMBER"] }
   },
   {
     path: "/profile",
@@ -26,17 +27,20 @@ const routes =  [
   {
     path: "/lesson",
     name: "lesson",
-    component: () => import("./components/Lesson.vue")
+    component: () => import("./components/Lesson.vue"),
+    meta: { roles: ["ROLE_MEMBER"] }
   },
   {
     path: "/proj",
     name: "proj",
-    component: () => import("./components/Proj.vue")
+    component: () => import("./components/Proj.vue"),
+    meta: { roles: ["ROLE_MEMBER"] }
   },
   {
     path: "/cooking",
     name: "cooking",
-    component: () => import("./components/Cooking.vue")
+    component: () => import("./components/Cooking.vue"),
+    meta: { roles: ["ROLE_MEMBER"] }
   },
   {
     path: "/login",
@@ -56,17 +60,20 @@ const routes =  [
   {  
     path: "/photos",
     name: "photos",
-    component: () => import("./components/Photos.vue")
+    component: () => import("./components/Photos.vue"),
+    meta: { roles: ["ROLE_MEMBER"] }
   },
   {  
     path: "/event/new",
     name: "event-new",
-    component: () => import("./components/EventCreation.vue")
+    component: () => import("./components/EventCreation.vue"),
+    meta: { roles: ["ROLE_ADMIN", "ROLE_LESSON_ADMIN", "ROLE_KARAOKE_ADMIN", "ROLE_PROJ_ADMIN", "ROLE_COOKING_ADMIN"] }
   },
   {  
     path: "/event/:id",
     name: "event-details",
-    component: () => import("./components/Event.vue")
+    component: () => import("./components/Event.vue"),
+    meta: { roles: ["ROLE_MEMBER"] }
   },
   {
     path: "/tutorials",
@@ -105,7 +112,7 @@ router.beforeEach((to, from, next) => {
     const hasAccess = user.roles.some(role => requiredRoles.includes(role));
     if (!hasAccess) {
       // If user does not have the required role, redirect to home
-      alert('You do not have access to this page.');
+      alert("Tu n'as pas un rôle suffisant pour accéder à cette page.");
       return next('/');
     }
   }
