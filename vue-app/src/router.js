@@ -58,6 +58,11 @@ const routes =  [
     name: "event",
     component: () => import("./components/Event.vue")
   },
+  {  
+    path: "/post/:id",
+    name: "post",
+    component: () => import("./components/Post.vue")
+  },
   {
     path: "/tutorials",
     name: "tutorials",

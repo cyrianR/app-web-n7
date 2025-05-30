@@ -69,7 +69,7 @@ public class PostController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Post> createPost(@RequestBody Post post) {
         try {
-            Post _post = postRepository.save(new Post(post.getDescription(), post.getDate(), post.getAuthor()));
+            Post _post = postRepository.save(new Post(post.getDescription(), post.getDate(), post.getTitle(), post.getAuthor()));
             return new ResponseEntity<>(_post, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -88,6 +88,7 @@ public class PostController {
             _post.setAuthor(post.getAuthor());
             _post.setEvents(post.getEvents());
             _post.setDescription(post.getDescription());
+            _post.setTitle(post.getTitle());
             return new ResponseEntity<>(postRepository.save(_post), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

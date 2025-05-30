@@ -24,6 +24,10 @@ class PostService {
   updatePost(post) {
     return http.put(`/post/${id}`, post);
   }
+
+  createPost(post) {
+    return http.put(`/post`, post);
+  }
 }
 
 export default new PostService();

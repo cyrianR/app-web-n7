@@ -1,6 +1,8 @@
 package fr.n7.spring_boot_api.model;
 
 import jakarta.persistence.*;
+
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,8 +21,11 @@ public class Post {
     @CollectionTable(name = "post_events", joinColumns = @JoinColumn(name = "post_id"))
     private Set<Event> events = new HashSet<>();
 
-    @Column(name = "date", nullable = false)
-    private String date;
+    @Column(name = "date", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime date;
+
+    @Column(name = "title", nullable = false)
+    private String title = "";
 
     @ManyToOne
     @JoinColumn(name = "author", nullable = false)
@@ -30,9 +35,10 @@ public class Post {
     public Post() {
     }
 
-    public Post(String description, String date, User author) {
+    public Post(String description, ZonedDateTime date, String title, User author) {
         this.description = description;
         this.date = date;
+        this.title = title;
         this.author = author;
     }
 
@@ -68,20 +74,28 @@ public class Post {
         this.events.remove(event);
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     public User getAuthor() {
         return author;
     }
 
     public void setAuthor(User author) {
         this.author = author;
+    }
+
+    public ZonedDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(ZonedDateTime date) {
+        this.date = date;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @Override
