@@ -91,7 +91,7 @@ export default {
                   <router-link to="/adminboard" class="dropdown-item">Zone admin</router-link>
                 </li>
                 <li v-if="isLoggedIn">
-                  <button @click="logout" class="dropdown-item">Se déconnecter</button>
+                  <button @click="logout" id="disconnect" class="dropdown-item">Se déconnecter</button>
                 </li>
                 <div v-else>
                   <li class="nav-item">
@@ -171,6 +171,12 @@ export default {
 .bi {
   color: rgba(var(--bs-dark-rgb),var(--bs-text-opacity)) !important;
   font-size: 22px !important;
+}
+
+#disconnect:active,
+#disconnect.active,
+#disconnect:focus {
+  --bs-dropdown-link-active-bg: #b51212;
 }
 
 .page-content {
