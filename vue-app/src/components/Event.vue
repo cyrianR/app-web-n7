@@ -3,6 +3,7 @@ import EventService from '../services/EventService';
 import LikeService from '../services/LikeService';
 
 export default {
+  name: 'EventDetail',
   data() {
     return {
       event : [],
@@ -10,6 +11,7 @@ export default {
       user : this.$store.state.auth.user,
       liked : false,
       showUpdateModal : false,
+      message : '',
       availableEventTypes: ["LESSON", "KARAOKE", "PROJO", "COOKING"]
     };
   },
@@ -58,6 +60,11 @@ export default {
   created() {
     this.retrieveEvent();
     this.retrieveUserLike();
+
+    const queryMessage = this.$route.query.created;
+    if (queryMessage === 'success') {
+      this.message = 'Évènement créé avec succès.';
+    }
   },
 
   methods: {
@@ -157,7 +164,11 @@ export default {
 
 <template>
 <div class="d-flex justify-content-center align-items-start">
-
+  <div v-if="message" class="alert alert-success col-12 col-md-8 col-lg-10" role="alert">
+    {{ this.message }}
+  </div>
+</div>
+<div class="d-flex justify-content-center align-items-start">
   <!-- Event -->
   <div class="col-12 col-md-8 col-lg-10">
     <div class="card">

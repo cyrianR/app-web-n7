@@ -59,8 +59,13 @@ const routes =  [
     component: () => import("./components/Photos.vue")
   },
   {  
+    path: "/event/new",
+    name: "event-new",
+    component: () => import("./components/EventCreation.vue")
+  },
+  {  
     path: "/event/:id",
-    name: "event",
+    name: "event-details",
     component: () => import("./components/Event.vue")
   },
   {

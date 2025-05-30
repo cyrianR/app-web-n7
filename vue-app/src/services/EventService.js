@@ -22,7 +22,7 @@ class EventService {
   }
 
   addEvent(event) {
-    return http.post(`/event/`, event);
+    return http.post(`/event`, event);
   }
 
   updateEvent(id, event) {

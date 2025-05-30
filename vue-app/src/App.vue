@@ -119,7 +119,7 @@ export default {
                   <router-link to="" class="dropdown-item">Post</router-link>
                 </li>
                 <li>
-                  <router-link to="" class="dropdown-item">Évènement</router-link>
+                  <router-link to="/event/new" class="dropdown-item">Évènement</router-link>
                 </li>
               </ul>
             </li>
