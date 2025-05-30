@@ -127,46 +127,46 @@ export default {
     updateProfile() {
       let changeOccurred = false;
       // Check if the username has changed
-  const updateUsername = () => {
-    if (this.updatedUser.username !== this.user.username) {
-      return UserService.updateUsername(this.updatedUser.username)
-        .then(() => {
-          alert("Nom d'utilisateur mis à jour avec succès !");
-          changeOccurred = true;
-        })
-        .catch((error) => {
-          console.error("Erreur lors de la mise à jour du nom d'utilisateur :", error);
-          alert("Une erreur est survenue lors de la mise à jour du profil.");
-        });
-    }
-    return Promise.resolve(); // Return a resolved promise if no change
-  };
+      const updateUsername = () => {
+        if (this.updatedUser.username !== this.user.username) {
+          return UserService.updateUsername(this.updatedUser.username)
+            .then(() => {
+              alert("Nom d'utilisateur mis à jour avec succès !");
+              changeOccurred = true;
+            })
+            .catch((error) => {
+              console.error("Erreur lors de la mise à jour du nom d'utilisateur :", error);
+              alert("Une erreur est survenue lors de la mise à jour du profil.");
+            });
+        }
+        return Promise.resolve(); // Return a resolved promise if no change
+      };
 
-  // Check if the email has changed
-  const updateEmail = () => {
-    if (this.updatedUser.email !== this.user.email) {
-      return UserService.updateEmail(this.updatedUser.email)
-        .then(() => {
-          alert("Email mis à jour avec succès !");
-          changeOccurred = true;
-        })
-        .catch((error) => {
-          console.error("Erreur lors de la mise à jour de l'email :", error);
-          alert("Une erreur est survenue lors de la mise à jour du profil.");
-        });
-    }
-    return Promise.resolve(); // Return a resolved promise if no change
-  };
+      // Check if the email has changed
+      const updateEmail = () => {
+        if (this.updatedUser.email !== this.user.email) {
+          return UserService.updateEmail(this.updatedUser.email)
+            .then(() => {
+              alert("Email mis à jour avec succès !");
+              changeOccurred = true;
+            })
+            .catch((error) => {
+              console.error("Erreur lors de la mise à jour de l'email :", error);
+              alert("Une erreur est survenue lors de la mise à jour du profil.");
+            });
+        }
+        return Promise.resolve(); // Return a resolved promise if no change
+      };
 
-  // Execute updates sequentially
-  updateEmail()
-    .then(() => updateUsername())
-    .then(() => {
-      if (changeOccurred) {
-        this.$store.dispatch("auth/logout");
-        this.$router.push({ path: "/login", query: { message: "user-updated" } });
-      }
-    });
+      // Execute updates sequentially
+      updateEmail()
+        .then(() => updateUsername())
+        .then(() => {
+          if (changeOccurred) {
+            this.$store.dispatch("auth/logout");
+            this.$router.push({ path: "/login", query: { message: "user-updated" } });
+          }
+        });
     },
     changePassword() {
       if (this.passwords.newPassword !== this.passwords.confirmPassword) {

@@ -1,81 +1,101 @@
 <template>
-  <div>
-    <h2>Liste des Leçons</h2>
-    <div v-if="isAdmin" class="add-lesson-form">
-      <h3>Ajouter une leçon</h3>
-      <form @submit.prevent="addLesson">
-        <input v-model="newLesson.title" placeholder="Titre" required />
-        <input v-model="newLesson.file" placeholder="URL fichier principal" />
-        <input v-model="newLesson.vocabFile" placeholder="URL fichier vocabulaire" />
-        <input v-model="newLesson.exFile" placeholder="URL fichier exercices" />
-        <input v-model="newLesson.culturalFile" placeholder="URL fichier culturel" />
-        <button type="submit">Ajouter</button>
-      </form>
+  <div class="container my-4">
+    <EventTypedList eventType="LESSON" class="mb-3" />
+    <h2 class="mb-4">Liste des Leçons</h2>
+
+    <!-- Add Lesson Form (Admin Only) -->
+    <div v-if="isAdmin" class="card mb-4">
+      <div class="card-header">
+        <h3 class="mb-0">Ajouter une leçon</h3>
+      </div>
+      <div class="card-body">
+        <form @submit.prevent="addLesson" class="row g-2 align-items-end">
+          <div class="col-md">
+            <input v-model="newLesson.title" class="form-control" placeholder="Titre" required />
+          </div>
+          <div class="col-md">
+            <input v-model="newLesson.file" class="form-control" placeholder="URL fichier principal" />
+          </div>
+          <div class="col-md">
+            <input v-model="newLesson.vocabFile" class="form-control" placeholder="URL fichier vocabulaire" />
+          </div>
+          <div class="col-md">
+            <input v-model="newLesson.exFile" class="form-control" placeholder="URL fichier exercices" />
+          </div>
+          <div class="col-md">
+            <input v-model="newLesson.culturalFile" class="form-control" placeholder="URL fichier culturel" />
+          </div>
+          <div class="col-auto">
+            <button type="submit" class="btn btn-success">Ajouter</button>
+          </div>
+        </form>
+      </div>
     </div>
-    <div v-if="lessons.length === 0">
-      <p>Aucune leçon trouvée.</p>
+
+    <!-- No Lessons Message -->
+    <div v-if="lessons.length === 0" class="alert alert-info">
+      Aucune leçon trouvée.
     </div>
-    <ul v-else class="lesson-list">
+
+    <!-- Lessons List -->
+    <ul v-else class="list-group">
       <li
         v-for="(lesson, idx) in lessons"
         :key="lesson.id"
-        class="lesson-item"
+        class="list-group-item d-flex flex-column flex-md-row align-items-center justify-content-between"
         :draggable="isAdmin"
         @dragstart="onDragStart(idx)"
         @dragover.prevent="onDragOver(idx)"
         @drop="onDrop(idx)"
-        :class="{ dragging: dragIndex === idx }"
+        :class="{ 'opacity-50': dragIndex === idx }"
       >
-        <div class="drag-handle" v-if="isAdmin" title="Déplacer">&#9776;</div>
-        
-        <div>
-          <strong>{{ lesson.title }} :</strong>
-          &nbsp;
-          <template v-if="lesson.file">
-            <a :href="lesson.file" target="_blank" rel="noopener">Cours</a>
-          </template>
-          <template v-if="lesson.vocabFile">
-            | <a :href="lesson.vocabFile" target="_blank" rel="noopener">Vocabulaire</a>
-          </template>
-          <template v-if="lesson.exFile">
-            | <a :href="lesson.exFile" target="_blank" rel="noopener">Exercices</a>
-          </template>
-          <template v-if="lesson.culturalFile">
-            | <a :href="lesson.culturalFile" target="_blank" rel="noopener">Culture</a>
-          </template>
+        <div class="d-flex align-items-center mb-2 mb-md-0 w-100">
+          <span v-if="isAdmin" class="me-3 fs-4 text-secondary" style="cursor: grab;" title="Déplacer">&#9776;</span>
+          <div>
+            <strong>{{ lesson.title }} : </strong>
+            <template v-if="lesson.file">
+              <a :href="lesson.file" target="_blank" rel="noopener">Cours</a>
+            </template>
+            <template v-if="lesson.vocabFile">
+              | <a :href="lesson.vocabFile" target="_blank" rel="noopener">Vocabulaire</a>
+            </template>
+            <template v-if="lesson.exFile">
+              | <a :href="lesson.exFile" target="_blank" rel="noopener">Exercices</a>
+            </template>
+            <template v-if="lesson.culturalFile">
+              | <a :href="lesson.culturalFile" target="_blank" rel="noopener">Culture</a>
+            </template>
+          </div>
         </div>
-        <div class="lesson-actions" v-if="isAdmin">
-          <button
-            @click="openUpdateModal(lesson)"
-            class="update-btn btn"
-          >
-            Modifier
-          </button>
-          <button
-            @click="removeLesson(lesson.id)"
-            class="remove-btn btn"
-          >
-            Supprimer
-          </button>
+        <div v-if="isAdmin" class="d-flex gap-2 mt-2 mt-md-0">
+          <button @click="openUpdateModal(lesson)" class="btn btn-primary btn-sm">Modifier</button>
+          <button @click="removeLesson(lesson.id)" class="btn btn-danger btn-sm">Supprimer</button>
         </div>
       </li>
     </ul>
 
-    <!-- Modal de modification -->
-    <div v-if="showUpdateModal" class="modal-overlay">
-      <div class="modal-content">
-        <h3>Modifier la leçon</h3>
-        <form @submit.prevent="updateLesson">
-          <input v-model="lessonToUpdate.title" placeholder="Titre" required />
-          <input v-model="lessonToUpdate.file" placeholder="URL fichier principal" required/>
-          <input v-model="lessonToUpdate.vocabFile" placeholder="URL fichier vocabulaire" />
-          <input v-model="lessonToUpdate.exFile" placeholder="URL fichier exercices" />
-          <input v-model="lessonToUpdate.culturalFile" placeholder="URL fichier culturel" required/>
-          <div class="modal-actions">
-            <button type="submit" class="update-btn btn">Enregistrer</button>
-            <button type="button" @click="closeUpdateModal" class="remove-btn btn">Annuler</button>
+    <!-- Update Modal -->
+    <div v-if="showUpdateModal" class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,0.4);">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Modifier la leçon</h3>
+            <button type="button" class="btn-close" @click="closeUpdateModal"></button>
           </div>
-        </form>
+          <form @submit.prevent="updateLesson">
+            <div class="modal-body">
+              <input v-model="lessonToUpdate.title" class="form-control mb-2" placeholder="Titre" required />
+              <input v-model="lessonToUpdate.file" class="form-control mb-2" placeholder="URL fichier principal" required />
+              <input v-model="lessonToUpdate.vocabFile" class="form-control mb-2" placeholder="URL fichier vocabulaire" />
+              <input v-model="lessonToUpdate.exFile" class="form-control mb-2" placeholder="URL fichier exercices" />
+              <input v-model="lessonToUpdate.culturalFile" class="form-control mb-2" placeholder="URL fichier culturel" required />
+            </div>
+            <div class="modal-footer">
+              <button type="button" @click="closeUpdateModal" class="btn btn-secondary">Annuler</button>
+              <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -83,9 +103,13 @@
 
 <script>
 import LessonService from "../services/LessonService";
+import EventTypedList from './EventTypedList.vue';
 
 export default {
   name: "LessonList",
+  components: {
+    EventTypedList
+  },
   data() {
     return {
       lessons: [],
@@ -162,7 +186,7 @@ export default {
         alert("Le fichier culturel est obligatoire.");
         return;
       }
-      LessonService.create(this.newLesson)
+      LessonService.createFull(this.newLesson)
         .then(response => {
           this.lessons.push(response.data);
           this.newLesson = {
@@ -261,102 +285,7 @@ export default {
 </script>
 
 <style scoped>
-.lesson-list {
-  list-style-type: none;
-  padding: 0;
-}
-.lesson-item {
-  border: 1px solid #ccc;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-radius: 5px;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  cursor: grab;
-  position: relative;
-}
-.lesson-item.dragging {
+.opacity-50 {
   opacity: 0.5;
-}
-.drag-handle {
-  cursor: grab;
-  font-size: 1.5em;
-  margin-right: 0.7em;
-  user-select: none;
-  display: inline-block;
-}
-.lesson-actions {
-  display: flex;
-  gap: 0.5em;
-  margin-top: 0.5em;
-  justify-content: center;
-}
-.remove-btn {
-  background: #e74c3c;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-.remove-btn:hover {
-  background: #c0392b;
-}
-.update-btn {
-  background: #2980b9;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-.update-btn:hover {
-  background: #1c5d8c;
-}
-.add-lesson-form {
-  margin-bottom: 2em;
-  padding: 1em;
-  border: 1px solid #b3b3b3;
-  border-radius: 5px;
-  background: #f8f8f8;
-}
-.add-lesson-form input {
-  margin-right: 0.5em;
-  margin-bottom: 0.5em;
-  padding: 0.3em;
-}
-.add-lesson-form button {
-  background: #27ae60;
-  color: white;
-  border: none;
-  padding: 0.5em 1em;
-  border-radius: 7px;
-  cursor: pointer;
-}
-.add-lesson-form button:hover {
-  background: #219150;
-}
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-.modal-content {
-  background: white;
-  padding: 2em;
-  border-radius: 8px;
-  min-width: 300px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-.modal-content input {
-  margin-bottom: 1em;
-  width: 100%;
-  padding: 0.5em;
-}
-.modal-actions {
-  display: flex;
-  gap: 0.5em;
-  justify-content: center;
 }
 </style>

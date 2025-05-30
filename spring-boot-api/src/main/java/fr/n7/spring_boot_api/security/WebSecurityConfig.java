@@ -78,6 +78,7 @@ public class WebSecurityConfig {
             .authorizeHttpRequests(auth -> 
                 auth.requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/error").hasAnyRole("ADMIN")
+                    .requestMatchers("/ws/**").permitAll()
                     // TODO : add request matcher for api documentation
                     .anyRequest().authenticated()
             );

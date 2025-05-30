@@ -84,18 +84,6 @@ public class LessonController {
         }
     }
 
-    // Create a new lesson (without vocab and ex files)
-    @PostMapping("/lesson")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('LESSON_ADMIN')")
-    public ResponseEntity<Lesson> createLesson(@RequestBody Lesson lesson) {
-        try {
-            Lesson newLesson = lessonRepository.save(new Lesson(lesson.getTitle(), lesson.getFile(), lesson.getCulturalFile()));
-            return new ResponseEntity<>(newLesson, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     // Create a new lesson (with everything)
     @PostMapping("/lesson/full")
     @PreAuthorize("hasRole('ADMIN') or hasRole('LESSON_ADMIN')")

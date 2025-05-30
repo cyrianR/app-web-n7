@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.time.format.DateTimeFormatter;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.n7.spring_boot_api.model.Event;
+import fr.n7.spring_boot_api.model.EventType;
 import fr.n7.spring_boot_api.repository.EventRepository;
 import fr.n7.spring_boot_api.payload.EventDTO;
 import fr.n7.spring_boot_api.payload.EventMapper;
@@ -90,6 +92,35 @@ public class EventController {
         }
     }
 
+    // Get all future events of a specific type
+    @GetMapping("/event/future")
+    public ResponseEntity<List<EventDTO>> getFutureEventsByType(@RequestParam String eventType) {
+        try {
+            ZoneId zone = ZoneId.systemDefault();
+            ZonedDateTime now = ZonedDateTime.now(zone);
+
+            fr.n7.spring_boot_api.model.EventType type = fr.n7.spring_boot_api.model.EventType.valueOf(eventType);
+            List<Event> events = eventRepository.findByEventTypeAndDateAfter(type, now);
+
+            if (events.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            List<EventDTO> eventResponses = events.stream()
+            .map(EventMapper::toResponse)
+            .collect(Collectors.toList());
+
+            // Take the first 5 events
+            if (eventResponses.size() > 5) {
+                eventResponses = eventResponses.subList(0, 5);
+            }
+
+            return new ResponseEntity<>(eventResponses, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     // Get event by ID
     @GetMapping("/event/{id}")
     public ResponseEntity<EventDTO> getEventById(@PathVariable("id") long id) {
@@ -116,7 +147,7 @@ public class EventController {
 
     // Update an event
     @PutMapping("/event/{id}")
-    public ResponseEntity<Event> updateEvent(@PathVariable("id") long id, @RequestBody EventDTO event) {
+    public ResponseEntity<EventDTO> updateEvent(@PathVariable("id") long id, @RequestBody EventDTO event) {
         Optional<Event> eventData = eventRepository.findById(id);
 
         if (eventData.isPresent()) {
@@ -125,7 +156,7 @@ public class EventController {
             _event.setDate(event.getDate());
             _event.setEventType(event.getEventType());
             _event.setDescription(event.getDescription());
-            return new ResponseEntity<>(eventRepository.save(_event), HttpStatus.OK);
+            return new ResponseEntity<>(EventMapper.toResponse(eventRepository.save(_event)), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
