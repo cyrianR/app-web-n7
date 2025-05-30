@@ -3,6 +3,7 @@ import EventService from '../services/EventService';
 import LikeService from '../services/LikeService';
 
 export default {
+  name: 'EventDetail',
   data() {
     return {
       event : [],
@@ -10,6 +11,7 @@ export default {
       user : this.$store.state.auth.user,
       liked : false,
       showUpdateModal : false,
+      message : '',
       availableEventTypes: ["LESSON", "KARAOKE", "PROJO", "COOKING"]
     };
   },
@@ -47,12 +49,22 @@ export default {
         const local = new Date(val);
         this.newEvent.date = local.toISOString().slice(0, 19) + 'Z';
       }
+    },
+
+    descriptionRows() {
+      const desc = this.newEvent.description || '';
+      return Math.max(desc.split('\n').length, 3);
     }
   },
 
   created() {
     this.retrieveEvent();
     this.retrieveUserLike();
+
+    const queryMessage = this.$route.query.created;
+    if (queryMessage === 'success') {
+      this.message = 'Évènement créé avec succès.';
+    }
   },
 
   methods: {
@@ -152,7 +164,11 @@ export default {
 
 <template>
 <div class="d-flex justify-content-center align-items-start">
-
+  <div v-if="message" class="alert alert-success col-12 col-md-8 col-lg-10" role="alert">
+    {{ this.message }}
+  </div>
+</div>
+<div class="d-flex justify-content-center align-items-start">
   <!-- Event -->
   <div class="col-12 col-md-8 col-lg-10">
     <div class="card">
@@ -166,7 +182,7 @@ export default {
         </div>
         <div class="card-body text-start">
           <h5 class="card-title"> {{ event.name }}</h5>  
-          <p class="card-text">{{ event.description }}</p>
+          <p class="card-text" style="white-space: pre-line;">{{ event.description }}</p>
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <button @click="changeLike" class="btn">
@@ -199,7 +215,7 @@ export default {
                 {{ type }}
               </option>
             </select>
-            <input v-model="newEvent.description" class="form-control mb-2" placeholder="Description" required />
+            <textarea v-model="newEvent.description" class="form-control mb-2" placeholder="Description" :rows="descriptionRows" required></textarea>
           </div>
           <div class="modal-footer">
             <button type="button" @click="closeUpdateModal" class="btn btn-secondary">Annuler</button>
