@@ -8,31 +8,42 @@ export default {
       newEvent: {
         name: '',
         date: '',
-        eventType: 'LESSON',
+        eventType: '',
         description: ''
       },
       user: this.$store.state.auth.user,
-      availableEventTypes: ["LESSON", "KARAOKE", "PROJO", "COOKING"],
+      availableEventTypes: [],
       submissionError: null
     };
   },
 
   created() {
-    if (this.user.roles.includes("ROLE_KARAOKE_ADMIN")) {
-      this.newEvent.eventType = "KARAOKE";
-    } else if (this.user.roles.includes("ROLE_LESSON_ADMIN")) {
+    // Add available event types based on user roles
+    if (this.user.roles.includes("ROLE_ADMIN")) {
+      this.availableEventTypes = ["LESSON", "KARAOKE", "PROJO", "COOKING"];
       this.newEvent.eventType = "LESSON";
-    } else if (this.user.roles.includes("ROLE_PROJ_ADMIN")) {
-      this.newEvent.eventType = "PROJO";
-    } else if (this.user.roles.includes("ROLE_COOKING_ADMIN")) {
-      this.newEvent.eventType = "COOKING";
+    }
+    else {
+      if (this.user.roles.includes("ROLE_KARAOKE_ADMIN")) {
+        this.availableEventTypes.push("KARAOKE");
+        this.newEvent.eventType = "KARAOKE";
+      }
+      if (this.user.roles.includes("ROLE_LESSON_ADMIN")) {
+        this.availableEventTypes.push("LESSON");
+        this.newEvent.eventType = "LESSON";
+      }
+      if (this.user.roles.includes("ROLE_PROJ_ADMIN")) {
+        this.availableEventTypes.push("PROJO");
+        this.newEvent.eventType = "PROJO";
+      }
+      if (this.user.roles.includes("ROLE_COOKING_ADMIN")) {
+        this.availableEventTypes.push("COOKING");
+        this.newEvent.eventType = "COOKING";
+      }
     }
   },
   
   computed: {
-    isTheAdmin() {
-      return this.user.roles.includes("ROLE_ADMIN");
-    },
 
     localDateTime: {
       get() {
@@ -114,7 +125,7 @@ export default {
             >
           </div>
 
-          <div class="mb-3" v-if="isTheAdmin">
+          <div class="mb-3">
             <label class="form-label">Type d'évènement</label>
             <select 
               v-model="newEvent.eventType" 
