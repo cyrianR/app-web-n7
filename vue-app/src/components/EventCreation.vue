@@ -17,6 +17,18 @@ export default {
     };
   },
 
+  created() {
+    if (this.user.roles.includes("ROLE_KARAOKE_ADMIN")) {
+      this.newEvent.eventType = "KARAOKE";
+    } else if (this.user.roles.includes("ROLE_LESSON_ADMIN")) {
+      this.newEvent.eventType = "LESSON";
+    } else if (this.user.roles.includes("ROLE_PROJ_ADMIN")) {
+      this.newEvent.eventType = "PROJO";
+    } else if (this.user.roles.includes("ROLE_COOKING_ADMIN")) {
+      this.newEvent.eventType = "COOKING";
+    }
+  },
+  
   computed: {
     isTheAdmin() {
       return this.user.roles.includes("ROLE_ADMIN");

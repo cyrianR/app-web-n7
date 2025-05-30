@@ -8,8 +8,15 @@ export default {
     isLoggedIn() {
       return this.$store.state.auth.status.loggedIn;
     },
-    isAdmin() {
+    isTheAdmin() {
       return this.$store.state.auth.user.roles.includes("ROLE_ADMIN");
+    },
+    isAnAdmin() {
+      return this.$store.state.auth.user.roles.includes("ROLE_ADMIN") ||
+        this.$store.state.auth.user.roles.includes("ROLE_LESSON_ADMIN") ||
+        this.$store.state.auth.user.roles.includes("ROLE_KARAOKE_ADMIN") ||
+        this.$store.state.auth.user.roles.includes("ROLE_PROJ_ADMIN") ||
+        this.$store.state.auth.user.roles.includes("ROLE_COOKING_ADMIN");
     }
   },
   mounted() {
@@ -87,7 +94,7 @@ export default {
                 <li v-if="isLoggedIn">
                   <router-link to="/profile" class="dropdown-item">Mon profil</router-link>
                 </li>
-                <li v-if="isLoggedIn && isAdmin">
+                <li v-if="isLoggedIn && isTheAdmin">
                   <router-link to="/adminboard" class="dropdown-item">Zone admin</router-link>
                 </li>
                 <li v-if="isLoggedIn">
@@ -103,7 +110,7 @@ export default {
                 </div>
               </ul>
             </li>
-            <li v-if="isLoggedIn && isAdmin" class="nav-item dropdown ms-lg-3">
+            <li v-if="isLoggedIn && isAnAdmin" class="nav-item dropdown ms-lg-3">
               <a
                 class="nav-link"
                 href="#"
