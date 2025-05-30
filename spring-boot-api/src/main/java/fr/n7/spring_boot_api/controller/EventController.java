@@ -2,6 +2,7 @@ package fr.n7.spring_boot_api.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.time.ZoneId;
@@ -22,12 +23,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 
 import fr.n7.spring_boot_api.model.Event;
 import fr.n7.spring_boot_api.model.EventType;
+import fr.n7.spring_boot_api.model.ERole;
 import fr.n7.spring_boot_api.repository.EventRepository;
 import fr.n7.spring_boot_api.payload.EventDTO;
 import fr.n7.spring_boot_api.payload.EventMapper;
+import fr.n7.spring_boot_api.security.services.UserDetailsImpl;
 
 // filter authorized origin
 @CrossOrigin(origins = "*")
@@ -40,6 +47,7 @@ public class EventController {
 
     // Get all events with optional filter by name
     @GetMapping("/event")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<EventDTO>> getAllEvents(@RequestParam(required = false) String name) {
         try {
             List<Event> events = new ArrayList<Event>();
@@ -136,8 +144,20 @@ public class EventController {
 
     // Create a new event
     @PostMapping("/event")
-    public ResponseEntity<EventDTO> createEvent(@RequestBody EventDTO event) {
+    public ResponseEntity<EventDTO> createEvent(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody EventDTO event) {
         try {
+            Set<ERole> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .map(ERole::valueOf)
+                .collect(Collectors.toSet());
+            if (!roles.contains(ERole.ROLE_ADMIN) && 
+                !(roles.contains(ERole.ROLE_COOKING_ADMIN) && event.getEventType() == EventType.COOKING) &&
+                !(roles.contains(ERole.ROLE_KARAOKE_ADMIN) && event.getEventType() == EventType.KARAOKE) &&
+                !(roles.contains(ERole.ROLE_LESSON_ADMIN) && event.getEventType() == EventType.LESSON) &&
+                !(roles.contains(ERole.ROLE_PROJ_ADMIN) && event.getEventType() == EventType.PROJO)) {
+                return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+            }
+            
             Event _event = eventRepository.save(new Event(event.getName(), event.getDate(), event.getEventType(), event.getDescription()));
             return new ResponseEntity<>(EventMapper.toResponse(_event), HttpStatus.CREATED);
         } catch (Exception e) {
@@ -147,11 +167,25 @@ public class EventController {
 
     // Update an event
     @PutMapping("/event/{id}")
-    public ResponseEntity<EventDTO> updateEvent(@PathVariable("id") long id, @RequestBody EventDTO event) {
+    public ResponseEntity<EventDTO> updateEvent(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable("id") long id, @RequestBody EventDTO event) {
+        
         Optional<Event> eventData = eventRepository.findById(id);
 
         if (eventData.isPresent()) {
             Event _event = eventData.get();
+
+            Set<ERole> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .map(ERole::valueOf)
+                .collect(Collectors.toSet());
+            if (!roles.contains(ERole.ROLE_ADMIN) && 
+                !(roles.contains(ERole.ROLE_COOKING_ADMIN) && _event.getEventType() == EventType.COOKING) &&
+                !(roles.contains(ERole.ROLE_KARAOKE_ADMIN) && _event.getEventType() == EventType.KARAOKE) &&
+                !(roles.contains(ERole.ROLE_LESSON_ADMIN) && _event.getEventType() == EventType.LESSON) &&
+                !(roles.contains(ERole.ROLE_PROJ_ADMIN) && _event.getEventType() == EventType.PROJO)) {
+                return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+            }
+
             _event.setName(event.getName());
             _event.setDate(event.getDate());
             _event.setEventType(event.getEventType());
@@ -164,13 +198,29 @@ public class EventController {
 
     // Delete an event
     @DeleteMapping("/event/{id}")
-    public ResponseEntity<HttpStatus> deleteEvent(@PathVariable("id") long id) {
+    public ResponseEntity<HttpStatus> deleteEvent(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable("id") long id) {
+        
         try {
             // Check if event exists
             Optional<Event> eventData = eventRepository.findById(id);
             if (!eventData.isPresent()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
+
+            Event event = eventData.get();
+
+            Set<ERole> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .map(ERole::valueOf)
+                .collect(Collectors.toSet());
+            if (!roles.contains(ERole.ROLE_ADMIN) && 
+                !(roles.contains(ERole.ROLE_COOKING_ADMIN) && event.getEventType() == EventType.COOKING) &&
+                !(roles.contains(ERole.ROLE_KARAOKE_ADMIN) && event.getEventType() == EventType.KARAOKE) &&
+                !(roles.contains(ERole.ROLE_LESSON_ADMIN) && event.getEventType() == EventType.LESSON) &&
+                !(roles.contains(ERole.ROLE_PROJ_ADMIN) && event.getEventType() == EventType.PROJO)) {
+                return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+            }
+
             eventRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
