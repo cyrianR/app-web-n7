@@ -75,6 +75,18 @@ const routes =  [
     component: () => import("./components/Event.vue"),
     meta: { roles: ["ROLE_MEMBER"] }
   },
+  {  
+    path: "/post/:id",
+    name: "post-details",
+    component: () => import("./components/Post.vue"),
+    meta: { roles: ["ROLE_MEMBER"] }
+  },
+  {  
+    path: "/post/new",
+    name: "post-new",
+    component: () => import("./components/PostCreation.vue"),
+    meta: { roles: ["ROLE_ADMIN", "ROLE_LESSON_ADMIN", "ROLE_KARAOKE_ADMIN", "ROLE_PROJ_ADMIN", "ROLE_COOKING_ADMIN"] }
+  },
   {
     path: "/tutorials",
     name: "tutorials",

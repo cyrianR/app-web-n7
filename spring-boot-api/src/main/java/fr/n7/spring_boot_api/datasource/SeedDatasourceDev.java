@@ -51,7 +51,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
     int numEvents = 10;
     int numLikes = 6;
     int numLessons = 10;
-    int numPosts = 10;
+    int numPosts = 20;
 
     @Autowired
     PasswordEncoder encoder;
@@ -189,8 +189,18 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
     private void loadPostData(int numPosts) {
         List<User> users = userRepo.findAll();
+
+        ZoneId zone = ZoneId.systemDefault();
+        ZonedDateTime now = ZonedDateTime.now(zone);
+        ZonedDateTime min = now.minusDays(30);
+
+        long startEpoch = min.toEpochSecond();
+        long endEpoch = now.toEpochSecond();
+
         for (int i = 0; i < numPosts; i++) {
-            postRepo.save(new Post(faker.book().title(), faker.date().future(30, java.util.concurrent.TimeUnit.DAYS).toString(), users.get(faker.number().numberBetween(0, numUsers -1))));
+            long randomEpoch = ThreadLocalRandom.current().nextLong(startEpoch, endEpoch);
+            ZonedDateTime randomDateTime = Instant.ofEpochSecond(randomEpoch).atZone(zone);
+            postRepo.save(new Post(faker.lorem().paragraph(3), randomDateTime, faker.book().title(), users.get(faker.number().numberBetween(0, numUsers -1))));
         }
     }
 

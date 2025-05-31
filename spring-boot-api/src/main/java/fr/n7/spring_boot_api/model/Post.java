@@ -1,8 +1,12 @@
 package fr.n7.spring_boot_api.model;
 
 import jakarta.persistence.*;
+
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
+import fr.n7.spring_boot_api.payload.EventDTO;
 
 @Entity
 @Table(name = "posts")
@@ -15,12 +19,15 @@ public class Post {
     @Column(name = "description", nullable = false)
     private String description = "";
 
-    @ElementCollection(targetClass = Event.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "post_events", joinColumns = @JoinColumn(name = "post_id"))
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "post_events", joinColumns = @JoinColumn(name = "post_id"),  inverseJoinColumns = @JoinColumn(name = "event_id"))
     private Set<Event> events = new HashSet<>();
 
-    @Column(name = "date", nullable = false)
-    private String date;
+    @Column(name = "date", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime date;
+
+    @Column(name = "title", nullable = false)
+    private String title = "";
 
     @ManyToOne
     @JoinColumn(name = "author", nullable = false)
@@ -30,9 +37,10 @@ public class Post {
     public Post() {
     }
 
-    public Post(String description, String date, User author) {
+    public Post(String description, ZonedDateTime date, String title, User author) {
         this.description = description;
         this.date = date;
+        this.title = title;
         this.author = author;
     }
 
@@ -64,16 +72,8 @@ public class Post {
         this.events.add(event);
     }
 
-    public void deleteEvent(Event event){
-        this.events.remove(event);
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
+    public void clearEvents(){
+        this.events.clear();
     }
 
     public User getAuthor() {
@@ -82,6 +82,22 @@ public class Post {
 
     public void setAuthor(User author) {
         this.author = author;
+    }
+
+    public ZonedDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(ZonedDateTime date) {
+        this.date = date;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @Override
