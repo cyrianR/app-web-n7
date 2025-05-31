@@ -47,7 +47,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
     AnimeRepository animeRepo;
 
     int numTutorials = 10;
-    int numUsers = 1;
+    int numUsers = 2;
     int numEvents = 10;
     int numLikes = 6;
     int numLessons = 10;
@@ -133,6 +133,8 @@ public class SeedDatasourceDev implements CommandLineRunner{
         User adminUser = new User(uniqueUsername, uniqueEmail, encoder.encode("admin123"));
         Role adminRole = roleRepo.findByName(ERole.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role ADMIN is not found during seeding."));
         adminUser.addRole(adminRole);
+        Role userRole = roleRepo.findByName(ERole.ROLE_MEMBER).orElseThrow(() -> new RuntimeException("Error: Role MEMBER is not found during seeding."));
+        adminUser.addRole(userRole);
         userRepo.save(adminUser);
 
         // create karaoke admin
@@ -141,6 +143,8 @@ public class SeedDatasourceDev implements CommandLineRunner{
         adminUser = new User(uniqueUsername, uniqueEmail, encoder.encode("admin123"));
         adminRole = roleRepo.findByName(ERole.ROLE_KARAOKE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role KAROAKE_ADMIN is not found during seeding."));
         adminUser.addRole(adminRole);
+        userRole = roleRepo.findByName(ERole.ROLE_MEMBER).orElseThrow(() -> new RuntimeException("Error: Role MEMBER is not found during seeding."));
+        adminUser.addRole(userRole);
         userRepo.save(adminUser);
 
         // create lesson admin
@@ -149,6 +153,8 @@ public class SeedDatasourceDev implements CommandLineRunner{
         adminUser = new User(uniqueUsername, uniqueEmail, encoder.encode("admin123"));
         adminRole = roleRepo.findByName(ERole.ROLE_LESSON_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role LESSON_ADMIN is not found during seeding."));
         adminUser.addRole(adminRole);
+        userRole = roleRepo.findByName(ERole.ROLE_MEMBER).orElseThrow(() -> new RuntimeException("Error: Role MEMBER is not found during seeding."));
+        adminUser.addRole(userRole);
         userRepo.save(adminUser);
     }
 

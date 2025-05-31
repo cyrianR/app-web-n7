@@ -140,6 +140,16 @@ export default {
         });
     },
 
+    deleteEvent() {
+      EventService.delete(this.event.id)
+        .then(() => {
+          this.$router.push({ name: 'home' });
+        })
+        .catch(error => {
+          console.error("Error deleting event:", error);
+        });
+    },
+
     getFormattedEventType(eventType) {
       return EventService.formatEventType(eventType);
     },
@@ -175,8 +185,11 @@ export default {
         <div class="card-header" :style="{ backgroundColor: getColorForEventType(event.eventType) }">
         <h3 class="m-0"> {{ getFormattedEventType(event.eventType) }} </h3>
         <div v-if="isAdmin" class="position-absolute" style="top: 0.5rem; right: 0.5rem;">
-          <button @click="openUpdateModal" class="btn btn-primary">
+          <button @click="openUpdateModal" class="btn btn-primary me-1">
             <i class="bi bi-pencil-square"></i>
+          </button>
+          <button @click="deleteEvent" class="btn btn-danger">
+            <i class="bi bi-trash"></i>
           </button>
         </div>
         </div>
