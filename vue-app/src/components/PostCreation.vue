@@ -32,17 +32,11 @@ export default {
       this.newPost.author.username = this.user.username;
       this.newPost.author.id = this.user.id;
       PostService.createPost(this.newPost)
-        .then(() => {
-          this.newPost = {
-            title: "",
-            description: "",
-            date: "",
-            author: {
-              id: "",
-              username: "",
-              roles: []
-        }
-          };
+        .then(response => {
+          this.$router.push({ 
+            name: 'post-details', 
+            params: { id: response.data.id },
+          });
         })
         .catch(() => {
           alert("Erreur lors de l'ajout du post.");

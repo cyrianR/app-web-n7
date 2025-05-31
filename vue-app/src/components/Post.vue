@@ -20,12 +20,7 @@ export default {
         author: this.$store.state.auth.user,
         date: ''
       },
-      newEvent: {
-        name: '',
-        date: '',
-        eventType: '',
-        description: ''
-      },
+      newEvent: null,
       submissionError1:"",
       submissionError2:"",
       user : this.$store.state.auth.user,
@@ -92,6 +87,7 @@ export default {
     },
 
     addEvent(event) {
+        
         if (!event) {
           this.submissionError1 = "Veuillez sélectionner un événement.";
           return;
@@ -142,6 +138,14 @@ export default {
     closeUpdateModal() {
       this.showUpdateModal = false;
     },
+
+    getFormattedEventType(eventType) {
+      return EventService.formatEventType(eventType);
+    },
+
+    getColorForEventType(eventType) {
+      return EventService.colorEvent(eventType);
+    },
   }
 };
 </script>
@@ -151,26 +155,31 @@ export default {
   <div class="col-12 col-md-8 col-lg-10">
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title"> {{ post.title }}</h3> 
+        <h3 class="card-title"> {{ post.title }}</h3>
+        <div v-if="isAdmin" class="position-absolute" style="top: 0.5rem; right: 0.5rem;">
+          <button @click="openUpdateModal(post)" class="btn btn-primary me-1">
+            <i class="bi bi-pencil-square"></i>
+          </button>
+          <button @click="removePost(post.id)" class="btn btn-danger">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
       </div> 
-      <div class="card-body">
-      <h3> Evènements </h3>
-      <div v-for="event in post.events">
-        <button v-if="event" @click="ToEvent(event.id)">{{ event.name }}</button>
+      <div class="card-body text-start">
+        <div>
+          <h3> Description </h3>
+          <p class="card-text mb-2">{{ post.description }}</p>
+        </div>
+        <h3 v-if="post.events[0]"> Évènements </h3>
+        <div v-for="event in post.events">
+          <button v-if="event" @click="ToEvent(event.id)" class="btn mt-1" :style="{ backgroundColor: getColorForEventType(event.eventType) }">{{ getFormattedEventType(event.eventType) }} {{ event.name }}</button>
+        </div>
+        <div class="text-muted mt-2 text-end">
+          {{ post.author.username }} <br>
+          {{ formatDate(post.date) }}
+        </div>
       </div>
-      <div>
-        <h3> Description </h3>
-        <p class="card-text">{{ post.description }}</p>
-      </div> 
-      </div>
-      <div class="text-muted ">
-        {{ post.author.username }} <br>
-        {{ formatDate(post.date) }}
-      </div>
-    </div>
-    <div v-if="isAdmin" class="d-flex justify-content-end">
-      <button @click="openUpdateModal(post)" class="btn btn-primary btn-sm">Modifier</button>
-      <button @click="removePost(post.id)" class="btn btn-danger btn-sm">Supprimer</button>
+        
     </div>
   </div>
 </div>
@@ -186,9 +195,9 @@ export default {
         <div class="modal-body">
           <div class="mb-3">
             <select 
-            class="form-select"
-            v-model="newEvent"
-          >
+              class="form-select"
+              v-model="newEvent"
+            >
             <option 
               v-for="newevent in events" 
               :key="newevent" 
@@ -200,27 +209,28 @@ export default {
           <button
               type = 'button'
               @click="addEvent(newEvent)"  
-              class="btn btn-primary mt-1"
+              class="btn btn-primary mt-1 me-1"
             >
-              ajouter l'évènement
+              Ajouter l'évènement
+            </button>
+            <button 
+              type = 'button'
+              @click="clearEvents"
+              class="btn btn-danger mt-1"
+            >
+              Retirer les évènements
             </button>
           </div>
           <div v-if="submissionError1" class="alert alert-danger mt-1">
             {{ submissionError1 }}
           </div>
-          <button 
-            type = 'button'
-            @click="clearEvents"
-            class="btn btn-primary mt-1"
-          >
-            retirer les évènements
-          </button>
+          
           <div v-if="submissionError2" class="alert alert-danger mt-1">
             {{ submissionError2 }}
           </div>
           <div v-for="event2 in postToUpdate.events">
             <div v-if="event2">
-              <p>{{ event2.name }}</p>
+              <p class="mt-1" :style="{ backgroundColor: getColorForEventType(event2.eventType) }">{{ getFormattedEventType(event2.eventType) }} {{ event2.name }}</p>
             </div>
           </div>
           <input v-model="postToUpdate.title" class="form-control mb-2" placeholder="Titre" required />

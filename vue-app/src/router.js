@@ -78,12 +78,14 @@ const routes =  [
   {  
     path: "/post/:id",
     name: "post-details",
-    component: () => import("./components/Post.vue")
+    component: () => import("./components/Post.vue"),
+    meta: { roles: ["ROLE_MEMBER"] }
   },
   {  
     path: "/post/new",
     name: "post-new",
-    component: () => import("./components/PostCreation.vue")
+    component: () => import("./components/PostCreation.vue"),
+    meta: { roles: ["ROLE_ADMIN", "ROLE_LESSON_ADMIN", "ROLE_KARAOKE_ADMIN", "ROLE_PROJ_ADMIN", "ROLE_COOKING_ADMIN"] }
   },
   {
     path: "/tutorials",
