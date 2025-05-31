@@ -6,6 +6,8 @@ import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import fr.n7.spring_boot_api.payload.EventDTO;
+
 @Entity
 @Table(name = "posts")
 public class Post {
@@ -17,8 +19,8 @@ public class Post {
     @Column(name = "description", nullable = false)
     private String description = "";
 
-    @ElementCollection(targetClass = Event.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "post_events", joinColumns = @JoinColumn(name = "post_id"))
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "post_events", joinColumns = @JoinColumn(name = "post_id"),  inverseJoinColumns = @JoinColumn(name = "event_id"))
     private Set<Event> events = new HashSet<>();
 
     @Column(name = "date", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
@@ -70,8 +72,8 @@ public class Post {
         this.events.add(event);
     }
 
-    public void deleteEvent(Event event){
-        this.events.remove(event);
+    public void clearEvents(){
+        this.events.clear();
     }
 
     public User getAuthor() {

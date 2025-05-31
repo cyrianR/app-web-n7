@@ -70,13 +70,13 @@ const routes =  [
   },
   {  
     path: "/post/:id",
-    name: "post",
+    name: "post-details",
     component: () => import("./components/Post.vue")
   },
   {  
     path: "/post/new",
-    name: "post",
-    component: () => import("./components/NewPost.vue")
+    name: "post-new",
+    component: () => import("./components/PostCreation.vue")
   },
   {
     path: "/tutorials",

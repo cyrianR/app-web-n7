@@ -51,7 +51,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
     int numEvents = 10;
     int numLikes = 6;
     int numLessons = 10;
-    int numPosts = 10;
+    int numPosts = 20;
 
     @Autowired
     PasswordEncoder encoder;
@@ -186,10 +186,10 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
         ZoneId zone = ZoneId.systemDefault();
         ZonedDateTime now = ZonedDateTime.now(zone);
-        ZonedDateTime max = now.plusDays(30);
+        ZonedDateTime min = now.minusDays(30);
 
-        long startEpoch = now.toEpochSecond();
-        long endEpoch = max.toEpochSecond();
+        long startEpoch = min.toEpochSecond();
+        long endEpoch = now.toEpochSecond();
 
         for (int i = 0; i < numPosts; i++) {
             long randomEpoch = ThreadLocalRandom.current().nextLong(startEpoch, endEpoch);

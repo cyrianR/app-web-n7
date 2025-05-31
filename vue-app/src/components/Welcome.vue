@@ -10,35 +10,32 @@ export default {
       currentIndex: -1,
       title: "",
       userRoles: [],
-      userTimeZone: '',
-      newPost: {
-        title: "",
-        description: "",
-        date: "",
-        author: ""
-      },
+      showAll: false
     };
   },
 
   created() {
-    this.retrievePosts();
-    this.fetchUser();
-  },
-
-  computed: {
-    isAdmin() {
-      return (
-        this.userRoles.includes("ROLE_ADMIN")
-      );
-    }
+    this.retrieve10Posts();
   },
 
 
   methods: {
-    retrievePosts() {
+    retrieve10Posts() {
+      PostService.getLast10()
+        .then(response => {
+          this.posts = response.data;
+          this.showAll = false;
+        })
+        .catch(error => {
+          console.error("Error retrieving posts:", error);
+        });
+    },
+
+    fetchAllPosts() {
       PostService.getAll()
         .then(response => {
           this.posts = response.data;
+          this.showAll = true;
         })
         .catch(error => {
           console.error("Error retrieving posts:", error);
@@ -46,7 +43,7 @@ export default {
     },
 
     refreshList() {
-      this.retrievePosts();
+      this.retrieve10Posts();
       this.currentPost = null;
       this.currentIndex = -1;
     },
@@ -72,46 +69,6 @@ export default {
         return;
       }
       this.userRoles = user.roles;
-      this.newPost.author = user;
-    },
-
-    addPost() {
-      if (!this.newPost.title) {
-        alert("Le titre est obligatoire.");
-        return;
-      }
-      if (!this.newPost.description) {
-        alert("La description est obligatoire.");
-        return;
-      }
-      this.timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const now = new Date();
-      const offsetMinutes = now.getTimezoneOffset();
-      const offsetHours = Math.floor(Math.abs(offsetMinutes) / 60);
-      const offsetMins = Math.abs(offsetMinutes) % 60;
-      const sign = offsetMinutes > 0 ? '-' : '+';
-      const pad = n => n.toString().padStart(2, '0');
-      const offsetString = `${sign}${pad(offsetHours)}:${pad(offsetMins)}`;
-      const localISO = now.toISOString().slice(0, -1);
-      this.newPost.date = `${localISO}${offsetString}`;
-      alert(this.newPost.description);
-      alert(this.newPost.title);
-      alert(this.newPost.date);
-      alert(this.newPost.author.username);
-      PostService.createPost(this.newPost)
-        .then(response => {
-          this.posts.push(response.data);
-          this.newPost = {
-            title: "",
-            description: "",
-            date: "",
-            author: ""
-          };
-          this.retrievePosts();
-        })
-        .catch(() => {
-          alert("Erreur lors de l'ajout du post.");
-        });
     },
 
   },
@@ -131,20 +88,6 @@ export default {
   </div>
 
   <img src="/img/welcome.jpg" class="img-fluid rounded mx-auto d-block" alt="Image du club">
-  <div v-if="isAdmin" class="add-post-form">
-    <h3>Ajouter un post</h3>
-    <form @submit.prevent="addPost">
-      <input v-model="newPost.title" placeholder="Titre" required /> <br>
-      <textarea
-        v-model="newPost.description"
-        rows="4"
-        cols="50"
-        placeholder="description"
-        required
-      ></textarea> <br>
-      <button type="submit">Ajouter</button>
-    </form>
-  </div>
   <h2 class="fw-bold text-start mt-4 pb-2">Posts récents</h2>
   <section>
     <div class="text-start row row-cols-1 row-cols-lg-2 g-4">
@@ -166,7 +109,12 @@ export default {
           </div>
         </div>
     </div>
-
+    <div v-if="!showAll">
+      <button class="btn btn-secondary mt-3" @click="fetchAllPosts">Voir tous les posts</button>
+    </div>
+    <div v-if="showAll">
+      <button class="btn btn-secondary mt-3" @click="retrieve10Posts">Voir les 10 derniers posts</button>
+    </div>
   </section>
 </template>
 
