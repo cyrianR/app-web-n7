@@ -2,9 +2,10 @@ import axios from "axios";
 import store from "./store";
 import { jwtDecode } from 'jwt-decode';
 
+const backend_url = import.meta.env.VITE_BACKEND_URL;
 
 const http = axios.create({
-  baseURL: "http://localhost:8080/api", // api base url
+  baseURL: "http://" + backend_url +"/api", // api base url
   headers: {
     "Content-type": "application/json"
   }

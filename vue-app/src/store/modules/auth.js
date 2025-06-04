@@ -36,7 +36,10 @@ export const auth = {
                     return Promise.reject(error);
                 }
             );
-        }
+        },
+        updateRoles({ commit }, updatedRoles) {
+            commit('updateRoles', updatedRoles);
+        },
     },
     mutations: {
         loginSuccess(state, user) {
@@ -56,6 +59,12 @@ export const auth = {
         },
         registerFailure(state) {
             state.status.loggedIn = false;
-        }
+        },
+        updateRoles(state, roles) {
+            if (state.user) {
+                state.user.roles = roles;
+                localStorage.setItem('user', JSON.stringify(state.user));
+            }
+          },
     }
 };

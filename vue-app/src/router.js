@@ -28,7 +28,16 @@ const routes =  [
     name: "lesson",
     component: () => import("./components/Lesson.vue")
   },
-  
+  {
+    path: "/proj",
+    name: "proj",
+    component: () => import("./components/Proj.vue")
+  },
+  {
+    path: "/cooking",
+    name: "cooking",
+    component: () => import("./components/Cooking.vue")
+  },
   {
     path: "/login",
     name: "login",
@@ -53,6 +62,11 @@ const routes =  [
     path: "/karaoke",
     name: "karaoke",
     component: () => import("./components/Song.vue")
+  },
+  {
+    path: "/event/:id",
+    name: "event",
+    component: () => import("./components/Event.vue")
   },
   {
     path: "/tutorials",
