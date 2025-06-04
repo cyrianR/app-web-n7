@@ -107,24 +107,6 @@ const routes =  [
     path: "/legal-notices",
     name: "legal-notices",
     component: () => import("./components/LegalNotices.vue"),
-  },
-  {
-    path: "/tutorials",
-    name: "tutorials",
-    component: () => import("./components/TutorialsList.vue"),
-    meta: { roles: ["ROLE_ADMIN"] }
-  },
-  {
-    path: "/tutorials/:id",
-    name: "tutorial-details",
-    component: () => import("./components/Tutorial.vue"),
-    meta: { roles: ["ROLE_ADMIN"] }
-  },
-  {
-    path: "/add",
-    name: "add",
-    component: () => import("./components/AddTutorial.vue"),
-    meta: { roles: ["ROLE_ADMIN"] }
   }
 ];
 

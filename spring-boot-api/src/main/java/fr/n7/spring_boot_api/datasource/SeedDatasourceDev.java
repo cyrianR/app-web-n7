@@ -29,9 +29,6 @@ public class SeedDatasourceDev implements CommandLineRunner{
     RoleRepository roleRepo;
 
     @Autowired
-    TutorialRepository tutorialRepo;
-
-    @Autowired
     UserRepository userRepo;
 
     @Autowired
@@ -49,7 +46,6 @@ public class SeedDatasourceDev implements CommandLineRunner{
     @Autowired
     SongRepository songRepo;
 
-    int numTutorials = 10;
     int numUsers = 2;
     int numEvents = 10;
     int numLikes = 6;
@@ -65,9 +61,6 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
         System.out.println("Loading Role data...");
         SeederUtils.loadRoles(roleRepo);
-
-        System.out.println("Loading Tutorial data...");
-        loadTutorialData(numTutorials);
 
         System.out.println("Loading Event data...");
         loadEventData(numEvents);
@@ -90,12 +83,7 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
         System.out.println("Seeding completed.");
     }
-
-    private void loadTutorialData(int numTutorials) {
-        for (int i = 0; i < numTutorials; i++) {
-            tutorialRepo.save(new Tutorial(faker.zelda().game(), faker.lorem().paragraph(), faker.bool().bool()));
-        }
-    }
+    
 
     private void loadUserData(int numUsers) {
         for (int i = 0; i < numUsers; i++) {
