@@ -155,9 +155,9 @@ export default {
           </div>
         </div>
         <div class="text-end d-flex flex-column me-3">
-          <a href="#" class="text-dark text-decoration-none">Cookies</a>
-          <a href="#" class="text-dark text-decoration-none">Contactez-nous</a>
-          <a href="#" class="text-dark text-decoration-none">Mentions légales</a>
+          <router-link to="/cookies" class="text-dark text-decoration-none">Cookies</router-link>
+          <router-link to="/contacts" class="text-dark text-decoration-none">Contactez-nous</router-link>
+          <router-link to="/legal-notices" class="text-dark text-decoration-none">Mentions légales</router-link>
         </div>
       </div>
     </footer>
