@@ -35,6 +35,7 @@ export default {
       PostService.getLast10()
         .then(response => {
           this.posts = response.data;
+          console.log("Retrieved posts:", this.posts);
           this.showAll = false;
         })
         .catch(error => {
