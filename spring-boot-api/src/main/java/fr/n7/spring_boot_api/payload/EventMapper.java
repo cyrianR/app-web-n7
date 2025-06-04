@@ -1,6 +1,5 @@
 package fr.n7.spring_boot_api.payload;
 
-import fr.n7.spring_boot_api.payload.EventDTO;
 import fr.n7.spring_boot_api.model.Event;
 
 public class EventMapper {

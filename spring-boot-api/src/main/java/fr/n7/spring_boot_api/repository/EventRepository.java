@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import fr.n7.spring_boot_api.model.Event;
-import fr.n7.spring_boot_api.model.EventType;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     Optional<Event> findByName(String name);

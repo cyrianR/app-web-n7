@@ -6,8 +6,6 @@ import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import fr.n7.spring_boot_api.payload.EventDTO;
-
 @Entity
 @Table(name = "posts")
 public class Post {
@@ -16,7 +14,8 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "description", nullable = false)
+    @Lob
+    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description = "";
 
     @ManyToMany(fetch = FetchType.EAGER)

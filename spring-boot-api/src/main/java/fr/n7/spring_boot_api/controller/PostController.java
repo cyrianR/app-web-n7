@@ -4,8 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,16 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import fr.n7.spring_boot_api.model.Event;
 import fr.n7.spring_boot_api.model.Post;
 import fr.n7.spring_boot_api.model.User;
-import fr.n7.spring_boot_api.payload.EventDTO;
-import fr.n7.spring_boot_api.payload.response.UserResponse;
-import fr.n7.spring_boot_api.repository.EventRepository;
 import fr.n7.spring_boot_api.repository.PostRepository;
 import fr.n7.spring_boot_api.repository.UserRepository;
 
@@ -69,6 +63,7 @@ public class PostController {
             posts = postRepository.findTop10ByOrderByDateDesc().get();
             return new ResponseEntity<>(posts, HttpStatus.OK);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
