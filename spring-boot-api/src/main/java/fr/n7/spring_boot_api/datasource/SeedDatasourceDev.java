@@ -46,6 +46,9 @@ public class SeedDatasourceDev implements CommandLineRunner{
     @Autowired
     AnimeRepository animeRepo;
 
+    @Autowired
+    SongRepository songRepo;
+
     int numTutorials = 10;
     int numUsers = 1;
     int numEvents = 10;
@@ -81,6 +84,9 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
         System.out.println("Loading Anime data...");
         loadAnimeData();
+
+        System.out.println("Loading Song data...");
+        loadSongData();
 
         System.out.println("Seeding completed.");
     }
@@ -196,4 +202,9 @@ public class SeedDatasourceDev implements CommandLineRunner{
         animeRepo.save(new Anime("Demon Slayer", 26, 3, "https://myanimelist.net/anime/38000/Kimetsu_no_Yaiba"));
     }
 
+    private void loadSongData() {
+        songRepo.save(new Song("Gurenge", "LiSA", "https://youtu.be/fNMBtyP8zjI"));
+        songRepo.save(new Song("Unravel", "TK from Ling Tosite Sigure", "https://youtu.be/A0pLdykGqI4"));
+        songRepo.save(new Song("Blue Bird", "Ikimonogakari", "https://youtu.be/naKStyMjOwM"));
+    }
 }

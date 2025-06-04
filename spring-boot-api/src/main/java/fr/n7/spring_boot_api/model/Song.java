@@ -4,7 +4,8 @@ package fr.n7.spring_boot_api.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
-
+@Entity
+@Table(name = "songs")
 public class Song {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

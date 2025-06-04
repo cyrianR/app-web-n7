@@ -1,15 +1,19 @@
-
 <script>
 import SongService from "../services/SongService";
+import EventTypedList from './EventTypedList.vue';
 export default {
     name: "Song",
+    components: {
+        EventTypedList
+    },
     data() {
         return {
             songs: [],
             search: "",
             newSong: {
                 title: "",
-                artist: ""
+                songwriter: "",
+                url: ""
             }
         };
     },
@@ -19,6 +23,12 @@ export default {
             if (!term) return this.songs;
             return this.songs.filter(song =>
                 song.title.toLowerCase().includes(term)
+            );
+        },
+        isAdmin() {
+            return (
+                this.$store.state.auth.user.roles.includes("ROLE_ADMIN") ||
+                this.$store.state.auth.user.roles.includes("ROLE_KARAOKE_ADMIN")
             );
         }
     },
@@ -37,13 +47,13 @@ export default {
                 });
         },
         addSong(newSong) {
-            if (!newSong.title || !newSong.artist) return;
+            if (!newSong.title || !newSong.songwriter) return;
             console.log("Adding song:", newSong);
             SongService.create(newSong)
                 .then(response => {
                     this.songs.push(response.data);
                     this.newSong.title = "";
-                    this.newSong.artist = "";
+                    this.newSong.songwriter = "";
                 })
                 .catch(error => {
                     console.error("Error adding song:", error);
@@ -71,8 +81,39 @@ export default {
 </script>
 
 <template>
-    <div class="song-container">
-        <h1>🎵 Liste des chansons</h1>
+    <EventTypedList eventType="KARAOKE" class="mb-3" />
+    <div class="container my-5 p-4 bg-light rounded shadow">
+        <div v-if="isAdmin">
+            <h2 class="mt-4">Ajouter une nouvelle chanson</h2>  
+            <form @submit.prevent="addSong(newSong)">
+                <div class="mb-3">
+                    <input
+                        v-model="newSong.title"
+                        type="text"
+                        placeholder="Titre de la chanson"
+                        class="form-control"
+                    />
+                </div>
+                <div class="mb-3">
+                    <input
+                        v-model="newSong.songwriter"
+                        type="text"
+                        placeholder="Artiste"
+                        class="form-control"
+                    />
+                </div>
+                <div class="mb-3">
+                    <input
+                        v-model="newSong.url"
+                        type="text"
+                        placeholder="Lien vers la chanson"
+                        class="form-control"
+                    />
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mb-4">Ajouter</button>
+            </form>
+        </div>
+        <h1 class="text-center mb-4">🎵 Liste des chansons</h1>
         <input
             v-model="search"
             type="text"
@@ -86,9 +127,10 @@ export default {
                 class="list-group-item d-flex justify-content-between align-items-center"
             >
                 <div>
-                    <strong>{{ song.title }}</strong> - {{ song.artist }}
+                    <a :href="song.url"> <strong>{{ song.title }}</strong> </a> - {{ song.songwriter }}
                 </div>
                 <button
+                    v-if="isAdmin"
                     class="btn btn-danger btn-sm"
                     @click="deleteSong(song.id)"
                 >
@@ -96,95 +138,8 @@ export default {
                 </button>
             </li>
         </ul>
-        <h2>Ajouter une nouvelle chanson</h2>  
-        <form @submit.prevent="addSong(newSong)">
-            <div class="mb-3">
-                <input
-                    v-model="newSong.title"
-                    type="text"
-                    placeholder="Titre de la chanson"
-                    class="form-control"
-                />
-            </div>
-            <div class="mb-3">
-                <input
-                    v-model="newSong.artist"
-                    type="text"
-                    placeholder="Artiste"
-                    class="form-control"
-                />
-            </div>
-            <button type="submit" class="btn btn-primary">Ajouter</button>
-        </form>
-        <h3> Liste des chansons </h3>
-        <ul class="list-group mt-3">
-            <li
-                v-for="song in getSongsByTitle(search)"
-                :key="song.id"
-                class="list-group-item d-flex justify-content-between align-items-center"
-            >
-                <div>
-                    <strong>{{ song.title }}</strong> - {{ song.artist }}
-                </div>
-                <button
-                    class="btn btn-danger btn-sm"
-                    @click="deleteSong(song.id)"
-                >
-                    Supprimer
-                </button>
-            </li>
-        </ul>
-        <p v-if="filteredSongs.length === 0" class="text-center">Aucune chanson trouvée.</p>
-        <p v-if="songs.length === 0" class="text-center">Aucune chanson disponible.</p>
-        <p v-if="songs.length > 0" class="text-center">Total des chansons: {{ songs.length }}</p>
+        
+        <p v-if="filteredSongs.length === 0" class="text-center text-secondary mt-3">Aucune chanson trouvée.</p>
+        <p v-if="songs.length > 0" class="text-center text-secondary mt-3">Total des chansons: {{ songs.length }}</p>
     </div>
 </template>
-<style scoped>
-.song-container {
-    max-width: 800px;
-    margin: 30px auto;
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-}
-.song-container h1 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-.song-container input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-}
-.song-container .list-group-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.song-container .btn {
-    margin-left: 10px;
-}
-.song-container form {
-    margin-top: 20px;
-}
-.song-container form input[type="text"] {
-    margin-bottom: 10px;
-}
-.song-container form button {
-    width: 100%;
-}
-.song-container .form-control {
-    margin-bottom: 10px;
-}
-.song-container .btn-primary {
-    width: 100%;
-}
-.song-container .btn-danger {
-    width: 100px;
-}
-.song-container p {
-    text-align: center;
-    color: #6c757d;
-}
-</style>

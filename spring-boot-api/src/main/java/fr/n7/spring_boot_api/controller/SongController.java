@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping; 
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +29,7 @@ public class SongController {
 
     // Get song by ID
     @GetMapping("/song/{id}")
+    @PreAuthorize("hasRole('MEMBER')")
     public ResponseEntity<Song> getSongById(@PathVariable("id") long id) {
         Optional<Song> songData = songRepository.findById(id);
         if (songData.isPresent()) {
@@ -41,6 +41,7 @@ public class SongController {
 
     // Get songs by title
     @GetMapping("/song/title/{title}")
+    @PreAuthorize("hasRole('MEMBER')")
     public ResponseEntity<List<Song>> getSongsByTitle(@PathVariable("title") String title) {
         List<Song> songs = songRepository.findByTitleContaining(title);
         if (songs.isEmpty()) {
@@ -52,6 +53,7 @@ public class SongController {
 
     // Get all songs
     @GetMapping("/song")
+    @PreAuthorize("hasRole('MEMBER')")
     public ResponseEntity<List<Song>> getAllSongs() {
         List<Song> songs = songRepository.findAll();
         if (songs.isEmpty()) {
@@ -63,6 +65,7 @@ public class SongController {
 
     // Create a new song
     @PostMapping("/song")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('KARAOKE_ADMIN')")
     public ResponseEntity<Song> createSong(@RequestBody Song song) {
         try {
             Song _song = songRepository.save(song);
@@ -74,6 +77,7 @@ public class SongController {
 
     // Delete a song by ID
     @DeleteMapping("/song/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('KARAOKE_ADMIN')")
     public ResponseEntity<HttpStatus> deleteSong(@PathVariable("id") long id) {
         try {
             songRepository.deleteById(id);
