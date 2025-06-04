@@ -88,6 +88,21 @@ const routes =  [
     meta: { roles: ["ROLE_ADMIN", "ROLE_LESSON_ADMIN", "ROLE_KARAOKE_ADMIN", "ROLE_PROJ_ADMIN", "ROLE_COOKING_ADMIN"] }
   },
   {
+    path: "/cookies",
+    name: "cookies",
+    component: () => import("./components/Cookies.vue"),
+  },
+  {
+    path: "/contacts",
+    name: "contacts",
+    component: () => import("./components/Contacts.vue"),
+  },
+  {
+    path: "/legal-notices",
+    name: "legal-notices",
+    component: () => import("./components/LegalNotices.vue"),
+  },
+  {
     path: "/tutorials",
     name: "tutorials",
     component: () => import("./components/TutorialsList.vue"),
