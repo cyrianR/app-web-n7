@@ -14,10 +14,21 @@ export default {
     };
   },
 
-  created() {
-    this.retrieve10Posts();
+  computed: {
+    isMember() {
+      return (
+        this.$store.state.auth.user && 
+        this.$store.state.auth.user.roles.includes("ROLE_MEMBER")
+        );
+    }
   },
 
+  created() {
+    if (this.$store.state.auth.user && 
+        this.$store.state.auth.user.roles.includes("ROLE_MEMBER")) {
+      this.retrieve10Posts();
+    }
+  },
 
   methods: {
     retrieve10Posts() {
@@ -88,34 +99,36 @@ export default {
   </div>
 
   <img src="/img/welcome.jpg" class="img-fluid rounded mx-auto d-block" alt="Image du club">
-  <h2 class="fw-bold text-start mt-4 pb-2">Posts récents</h2>
-  <section>
-    <div class="text-start row row-cols-1 row-cols-lg-2 g-4">
-      <div class="col" v-for="post in posts" :key="post.id">
-          <div class="card">
-            <div class="card-body">
-              <h4 class="card-title">{{ post.title }}</h4>
-              <p class="card-text multiline-truncate">{{ post.description }}</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button @click="postPage(post.id)" class="btn btn-primary">Lire la suite</button>
-                </div>
-                <div class="text-muted ">
-                  {{ post.author.username }} <br>
-                  {{ formatDate(post.date) }}
+  <div v-if="isMember">
+    <h2 class="fw-bold text-start mt-4 pb-2">Posts récents</h2>
+    <section>
+      <div class="text-start row row-cols-1 row-cols-lg-2 g-4">
+        <div class="col" v-for="post in posts" :key="post.id">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">{{ post.title }}</h4>
+                <p class="card-text multiline-truncate">{{ post.description }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="btn-group">
+                    <button @click="postPage(post.id)" class="btn btn-primary">Lire la suite</button>
+                  </div>
+                  <div class="text-muted ">
+                    {{ post.author.username }} <br>
+                    {{ formatDate(post.date) }}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-    </div>
-    <div v-if="!showAll">
-      <button class="btn btn-secondary mt-3" @click="fetchAllPosts">Voir tous les posts</button>
-    </div>
-    <div v-if="showAll">
-      <button class="btn btn-secondary mt-3" @click="retrieve10Posts">Voir les 10 derniers posts</button>
-    </div>
-  </section>
+      </div>
+      <div v-if="!showAll">
+        <button class="btn btn-secondary mt-3" @click="fetchAllPosts">Voir tous les posts</button>
+      </div>
+      <div v-if="showAll">
+        <button class="btn btn-secondary mt-3" @click="retrieve10Posts">Réduire</button>
+      </div>
+    </section>
+  </div>
 </template>
 
 
