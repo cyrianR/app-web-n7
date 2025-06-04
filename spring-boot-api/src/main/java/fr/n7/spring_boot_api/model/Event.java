@@ -24,7 +24,7 @@ public class Event {
     @Column(name = "event_type", nullable = false)
     private EventType eventType;
 
-    @Lob
+    
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 

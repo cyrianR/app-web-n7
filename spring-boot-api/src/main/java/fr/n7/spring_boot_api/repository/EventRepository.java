@@ -18,10 +18,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     
     Optional<Event> findById(long id);
 
-    @Transactional
+    
     List<Event> findByDateGreaterThanEqualAndDateLessThan(ZonedDateTime start, ZonedDateTime end);
 
     @Query("SELECT e FROM Event e WHERE e.eventType = :eventType AND e.date > :date ORDER BY e.date")
-    @Transactional
     List<Event> findByEventTypeAndDateAfter(@Param("eventType") fr.n7.spring_boot_api.model.EventType eventType, @Param("date") ZonedDateTime date);
 }
