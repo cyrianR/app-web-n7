@@ -24,7 +24,8 @@ public class Event {
     @Column(name = "event_type", nullable = false)
     private EventType eventType;
 
-    @Column(name = "description", nullable = false)
+    @Lob
+    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
     @ManyToMany(mappedBy = "likedEvents")

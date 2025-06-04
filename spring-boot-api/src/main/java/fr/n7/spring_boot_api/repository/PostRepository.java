@@ -13,6 +13,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Transactional
     Optional<List<Post>> findTop10ByOrderByDateDesc();
-    
+
+    @Transactional
     Optional<List<Post>> findByOrderByDateDesc();
 }
