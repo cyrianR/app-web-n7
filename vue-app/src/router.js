@@ -72,7 +72,8 @@ const routes =  [
   {  
     path: "/karaoke",
     name: "karaoke",
-    component: () => import("./components/Song.vue")
+    component: () => import("./components/Song.vue"),
+    meta: { roles: ["ROLE_MEMBER"] }
   },
   {
     path: "/event/:id",
