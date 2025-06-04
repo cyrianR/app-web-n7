@@ -50,11 +50,11 @@ public class SeedDatasourceDev implements CommandLineRunner{
     SongRepository songRepo;
 
     int numTutorials = 10;
-    int numUsers = 1;
+    int numUsers = 2;
     int numEvents = 10;
     int numLikes = 6;
     int numLessons = 10;
-    int numPosts = 10;
+    int numPosts = 20;
 
     @Autowired
     PasswordEncoder encoder;
@@ -139,6 +139,8 @@ public class SeedDatasourceDev implements CommandLineRunner{
         User adminUser = new User(uniqueUsername, uniqueEmail, encoder.encode("admin123"));
         Role adminRole = roleRepo.findByName(ERole.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role ADMIN is not found during seeding."));
         adminUser.addRole(adminRole);
+        Role userRole = roleRepo.findByName(ERole.ROLE_MEMBER).orElseThrow(() -> new RuntimeException("Error: Role MEMBER is not found during seeding."));
+        adminUser.addRole(userRole);
         userRepo.save(adminUser);
 
         // create karaoke admin
@@ -147,6 +149,8 @@ public class SeedDatasourceDev implements CommandLineRunner{
         adminUser = new User(uniqueUsername, uniqueEmail, encoder.encode("admin123"));
         adminRole = roleRepo.findByName(ERole.ROLE_KARAOKE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role KAROAKE_ADMIN is not found during seeding."));
         adminUser.addRole(adminRole);
+        userRole = roleRepo.findByName(ERole.ROLE_MEMBER).orElseThrow(() -> new RuntimeException("Error: Role MEMBER is not found during seeding."));
+        adminUser.addRole(userRole);
         userRepo.save(adminUser);
 
         // create lesson admin
@@ -155,6 +159,8 @@ public class SeedDatasourceDev implements CommandLineRunner{
         adminUser = new User(uniqueUsername, uniqueEmail, encoder.encode("admin123"));
         adminRole = roleRepo.findByName(ERole.ROLE_LESSON_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role LESSON_ADMIN is not found during seeding."));
         adminUser.addRole(adminRole);
+        userRole = roleRepo.findByName(ERole.ROLE_MEMBER).orElseThrow(() -> new RuntimeException("Error: Role MEMBER is not found during seeding."));
+        adminUser.addRole(userRole);
         userRepo.save(adminUser);
     }
 
@@ -189,8 +195,18 @@ public class SeedDatasourceDev implements CommandLineRunner{
 
     private void loadPostData(int numPosts) {
         List<User> users = userRepo.findAll();
+
+        ZoneId zone = ZoneId.systemDefault();
+        ZonedDateTime now = ZonedDateTime.now(zone);
+        ZonedDateTime min = now.minusDays(30);
+
+        long startEpoch = min.toEpochSecond();
+        long endEpoch = now.toEpochSecond();
+
         for (int i = 0; i < numPosts; i++) {
-            postRepo.save(new Post(faker.book().title(), faker.date().future(30, java.util.concurrent.TimeUnit.DAYS).toString(), users.get(faker.number().numberBetween(0, numUsers -1))));
+            long randomEpoch = ThreadLocalRandom.current().nextLong(startEpoch, endEpoch);
+            ZonedDateTime randomDateTime = Instant.ofEpochSecond(randomEpoch).atZone(zone);
+            postRepo.save(new Post(faker.lorem().paragraph(3), randomDateTime, faker.book().title(), users.get(faker.number().numberBetween(0, numUsers -1))));
         }
     }
 

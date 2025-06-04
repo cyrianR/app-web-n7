@@ -1,5 +1,6 @@
 package fr.n7.spring_boot_api.controller;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,9 +23,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import fr.n7.spring_boot_api.model.Event;
 import fr.n7.spring_boot_api.model.Post;
+import fr.n7.spring_boot_api.model.User;
+import fr.n7.spring_boot_api.payload.EventDTO;
 import fr.n7.spring_boot_api.payload.response.UserResponse;
 import fr.n7.spring_boot_api.repository.EventRepository;
 import fr.n7.spring_boot_api.repository.PostRepository;
+import fr.n7.spring_boot_api.repository.UserRepository;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -34,18 +38,35 @@ public class PostController {
     @Autowired
     PostRepository postRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     // Get all posts
     @GetMapping("/posts")
     public ResponseEntity<List<Post>> getAllPosts() {
         try {
             List<Post> posts = new ArrayList<Post>();
 
-            postRepository.findAll().forEach(posts::add);
-
-            if (posts.isEmpty()) {
+            if (postRepository.findByOrderByDateDesc().isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
+            posts = postRepository.findByOrderByDateDesc().get();
+            return new ResponseEntity<>(posts, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
+     // Get 10 last posts
+    @GetMapping("/10posts")
+    public ResponseEntity<List<Post>> getLast10Posts() {
+        try {
+            List<Post> posts = new ArrayList<Post>();
+
+            if (postRepository.findTop10ByOrderByDateDesc().isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            posts = postRepository.findTop10ByOrderByDateDesc().get();
             return new ResponseEntity<>(posts, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -66,10 +87,10 @@ public class PostController {
     
     // Create a new post
     @PostMapping("/post")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Post> createPost(@RequestBody Post post) {
         try {
-            Post _post = postRepository.save(new Post(post.getDescription(), post.getDate(), post.getAuthor()));
+            User user = userRepository.findById(post.getAuthor().getId()).get();
+            Post _post = postRepository.save(new Post(post.getDescription(), ZonedDateTime.now(), post.getTitle(), user));
             return new ResponseEntity<>(_post, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -81,13 +102,13 @@ public class PostController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Post> updatePost(@PathVariable("id") long id, @RequestBody Post post) {
         Optional<Post> postData = postRepository.findById(id);
-
         if (postData.isPresent()) {
             Post _post = postData.get();
-            _post.setDate(post.getDate());
+            _post.setDate(ZonedDateTime.now());
             _post.setAuthor(post.getAuthor());
             _post.setEvents(post.getEvents());
             _post.setDescription(post.getDescription());
+            _post.setTitle(post.getTitle());
             return new ResponseEntity<>(postRepository.save(_post), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -108,14 +129,14 @@ public class PostController {
         }
     }
 
-    // Remove event from post
-    @PutMapping("/post/{id}/removeEvent")
+    // Remove events from post
+    @PutMapping("/post/{id}/clearEvents")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Post> deleteEvent(@PathVariable("id") long id, @RequestBody Event event) {
+    public ResponseEntity<Post> clearEvents(@PathVariable("id") long id) {
         Optional<Post> postData = postRepository.findById(id);
         if (postData.isPresent()) {
             Post post = postData.get();
-            post.deleteEvent(event);
+            post.clearEvents();;
             return new ResponseEntity<>(postRepository.save(post), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

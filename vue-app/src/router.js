@@ -4,7 +4,7 @@ import store from "./store";
 const routes =  [
   {
     path: "/",
-    name: "accueil",
+    name: "home",
     component: () => import("./components/Welcome.vue")
   },
   {
@@ -16,7 +16,8 @@ const routes =  [
   {
     path: "/agenda",
     name: "agenda",
-    component: () => import("./components/Agenda.vue")
+    component: () => import("./components/Agenda.vue"),
+    meta: { roles: ["ROLE_MEMBER"] }
   },
   {
     path: "/profile",
@@ -26,17 +27,20 @@ const routes =  [
   {
     path: "/lesson",
     name: "lesson",
-    component: () => import("./components/Lesson.vue")
+    component: () => import("./components/Lesson.vue"),
+    meta: { roles: ["ROLE_MEMBER"] }
   },
   {
     path: "/proj",
     name: "proj",
-    component: () => import("./components/Proj.vue")
+    component: () => import("./components/Proj.vue"),
+    meta: { roles: ["ROLE_MEMBER"] }
   },
   {
     path: "/cooking",
     name: "cooking",
-    component: () => import("./components/Cooking.vue")
+    component: () => import("./components/Cooking.vue"),
+    meta: { roles: ["ROLE_MEMBER"] }
   },
   {
     path: "/login",
@@ -56,7 +60,14 @@ const routes =  [
   {  
     path: "/photos",
     name: "photos",
-    component: () => import("./components/Photos.vue")
+    component: () => import("./components/Photos.vue"),
+    meta: { roles: ["ROLE_MEMBER"] }
+  },
+  {  
+    path: "/event/new",
+    name: "event-new",
+    component: () => import("./components/EventCreation.vue"),
+    meta: { roles: ["ROLE_ADMIN", "ROLE_LESSON_ADMIN", "ROLE_KARAOKE_ADMIN", "ROLE_PROJ_ADMIN", "ROLE_COOKING_ADMIN"] }
   },
   {  
     path: "/karaoke",
@@ -65,8 +76,36 @@ const routes =  [
   },
   {
     path: "/event/:id",
-    name: "event",
-    component: () => import("./components/Event.vue")
+    name: "event-details",
+    component: () => import("./components/Event.vue"),
+    meta: { roles: ["ROLE_MEMBER"] }
+  },
+  {  
+    path: "/post/:id",
+    name: "post-details",
+    component: () => import("./components/Post.vue"),
+    meta: { roles: ["ROLE_MEMBER"] }
+  },
+  {  
+    path: "/post/new",
+    name: "post-new",
+    component: () => import("./components/PostCreation.vue"),
+    meta: { roles: ["ROLE_ADMIN", "ROLE_LESSON_ADMIN", "ROLE_KARAOKE_ADMIN", "ROLE_PROJ_ADMIN", "ROLE_COOKING_ADMIN"] }
+  },
+  {
+    path: "/cookies",
+    name: "cookies",
+    component: () => import("./components/Cookies.vue"),
+  },
+  {
+    path: "/contacts",
+    name: "contacts",
+    component: () => import("./components/Contacts.vue"),
+  },
+  {
+    path: "/legal-notices",
+    name: "legal-notices",
+    component: () => import("./components/LegalNotices.vue"),
   },
   {
     path: "/tutorials",
@@ -105,7 +144,7 @@ router.beforeEach((to, from, next) => {
     const hasAccess = user.roles.some(role => requiredRoles.includes(role));
     if (!hasAccess) {
       // If user does not have the required role, redirect to home
-      alert('You do not have access to this page.');
+      alert("Tu n'as pas un rôle suffisant pour accéder à cette page.");
       return next('/');
     }
   }

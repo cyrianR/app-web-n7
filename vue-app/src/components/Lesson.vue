@@ -91,8 +91,8 @@
               <input v-model="lessonToUpdate.culturalFile" class="form-control mb-2" placeholder="URL fichier culturel" required />
             </div>
             <div class="modal-footer">
-              <button type="submit" class="btn btn-primary">Enregistrer</button>
               <button type="button" @click="closeUpdateModal" class="btn btn-secondary">Annuler</button>
+              <button type="submit" class="btn btn-primary">Enregistrer</button>
             </div>
           </form>
         </div>

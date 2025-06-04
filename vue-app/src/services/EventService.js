@@ -22,7 +22,7 @@ class EventService {
   }
 
   addEvent(event) {
-    return http.post(`/event/`, event);
+    return http.post(`/event`, event);
   }
 
   updateEvent(id, event) {
@@ -36,7 +36,7 @@ class EventService {
       COOKING: '🍳 Atelier cuisine',
       KARAOKE: '🎤 Karaoke'
     }
-    return frenchMap[eventType] || 'Autre'
+    return frenchMap[eventType] || 'Aucun évènement'
   }
 
   colorEvent(eventType) {
